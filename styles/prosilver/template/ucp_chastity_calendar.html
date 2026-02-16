@@ -1,0 +1,191 @@
+<!-- INCLUDE ucp_header.html -->
+
+<h2>{L_UCP_CHASTITY_CALENDAR}</h2>
+
+<div class="panel">
+    <div class="inner">
+        
+        <!-- IF HAS_ACTIVE_PERIOD -->
+        <div class="rules">
+            <div class="rule">
+                <strong>{L_CHASTITY_CURRENT_PERIOD}:</strong> {CURRENT_DAYS} {L_CHASTITY_DAYS}
+            </div>
+        </div>
+        <!-- ENDIF -->
+
+        <!-- IF not HAS_ACTIVE_PERIOD -->
+        <form id="add_period_form" method="post" action="{U_ACTION}">
+            <fieldset>
+                <legend>{L_CHASTITY_ADD_PERIOD}</legend>
+                
+                <dl>
+                    <dt><label for="start_date">{L_CHASTITY_START_DATE}:</label></dt>
+                    <dd><input type="date" id="start_date" name="start_date" value="{TODAY_DATE}" max="{TODAY_DATE}" required /></dd>
+                </dl>
+                
+                <dl>
+                    <dt><label for="is_permanent">{L_CHASTITY_PERMANENT}:</label><br /><span>{L_CHASTITY_PERMANENT_EXPLAIN}</span></dt>
+                    <dd>
+                        <input type="radio" name="is_permanent" id="is_permanent_no" value="0" checked="checked" /> <label for="is_permanent_no">{L_CHASTITY_TEMPORARY_MODE}</label><br />
+                        <input type="radio" name="is_permanent" id="is_permanent_yes" value="1" /> <label for="is_permanent_yes">{L_CHASTITY_PERMANENT_MODE}</label>
+                    </dd>
+                </dl>
+                
+                <dl>
+                    <dt><label for="notes">{L_CHASTITY_NOTES}:</label><br /><span>{L_OPTIONAL}</span></dt>
+                    <dd><textarea id="notes" name="notes" rows="3" cols="40"></textarea></dd>
+                </dl>
+            </fieldset>
+            
+            <fieldset>
+                <legend>{L_CHASTITY_RULES}</legend>
+                <p>{L_CHASTITY_RULES_EXPLAIN}</p>
+                
+                <!-- IF S_RULE_MASTURBATION_ENABLED -->
+                <dl>
+                    <dt><label for="rule_masturbation">{L_CHASTITY_RULE_MASTURBATION}:</label></dt>
+                    <dd>
+                        <input type="radio" name="rule_masturbation" id="rule_masturbation_yes" value="1" /> <label for="rule_masturbation_yes">{L_CHASTITY_YES}</label>
+                        <input type="radio" name="rule_masturbation" id="rule_masturbation_no" value="0" checked="checked" /> <label for="rule_masturbation_no">{L_CHASTITY_NO}</label>
+                    </dd>
+                </dl>
+                <!-- ENDIF -->
+                
+                <!-- IF S_RULE_EJACULATION_ENABLED -->
+                <dl>
+                    <dt><label for="rule_ejaculation">{L_CHASTITY_RULE_EJACULATION}:</label></dt>
+                    <dd>
+                        <input type="radio" name="rule_ejaculation" id="rule_ejaculation_yes" value="1" /> <label for="rule_ejaculation_yes">{L_CHASTITY_YES}</label>
+                        <input type="radio" name="rule_ejaculation" id="rule_ejaculation_no" value="0" checked="checked" /> <label for="rule_ejaculation_no">{L_CHASTITY_NO}</label>
+                    </dd>
+                </dl>
+                <!-- ENDIF -->
+                
+                <!-- IF S_RULE_SLEEP_REMOVAL_ENABLED -->
+                <dl>
+                    <dt><label for="rule_sleep_removal">{L_CHASTITY_RULE_SLEEP_REMOVAL}:</label></dt>
+                    <dd>
+                        <input type="radio" name="rule_sleep_removal" id="rule_sleep_removal_yes" value="1" /> <label for="rule_sleep_removal_yes">{L_CHASTITY_YES}</label>
+                        <input type="radio" name="rule_sleep_removal" id="rule_sleep_removal_no" value="0" checked="checked" /> <label for="rule_sleep_removal_no">{L_CHASTITY_NO}</label>
+                    </dd>
+                </dl>
+                <!-- ENDIF -->
+                
+                <!-- IF S_RULE_PUBLIC_REMOVAL_ENABLED -->
+                <dl>
+                    <dt><label for="rule_public_removal">{L_CHASTITY_RULE_PUBLIC_REMOVAL}:</label></dt>
+                    <dd>
+                        <input type="radio" name="rule_public_removal" id="rule_public_removal_yes" value="1" /> <label for="rule_public_removal_yes">{L_CHASTITY_YES}</label>
+                        <input type="radio" name="rule_public_removal" id="rule_public_removal_no" value="0" checked="checked" /> <label for="rule_public_removal_no">{L_CHASTITY_NO}</label>
+                    </dd>
+                </dl>
+                <!-- ENDIF -->
+                
+                <!-- IF S_RULE_MEDICAL_REMOVAL_ENABLED -->
+                <dl>
+                    <dt><label for="rule_medical_removal">{L_CHASTITY_RULE_MEDICAL_REMOVAL}:</label></dt>
+                    <dd>
+                        <input type="radio" name="rule_medical_removal" id="rule_medical_removal_yes" value="1" checked="checked" /> <label for="rule_medical_removal_yes">{L_CHASTITY_YES}</label>
+                        <input type="radio" name="rule_medical_removal" id="rule_medical_removal_no" value="0" /> <label for="rule_medical_removal_no">{L_CHASTITY_NO}</label>
+                    </dd>
+                </dl>
+                <!-- ENDIF -->
+            </fieldset>
+            
+            <fieldset class="submit-buttons">
+                <input type="submit" name="add_period" value="{L_SUBMIT}" class="button1" />
+                {S_FORM_TOKEN}
+            </fieldset>
+        </form>
+        <!-- ENDIF -->
+
+        <h3>{L_CHASTITY_CALENDAR}</h3>
+        
+        <!-- IF .periods -->
+        <table class="table1 zebra-table">
+            <thead>
+                <tr>
+                    <th>{L_CHASTITY_START_DATE}</th>
+                    <th>{L_CHASTITY_END_DATE}</th>
+                    <th>{L_CHASTITY_STATUS}</th>
+                    <th>{L_CHASTITY_DAYS}</th>
+                    <th>{L_CHASTITY_NOTES}</th>
+                    <th>{L_CHASTITY_RULES}</th>
+                    <th>{L_ACTIONS}</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- BEGIN periods -->
+                <tr class="<!-- IF periods.IS_ACTIVE -->bg3<!-- ENDIF -->">
+                    <td>{periods.START_DATE}</td>
+                    <td>
+                        <!-- IF periods.IS_PERMANENT and periods.IS_ACTIVE -->
+                        <strong style="color: #BC2A4D;">♾️ {L_CHASTITY_PERMANENT}</strong>
+                        <!-- ELSE -->
+                        {periods.END_DATE}
+                        <!-- ENDIF -->
+                    </td>
+                    <td>
+                        <!-- IF periods.IS_ACTIVE -->
+                        <strong style="color: #BC2A4D;">{periods.STATUS}</strong>
+                        <!-- ELSE -->
+                        {periods.STATUS}
+                        <!-- ENDIF -->
+                    </td>
+                    <td>
+                        <!-- IF periods.IS_ACTIVE -->
+                        <strong>{periods.DAYS_COUNT}</strong>
+                        <!-- ELSE -->
+                        {periods.DAYS_COUNT}
+                        <!-- ENDIF -->
+                    </td>
+                    <td>{periods.NOTES}</td>
+                    <td>
+                        <a href="#" onclick="document.getElementById('rules_{periods.PERIOD_ID}').style.display = document.getElementById('rules_{periods.PERIOD_ID}').style.display == 'none' ? 'block' : 'none'; return false;" class="button2">{L_CHASTITY_VIEW_RULES}</a>
+                        <div id="rules_{periods.PERIOD_ID}" style="display: none; margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                            <strong>{L_CHASTITY_RULES}:</strong><br />
+                            <!-- IF S_RULE_MASTURBATION_ENABLED -->
+                            ✓ {L_CHASTITY_RULE_MASTURBATION}: <!-- IF periods.RULE_MASTURBATION --><span style="color: green;">{L_CHASTITY_YES}</span><!-- ELSE --><span style="color: red;">{L_CHASTITY_NO}</span><!-- ENDIF --><br />
+                            <!-- ENDIF -->
+                            <!-- IF S_RULE_EJACULATION_ENABLED -->
+                            ✓ {L_CHASTITY_RULE_EJACULATION}: <!-- IF periods.RULE_EJACULATION --><span style="color: green;">{L_CHASTITY_YES}</span><!-- ELSE --><span style="color: red;">{L_CHASTITY_NO}</span><!-- ENDIF --><br />
+                            <!-- ENDIF -->
+                            <!-- IF S_RULE_SLEEP_REMOVAL_ENABLED -->
+                            ✓ {L_CHASTITY_RULE_SLEEP_REMOVAL}: <!-- IF periods.RULE_SLEEP_REMOVAL --><span style="color: green;">{L_CHASTITY_YES}</span><!-- ELSE --><span style="color: red;">{L_CHASTITY_NO}</span><!-- ENDIF --><br />
+                            <!-- ENDIF -->
+                            <!-- IF S_RULE_PUBLIC_REMOVAL_ENABLED -->
+                            ✓ {L_CHASTITY_RULE_PUBLIC_REMOVAL}: <!-- IF periods.RULE_PUBLIC_REMOVAL --><span style="color: green;">{L_CHASTITY_YES}</span><!-- ELSE --><span style="color: red;">{L_CHASTITY_NO}</span><!-- ENDIF --><br />
+                            <!-- ENDIF -->
+                            <!-- IF S_RULE_MEDICAL_REMOVAL_ENABLED -->
+                            ✓ {L_CHASTITY_RULE_MEDICAL_REMOVAL}: <!-- IF periods.RULE_MEDICAL_REMOVAL --><span style="color: green;">{L_CHASTITY_YES}</span><!-- ELSE --><span style="color: red;">{L_CHASTITY_NO}</span><!-- ENDIF -->
+                            <!-- ENDIF -->
+                        </div>
+                    </td>
+                    <td>
+                        <!-- IF periods.IS_ACTIVE -->
+                        <form method="post" action="{U_ACTION}" style="display: inline;">
+                            <input type="hidden" name="period_id" value="{periods.PERIOD_ID}" />
+                            <input type="submit" name="end_period" value="{L_CHASTITY_END_PERIOD}" class="button2" onclick="return confirm('{L_CHASTITY_END_PERIOD_CONFIRM}');" />
+                            {S_FORM_TOKEN}
+                        </form>
+                        <!-- ENDIF -->
+                        <!-- IF periods.CAN_DELETE -->
+                        <form method="post" action="{U_ACTION}" style="display: inline;">
+                            <input type="hidden" name="period_id" value="{periods.PERIOD_ID}" />
+                            <input type="submit" name="delete_period" value="{L_DELETE}" class="button2" onclick="return confirm('{L_CONFIRM}');" />
+                            {S_FORM_TOKEN}
+                        </form>
+                        <!-- ENDIF -->
+                    </td>
+                </tr>
+            <!-- END periods -->
+            </tbody>
+        </table>
+        <!-- ELSE -->
+        <p>{L_CHASTITY_NO_PERIODS}</p>
+        <!-- ENDIF -->
+        
+    </div>
+</div>
+
+<!-- INCLUDE ucp_footer.html -->

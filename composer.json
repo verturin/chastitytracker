@@ -1,0 +1,25 @@
+{
+    "name": "verturin/chastitytracker",
+    "type": "phpbb-extension",
+    "description": "Extension de suivi de chasteté avec calendrier et statistiques",
+    "homepage": "https://github.com/verturin/chastitytracker",
+    "version": "1.3.0",
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "Verturin",
+            "homepage": "https://github.com/verturin",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "display-name": "Chastity Tracker",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.2.0"
+        }
+    }
+}

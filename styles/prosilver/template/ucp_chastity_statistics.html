@@ -1,0 +1,96 @@
+<!-- INCLUDE ucp_header.html -->
+
+<h2>{L_UCP_CHASTITY_STATISTICS}</h2>
+
+<div class="panel">
+    <div class="inner">
+        
+        <h3>{L_ACP_CHASTITY_GLOBAL_STATS}</h3>
+        
+        <div class="content">
+            <dl>
+                <dt><strong>{L_CHASTITY_STATUS}:</strong></dt>
+                <dd>
+                    <!-- IF CHASTITY_STATUS == '{L_CHASTITY_STATUS_LOCKED}' -->
+                    <span style="color: #BC2A4D; font-weight: bold;">{CHASTITY_STATUS}</span>
+                    <!-- ELSE -->
+                    <span style="color: #228B22; font-weight: bold;">{CHASTITY_STATUS}</span>
+                    <!-- ENDIF -->
+                </dd>
+            </dl>
+            <!-- IF CURRENT_DAYS > 0 -->
+            <dl>
+                <dt><strong>{L_CHASTITY_CURRENT_DAYS}:</strong></dt>
+                <dd><span style="font-size: 1.2em; font-weight: bold;">{CURRENT_DAYS} {L_CHASTITY_DAYS}</span></dd>
+            </dl>
+            <!-- ENDIF -->
+            <dl>
+                <dt><strong>{L_CHASTITY_TOTAL_DAYS}:</strong></dt>
+                <dd>{TOTAL_DAYS} {L_CHASTITY_DAYS}</dd>
+            </dl>
+            <dl>
+                <dt><strong>{L_CHASTITY_TOTAL_PERIODS}:</strong></dt>
+                <dd>{TOTAL_PERIODS}</dd>
+            </dl>
+            <dl>
+                <dt><strong>{L_CHASTITY_YEAR_DAYS}:</strong></dt>
+                <dd>{CURRENT_YEAR_DAYS} {L_CHASTITY_DAYS}</dd>
+            </dl>
+            <dl>
+                <dt><strong>{L_CHASTITY_LONGEST_PERIOD}:</strong></dt>
+                <dd>{LONGEST_PERIOD} {L_CHASTITY_DAYS}</dd>
+            </dl>
+            <dl>
+                <dt><strong>{L_CHASTITY_AVERAGE_PERIOD}:</strong></dt>
+                <dd>{AVERAGE_PERIOD} {L_CHASTITY_DAYS}</dd>
+            </dl>
+        </div>
+
+        <!-- IF .year_stats -->
+        <h3>{L_CHASTITY_STATS_BY_YEAR}</h3>
+        
+        <table class="table1 zebra-table">
+            <thead>
+                <tr>
+                    <th>{L_CHASTITY_YEAR}</th>
+                    <th>{L_CHASTITY_DAYS}</th>
+                    <th>{L_CHASTITY_PERIODS}</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- BEGIN year_stats -->
+                <tr>
+                    <td><strong>{year_stats.YEAR}</strong></td>
+                    <td>{year_stats.DAYS}</td>
+                    <td>{year_stats.PERIODS}</td>
+                </tr>
+            <!-- END year_stats -->
+            </tbody>
+        </table>
+        <!-- ENDIF -->
+
+        <!-- IF .month_stats -->
+        <h3>{L_CHASTITY_STATS_BY_MONTH}</h3>
+        
+        <table class="table1 zebra-table">
+            <thead>
+                <tr>
+                    <th>{L_CHASTITY_MONTH}</th>
+                    <th>{L_CHASTITY_DAYS}</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- BEGIN month_stats -->
+                <tr>
+                    <td>{month_stats.MONTH}</td>
+                    <td>{month_stats.DAYS}</td>
+                </tr>
+            <!-- END month_stats -->
+            </tbody>
+        </table>
+        <!-- ENDIF -->
+
+    </div>
+</div>
+
+<!-- INCLUDE ucp_footer.html -->

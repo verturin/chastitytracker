@@ -1,0 +1,12 @@
+<!-- EVENT postrow_after_poster_profile -->
+<!-- IF postrow.S_DISPLAY_CHASTITY and postrow.S_CHASTITY_LOCKED -->
+<dd class="profile-chastity">
+    <strong style="color: #BC2A4D;">🔒 {L_CHASTITY_STATUS_LOCKED}</strong><br />
+    <span style="font-size: 0.9em;">{postrow.CHASTITY_DAYS} {L_CHASTITY_DAYS}</span>
+</dd>
+<!-- ELSEIF postrow.S_DISPLAY_CHASTITY -->
+<dd class="profile-chastity">
+    <span style="color: #228B22;">🔓 {L_CHASTITY_STATUS_FREE}</span>
+</dd>
+<!-- ENDIF -->
+<!-- ENDEVENT postrow_after_poster_profile -->

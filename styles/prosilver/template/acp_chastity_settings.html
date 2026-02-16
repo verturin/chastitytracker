@@ -1,0 +1,100 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_ACP_CHASTITY_SETTINGS}</h1>
+
+<p>{L_ACP_CHASTITY_SETTINGS_EXPLAIN}</p>
+
+<form id="acp_chastity_settings" method="post" action="{U_ACTION}">
+
+<fieldset>
+    <legend>{L_ACP_CHASTITY_SETTINGS}</legend>
+    <dl>
+        <dt><label for="chastity_enable">{L_ACP_CHASTITY_ENABLE}:</label></dt>
+        <dd><input type="radio" class="radio" name="chastity_enable" value="1" <!-- IF CHASTITY_ENABLE -->checked="checked"<!-- ENDIF --> /> {L_YES} &nbsp; 
+            <input type="radio" class="radio" name="chastity_enable" value="0" <!-- IF not CHASTITY_ENABLE -->checked="checked"<!-- ENDIF --> /> {L_NO}</dd>
+    </dl>
+    <dl>
+        <dt><label for="chastity_profile_display">{L_ACP_CHASTITY_PROFILE_DISPLAY}:</label></dt>
+        <dd><input type="radio" class="radio" name="chastity_profile_display" value="1" <!-- IF CHASTITY_PROFILE_DISPLAY -->checked="checked"<!-- ENDIF --> /> {L_YES} &nbsp; 
+            <input type="radio" class="radio" name="chastity_profile_display" value="0" <!-- IF not CHASTITY_PROFILE_DISPLAY -->checked="checked"<!-- ENDIF --> /> {L_NO}</dd>
+    </dl>
+    <dl>
+        <dt><label for="chastity_min_period_days">{L_ACP_CHASTITY_MIN_PERIOD_DAYS}:</label><br /><span>{L_ACP_CHASTITY_MIN_PERIOD_DAYS_EXPLAIN}</span></dt>
+        <dd><input type="number" id="chastity_min_period_days" name="chastity_min_period_days" value="{CHASTITY_MIN_PERIOD_DAYS}" min="0" /></dd>
+    </dl>
+</fieldset>
+
+<fieldset>
+    <legend>{L_ACP_CHASTITY_RULES_SETTINGS}</legend>
+    <p>{L_ACP_CHASTITY_RULES_SETTINGS_EXPLAIN}</p>
+    
+    <dl>
+        <dt><label for="chastity_rule_masturbation_enabled">{L_CHASTITY_RULE_MASTURBATION}:</label><br /><span>{L_ACP_CHASTITY_RULE_ENABLE_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_rule_masturbation_enabled" value="1" <!-- IF CHASTITY_RULE_MASTURBATION_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_rule_masturbation_enabled" value="0" <!-- IF not CHASTITY_RULE_MASTURBATION_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_rule_ejaculation_enabled">{L_CHASTITY_RULE_EJACULATION}:</label><br /><span>{L_ACP_CHASTITY_RULE_ENABLE_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_rule_ejaculation_enabled" value="1" <!-- IF CHASTITY_RULE_EJACULATION_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_rule_ejaculation_enabled" value="0" <!-- IF not CHASTITY_RULE_EJACULATION_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_rule_sleep_removal_enabled">{L_CHASTITY_RULE_SLEEP_REMOVAL}:</label><br /><span>{L_ACP_CHASTITY_RULE_ENABLE_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_rule_sleep_removal_enabled" value="1" <!-- IF CHASTITY_RULE_SLEEP_REMOVAL_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_rule_sleep_removal_enabled" value="0" <!-- IF not CHASTITY_RULE_SLEEP_REMOVAL_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_rule_public_removal_enabled">{L_CHASTITY_RULE_PUBLIC_REMOVAL}:</label><br /><span>{L_ACP_CHASTITY_RULE_ENABLE_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_rule_public_removal_enabled" value="1" <!-- IF CHASTITY_RULE_PUBLIC_REMOVAL_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_rule_public_removal_enabled" value="0" <!-- IF not CHASTITY_RULE_PUBLIC_REMOVAL_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_rule_medical_removal_enabled">{L_CHASTITY_RULE_MEDICAL_REMOVAL}:</label><br /><span>{L_ACP_CHASTITY_RULE_ENABLE_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_rule_medical_removal_enabled" value="1" <!-- IF CHASTITY_RULE_MEDICAL_REMOVAL_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_rule_medical_removal_enabled" value="0" <!-- IF not CHASTITY_RULE_MEDICAL_REMOVAL_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+</fieldset>
+
+<fieldset>
+    <legend>{L_ACP_CHASTITY_LOCKTOBER_SETTINGS}</legend>
+    <p>{L_ACP_CHASTITY_LOCKTOBER_SETTINGS_EXPLAIN}</p>
+    
+    <dl>
+        <dt><label for="chastity_locktober_enabled">{L_ACP_CHASTITY_LOCKTOBER_ENABLED}:</label><br /><span>{L_ACP_CHASTITY_LOCKTOBER_ENABLED_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_locktober_enabled" value="1" <!-- IF CHASTITY_LOCKTOBER_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_locktober_enabled" value="0" <!-- IF not CHASTITY_LOCKTOBER_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_locktober_year">{L_ACP_CHASTITY_LOCKTOBER_YEAR}:</label><br /><span>{L_ACP_CHASTITY_LOCKTOBER_YEAR_EXPLAIN}</span></dt>
+        <dd><input type="number" id="chastity_locktober_year" name="chastity_locktober_year" value="{CHASTITY_LOCKTOBER_YEAR}" min="2020" max="2050" /></dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_locktober_badge_enabled">{L_ACP_CHASTITY_LOCKTOBER_BADGE_ENABLED}:</label><br /><span>{L_ACP_CHASTITY_LOCKTOBER_BADGE_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="1" <!-- IF CHASTITY_LOCKTOBER_BADGE_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="0" <!-- IF not CHASTITY_LOCKTOBER_BADGE_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+    
+    <dl>
+        <dt><label for="chastity_locktober_leaderboard_enabled">{L_ACP_CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED}:</label><br /><span>{L_ACP_CHASTITY_LOCKTOBER_LEADERBOARD_EXPLAIN}</span></dt>
+        <dd><input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="1" <!-- IF CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_ENABLED} &nbsp; 
+            <input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="0" <!-- IF not CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED -->checked="checked"<!-- ENDIF --> /> {L_DISABLED}</dd>
+    </dl>
+</fieldset>
+
+<fieldset class="submit-buttons">
+    <input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />
+    <input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+</fieldset>
+
+{S_FORM_TOKEN}
+</form>
+
+<!-- INCLUDE overall_footer.html -->

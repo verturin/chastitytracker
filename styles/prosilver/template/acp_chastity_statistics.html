@@ -1,0 +1,58 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_ACP_CHASTITY_STATISTICS}</h1>
+
+<p>{L_ACP_CHASTITY_STATISTICS_EXPLAIN}</p>
+
+<fieldset>
+    <legend>{L_ACP_CHASTITY_GLOBAL_STATS}</legend>
+    <dl>
+        <dt><strong>{L_CHASTITY_TOTAL_PERIODS}:</strong></dt>
+        <dd>{TOTAL_PERIODS}</dd>
+    </dl>
+    <dl>
+        <dt><strong>{L_CHASTITY_TOTAL_DAYS}:</strong></dt>
+        <dd>{TOTAL_DAYS}</dd>
+    </dl>
+    <dl>
+        <dt><strong>{L_ACP_CHASTITY_TOTAL_USERS}:</strong></dt>
+        <dd>{TOTAL_USERS}</dd>
+    </dl>
+    <dl>
+        <dt><strong>{L_ACP_CHASTITY_ACTIVE_PERIODS}:</strong></dt>
+        <dd>{ACTIVE_PERIODS}</dd>
+    </dl>
+    <dl>
+        <dt><strong>{L_ACP_CHASTITY_AVERAGE_DAYS}:</strong></dt>
+        <dd>{AVERAGE_DAYS}</dd>
+    </dl>
+</fieldset>
+
+<!-- IF .top_users -->
+<fieldset>
+    <legend>{L_ACP_CHASTITY_TOP_USERS}</legend>
+    
+    <table class="table1 zebra-table">
+        <thead>
+            <tr>
+                <th>{L_USERNAME}</th>
+                <th>{L_CHASTITY_TOTAL_DAYS}</th>
+                <th>{L_CHASTITY_TOTAL_PERIODS}</th>
+            </tr>
+        </thead>
+        <tbody>
+        <!-- BEGIN top_users -->
+            <tr>
+                <td>{top_users.USERNAME}</td>
+                <td>{top_users.TOTAL_DAYS}</td>
+                <td>{top_users.TOTAL_PERIODS}</td>
+            </tr>
+        <!-- END top_users -->
+        </tbody>
+    </table>
+</fieldset>
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

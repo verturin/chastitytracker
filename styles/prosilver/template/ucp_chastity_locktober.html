@@ -1,0 +1,101 @@
+<!-- INCLUDE ucp_header.html -->
+
+<h2>{L_CHASTITY_LOCKTOBER} {LOCKTOBER_YEAR} 🎃</h2>
+
+<div class="panel">
+    <div class="inner">
+        
+        <div class="content" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%); color: white; border-radius: 10px; margin-bottom: 20px;">
+            <h3 style="margin: 0; font-size: 1.5em;">🔒 {L_CHASTITY_LOCKTOBER_CHALLENGE} 🔒</h3>
+            <p style="margin: 10px 0;">{L_CHASTITY_LOCKTOBER_EXPLAIN}</p>
+        </div>
+        
+        <!-- IF HAS_ACTIVE_LOCKTOBER -->
+        <div class="chastity-current-status locked" style="background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%); border-color: #ff6b00;">
+            <h3>🎃 {L_CHASTITY_LOCKTOBER_ACTIVE} 🎃</h3>
+            <p style="font-size: 2em; font-weight: bold; margin: 10px 0;">
+                {L_CHASTITY_LOCKTOBER_DAY,LOCKTOBER_CURRENT_DAY}
+            </p>
+            <!-- IF LOCKTOBER_CURRENT_DAY >= 31 -->
+            <p style="font-size: 1.5em; color: #ffd700;">🎉 {L_CHASTITY_LOCKTOBER_COMPLETED} 🎉</p>
+            <p>{L_CHASTITY_LOCKTOBER_COMPLETE_MESSAGE}</p>
+            <!-- ENDIF -->
+        </div>
+        <!-- ELSE -->
+            <!-- IF IS_OCTOBER -->
+            <div class="content" style="background: #f5f5f5; padding: 20px; border-radius: 5px; text-align: center;">
+                <h3>{L_CHASTITY_LOCKTOBER_PARTICIPATE}</h3>
+                <p>{L_CHASTITY_LOCKTOBER_JOIN_EXPLAIN}</p>
+                <form method="post" action="{U_ACTION}">
+                    <input type="submit" name="start_locktober" value="{L_CHASTITY_LOCKTOBER_START}" class="button1" style="font-size: 1.2em; padding: 10px 30px; background: #ff6b00; border-color: #ff6b00;" />
+                    {S_FORM_TOKEN}
+                </form>
+            </div>
+            <!-- ELSE -->
+            <div class="content" style="background: #f0f0f0; padding: 20px; border-radius: 5px; text-align: center;">
+                <p>{L_CHASTITY_LOCKTOBER_WAIT}</p>
+                <p>{L_CHASTITY_LOCKTOBER_NEXT_YEAR}</p>
+            </div>
+            <!-- ENDIF -->
+        <!-- ENDIF -->
+        
+        <!-- IF .completed_locktober -->
+        <h3>🏆 {L_CHASTITY_LOCKTOBER_WINNERS} 🏆</h3>
+        <div class="content">
+            <table class="table1">
+                <thead>
+                    <tr>
+                        <th>{L_CHASTITY_YEAR}</th>
+                        <th>{L_CHASTITY_DAYS}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <!-- BEGIN completed_locktober -->
+                    <tr>
+                        <td><strong>🎃 Locktober {completed_locktober.YEAR}</strong></td>
+                        <td><strong style="color: #ff6b00;">{completed_locktober.DAYS} {L_CHASTITY_DAYS}</strong></td>
+                    </tr>
+                <!-- END completed_locktober -->
+                </tbody>
+            </table>
+        </div>
+        <!-- ENDIF -->
+        
+        <!-- IF LOCKTOBER_LEADERBOARD_ENABLED and .leaderboard -->
+        <h3>📊 {L_CHASTITY_LOCKTOBER_LEADERBOARD} {LOCKTOBER_YEAR}</h3>
+        <div class="content">
+            <table class="table1 zebra-table">
+                <thead>
+                    <tr>
+                        <th>{L_RANK}</th>
+                        <th>{L_USERNAME}</th>
+                        <th>{L_CHASTITY_DAYS}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <!-- BEGIN leaderboard -->
+                    <tr>
+                        <td>
+                            <!-- IF leaderboard.RANK == 1 -->
+                            🥇 {leaderboard.RANK}
+                            <!-- ELSEIF leaderboard.RANK == 2 -->
+                            🥈 {leaderboard.RANK}
+                            <!-- ELSEIF leaderboard.RANK == 3 -->
+                            🥉 {leaderboard.RANK}
+                            <!-- ELSE -->
+                            {leaderboard.RANK}
+                            <!-- ENDIF -->
+                        </td>
+                        <td>{leaderboard.USERNAME}</td>
+                        <td><strong style="color: #ff6b00;">{leaderboard.DAYS}</strong></td>
+                    </tr>
+                <!-- END leaderboard -->
+                </tbody>
+            </table>
+        </div>
+        <!-- ENDIF -->
+        
+    </div>
+</div>
+
+<!-- INCLUDE ucp_footer.html -->

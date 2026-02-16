@@ -1,0 +1,155 @@
+<?php
+/**
+ *
+ * Chastity Tracker Extension
+ *
+ * @copyright (c) 2024
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
+
+if (!defined('IN_PHPBB'))
+{
+    exit;
+}
+
+if (empty($lang) || !is_array($lang))
+{
+    $lang = array();
+}
+
+$lang = array_merge($lang, array(
+    // General
+    'CHASTITY_TRACKER' => 'Chastity Tracker',
+    'CHASTITY_STATUS' => 'Chastity Status',
+    'CHASTITY_STATUS_FREE' => 'Free',
+    'CHASTITY_STATUS_LOCKED' => 'Locked',
+    'CHASTITY_STATUS_ACTIVE' => 'Active',
+    'CHASTITY_STATUS_COMPLETED' => 'Completed',
+
+    // UCP
+    'UCP_CHASTITY_TRACKER' => 'Chastity Tracker',
+    'UCP_CHASTITY_CALENDAR' => 'Calendar',
+    'UCP_CHASTITY_STATISTICS' => 'Statistics',
+    'UCP_CHASTITY_LOCKTOBER' => 'Locktober',
+
+    // Calendar
+    'CHASTITY_CALENDAR' => 'Chastity Calendar',
+    'CHASTITY_ADD_PERIOD' => 'Start New Period',
+    'CHASTITY_END_PERIOD' => 'End Period',
+    'CHASTITY_DELETE_PERIOD' => 'Delete Period',
+    'CHASTITY_START_DATE' => 'Start Date',
+    'CHASTITY_END_DATE' => 'End Date',
+    'CHASTITY_DAYS' => 'Days',
+    'CHASTITY_NOTES' => 'Notes',
+    'CHASTITY_NO_PERIODS' => 'No periods recorded yet.',
+    'CHASTITY_CURRENT_PERIOD' => 'Current period',
+    'CHASTITY_CURRENT_DAYS' => 'Current days locked',
+    'CHASTITY_PERMANENT' => 'Permanent lock (no end date)',
+    'CHASTITY_PERMANENT_MODE' => 'Permanent mode',
+    'CHASTITY_TEMPORARY_MODE' => 'Temporary mode',
+    'CHASTITY_PERMANENT_EXPLAIN' => 'In permanent mode, there is no planned end date (but you can still stop the period manually)',
+    'CHASTITY_VIEW_RULES' => 'View rules',
+    'CHASTITY_HIDE_RULES' => 'Hide rules',
+    
+    // Locktober
+    'CHASTITY_LOCKTOBER' => 'Locktober',
+    'CHASTITY_LOCKTOBER_CHALLENGE' => 'Locktober Challenge',
+    'CHASTITY_LOCKTOBER_PARTICIPATE' => 'Join Locktober',
+    'CHASTITY_LOCKTOBER_EXPLAIN' => 'Locktober is an annual chastity challenge throughout the entire month of October (31 days)',
+    'CHASTITY_LOCKTOBER_START' => 'Start Locktober',
+    'CHASTITY_LOCKTOBER_ACTIVE' => 'Locktober in progress',
+    'CHASTITY_LOCKTOBER_COMPLETED' => 'Locktober completed! 🎉',
+    'CHASTITY_LOCKTOBER_FAILED' => 'Locktober abandoned',
+    'CHASTITY_LOCKTOBER_PARTICIPANTS' => 'Locktober Participants',
+    'CHASTITY_LOCKTOBER_LEADERBOARD' => 'Locktober Leaderboard',
+    'CHASTITY_LOCKTOBER_DAY' => 'Day %d/31',
+    'CHASTITY_LOCKTOBER_WINNERS' => 'Locktober Winners',
+    'CHASTITY_LOCKTOBER_BADGE' => 'Locktober Badge',
+    'CHASTITY_LOCKTOBER_YEAR' => 'Locktober %d',
+    'CHASTITY_LOCKTOBER_JOIN_EXPLAIN' => 'Join the Locktober challenge and try to stay in chastity for all 31 days of October!',
+    'CHASTITY_LOCKTOBER_WAIT' => 'The Locktober challenge is only available in October.',
+    'CHASTITY_LOCKTOBER_NEXT_YEAR' => 'Come back in October to participate in the next challenge!',
+    'CHASTITY_LOCKTOBER_COMPLETE_MESSAGE' => 'Congratulations! You have successfully completed the Locktober challenge!',
+    'CHASTITY_LOCKTOBER_STARTED' => 'You have joined the Locktober challenge! Good luck!',
+    'CHASTITY_LOCKTOBER_NOT_OCTOBER' => 'Locktober can only be started in October.',
+    'CHASTITY_LOCKTOBER_DISABLED' => 'Locktober is currently disabled.',
+    'CHASTITY_HIDE_RULES' => 'Hide rules',
+
+    // Rules
+    'CHASTITY_RULES' => 'Period Rules',
+    'CHASTITY_RULES_EXPLAIN' => 'Define the rules for this lock period',
+    'CHASTITY_RULE_MASTURBATION' => 'Can masturbate',
+    'CHASTITY_RULE_EJACULATION' => 'Can ejaculate',
+    'CHASTITY_RULE_SLEEP_REMOVAL' => 'Can remove cage for sleeping',
+    'CHASTITY_RULE_PUBLIC_REMOVAL' => 'Can remove cage at nudist beaches, locker rooms, etc.',
+    'CHASTITY_RULE_MEDICAL_REMOVAL' => 'Can remove cage for medical emergencies',
+    'CHASTITY_YES' => 'Allowed',
+    'CHASTITY_NO' => 'Forbidden',
+
+    // Statistics
+    'CHASTITY_TOTAL_DAYS' => 'Total days',
+    'CHASTITY_TOTAL_PERIODS' => 'Total periods',
+    'CHASTITY_YEAR_DAYS' => 'Days this year',
+    'CHASTITY_LONGEST_PERIOD' => 'Longest period',
+    'CHASTITY_AVERAGE_PERIOD' => 'Average period',
+    'CHASTITY_STATS_BY_YEAR' => 'Statistics by year',
+    'CHASTITY_STATS_BY_MONTH' => 'Statistics by month (current year)',
+    'CHASTITY_YEAR' => 'Year',
+    'CHASTITY_MONTH' => 'Month',
+    'CHASTITY_PERIODS' => 'Periods',
+
+    // Messages
+    'CHASTITY_PERIOD_ADDED' => 'Chastity period started successfully.',
+    'CHASTITY_PERIOD_ENDED' => 'Chastity period ended successfully.',
+    'CHASTITY_PERIOD_DELETED' => 'Period deleted successfully.',
+    'CHASTITY_ALREADY_ACTIVE' => 'You already have an active chastity period.',
+    'CHASTITY_INVALID_DATE' => 'Invalid date. The start date cannot be in the future.',
+    'CHASTITY_PERIOD_NOT_FOUND' => 'Period not found.',
+    'CHASTITY_END_PERIOD_CONFIRM' => 'Are you sure you want to end this chastity period?',
+
+    // ACP
+    'ACP_CHASTITY_TRACKER' => 'Chastity Tracker',
+    'ACP_CHASTITY_SETTINGS' => 'Settings',
+    'ACP_CHASTITY_SETTINGS_EXPLAIN' => 'Here you can configure the settings for the Chastity Tracker extension.',
+    'ACP_CHASTITY_STATISTICS' => 'Statistics',
+    'ACP_CHASTITY_ENABLE' => 'Enable Chastity Tracker',
+    'ACP_CHASTITY_PROFILE_DISPLAY' => 'Display status on profile',
+    'ACP_CHASTITY_MIN_PERIOD_DAYS' => 'Minimum period days',
+    'ACP_CHASTITY_MIN_PERIOD_DAYS_EXPLAIN' => 'Minimum number of days required to validate a period (0 = no limit)',
+    'ACP_CHASTITY_GLOBAL_STATS' => 'Global Statistics',
+    'ACP_CHASTITY_TOP_USERS' => 'Top Users',
+    'ACP_CHASTITY_ACTIVE_PERIODS' => 'Active periods',
+    'ACP_CHASTITY_TOTAL_USERS' => 'Total users',
+    'ACP_CHASTITY_AVERAGE_DAYS' => 'Average days per period',
+    'ACP_CHASTITY_RULES_SETTINGS' => 'Rules Configuration',
+    'ACP_CHASTITY_RULES_SETTINGS_EXPLAIN' => 'Choose which rules will be available to users when creating a period. Disabled rules will not appear in the form.',
+    'ACP_CHASTITY_RULE_ENABLE_EXPLAIN' => 'Enable this rule to make it available to users',
+    
+    // ACP Locktober
+    'ACP_CHASTITY_LOCKTOBER' => 'Locktober',
+    'ACP_CHASTITY_LOCKTOBER_SETTINGS' => 'Locktober Settings',
+    'ACP_CHASTITY_LOCKTOBER_SETTINGS_EXPLAIN' => 'Configure settings for the annual Locktober challenge',
+    'ACP_CHASTITY_LOCKTOBER_ENABLED' => 'Enable Locktober',
+    'ACP_CHASTITY_LOCKTOBER_ENABLED_EXPLAIN' => 'Allows users to participate in the Locktober challenge',
+    'ACP_CHASTITY_LOCKTOBER_YEAR' => 'Active Locktober Year',
+    'ACP_CHASTITY_LOCKTOBER_YEAR_EXPLAIN' => 'Current year for the Locktober challenge',
+    'ACP_CHASTITY_LOCKTOBER_BADGE_ENABLED' => 'Display Locktober badges',
+    'ACP_CHASTITY_LOCKTOBER_BADGE_EXPLAIN' => 'Shows a special badge for Locktober participants and winners',
+    'ACP_CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED' => 'Enable Locktober leaderboard',
+    'ACP_CHASTITY_LOCKTOBER_LEADERBOARD_EXPLAIN' => 'Displays a leaderboard of Locktober participants',
+    'ACP_CHASTITY_LOCKTOBER_STATS' => 'Locktober Statistics',
+
+    // Permissions
+    'ACL_U_CHASTITY_VIEW' => 'Can view chastity tracker',
+    'ACL_U_CHASTITY_MANAGE' => 'Can manage own chastity periods',
+    'ACL_M_CHASTITY_MODERATE' => 'Can moderate chastity periods',
+
+    // Profile
+    'CHASTITY_PROFILE_STATUS' => 'Chastity Status',
+    'CHASTITY_PROFILE_LOCKED_SINCE' => 'Locked since',
+    'CHASTITY_PROFILE_TOTAL_DAYS' => 'Total days in chastity',
+    
+    // Misc
+    'RANK' => 'Rank',
+));

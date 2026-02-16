@@ -1,0 +1,30 @@
+<!-- EVENT memberlist_view_profile_custom_fields_after -->
+<!-- IF S_DISPLAY_CHASTITY -->
+<dl>
+    <dt>{L_CHASTITY_PROFILE_STATUS}:</dt>
+    <dd>
+        <!-- IF S_CHASTITY_LOCKED -->
+        <strong style="color: #BC2A4D; font-size: 1.1em;">🔒 {CHASTITY_STATUS}</strong>
+        <!-- ELSE -->
+        <span style="color: #228B22; font-size: 1.1em;">🔓 {CHASTITY_STATUS}</span>
+        <!-- ENDIF -->
+    </dd>
+</dl>
+<!-- IF S_CHASTITY_LOCKED -->
+<dl>
+    <dt>{L_CHASTITY_PROFILE_LOCKED_SINCE}:</dt>
+    <dd>{CHASTITY_LOCKED_SINCE}</dd>
+</dl>
+<dl>
+    <dt>{L_CHASTITY_CURRENT_DAYS}:</dt>
+    <dd><strong style="font-size: 1.2em;">{CHASTITY_CURRENT_DAYS} {L_CHASTITY_DAYS}</strong></dd>
+</dl>
+<!-- ENDIF -->
+<!-- IF CHASTITY_TOTAL_DAYS > 0 -->
+<dl>
+    <dt>{L_CHASTITY_PROFILE_TOTAL_DAYS}:</dt>
+    <dd>{CHASTITY_TOTAL_DAYS} {L_CHASTITY_DAYS}</dd>
+</dl>
+<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- ENDEVENT memberlist_view_profile_custom_fields_after -->
