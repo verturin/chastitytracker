@@ -1,0 +1,97 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('CHASTITY_LOCKTOBER') }} {{ LOCKTOBER_YEAR }} 🎃</h2>
+
+<div class="panel">
+	<div class="inner">
+
+		<div class="content" style="text-align:center;padding:20px;background:linear-gradient(135deg,#ff6b00 0%,#ff8c00 100%);color:white;border-radius:10px;margin-bottom:20px;">
+			<h3 style="margin:0;font-size:1.5em;">🔒 {{ lang('CHASTITY_LOCKTOBER_CHALLENGE') }} 🔒</h3>
+			<p style="margin:10px 0;">{{ lang('CHASTITY_LOCKTOBER_EXPLAIN') }}</p>
+		</div>
+
+		{% if HAS_ACTIVE_LOCKTOBER %}
+		<div class="chastity-current-status locked" style="background:linear-gradient(135deg,#ff6b00 0%,#ff8c00 100%);border-color:#ff6b00;">
+			<h3>🎃 {{ lang('CHASTITY_LOCKTOBER_ACTIVE') }} 🎃</h3>
+			<p style="font-size:2em;font-weight:bold;margin:10px 0;">
+				{{ lang('CHASTITY_LOCKTOBER_DAY', LOCKTOBER_CURRENT_DAY) }}
+			</p>
+			{% if LOCKTOBER_CURRENT_DAY >= 31 %}
+			<p style="font-size:1.5em;color:#ffd700;">🎉 {{ lang('CHASTITY_LOCKTOBER_COMPLETED') }} 🎉</p>
+			<p>{{ lang('CHASTITY_LOCKTOBER_COMPLETE_MESSAGE') }}</p>
+			{% endif %}
+		</div>
+		{% else %}
+			{% if IS_OCTOBER %}
+			<div class="content" style="background:#f5f5f5;padding:20px;border-radius:5px;text-align:center;">
+				<h3>{{ lang('CHASTITY_LOCKTOBER_PARTICIPATE') }}</h3>
+				<p>{{ lang('CHASTITY_LOCKTOBER_JOIN_EXPLAIN') }}</p>
+				<form method="post" action="{{ U_ACTION }}">
+					<input type="submit" name="start_locktober" value="{{ lang('CHASTITY_LOCKTOBER_START') }}" class="button1" style="font-size:1.2em;padding:10px 30px;background:#ff6b00;border-color:#ff6b00;" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</div>
+			{% else %}
+			<div class="content" style="background:#f0f0f0;padding:20px;border-radius:5px;text-align:center;">
+				<p>{{ lang('CHASTITY_LOCKTOBER_WAIT') }}</p>
+				<p>{{ lang('CHASTITY_LOCKTOBER_NEXT_YEAR') }}</p>
+			</div>
+			{% endif %}
+		{% endif %}
+
+		{% if loops.completed_locktober is defined and loops.completed_locktober|length %}
+		<h3>🏆 {{ lang('CHASTITY_LOCKTOBER_WINNERS') }} 🏆</h3>
+		<div class="content">
+			<table class="table1">
+				<thead>
+					<tr>
+						<th>{{ lang('CHASTITY_YEAR') }}</th>
+						<th>{{ lang('CHASTITY_DAYS') }}</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for row in loops.completed_locktober %}
+					<tr>
+						<td><strong>🎃 Locktober {{ row.YEAR }}</strong></td>
+						<td><strong style="color:#ff6b00;">{{ row.DAYS }} {{ lang('CHASTITY_DAYS') }}</strong></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% endif %}
+
+		{% if LOCKTOBER_LEADERBOARD_ENABLED and loops.leaderboard is defined and loops.leaderboard|length %}
+		<h3>📊 {{ lang('CHASTITY_LOCKTOBER_LEADERBOARD') }} {{ LOCKTOBER_YEAR }}</h3>
+		<div class="content">
+			<table class="table1 zebra-table">
+				<thead>
+					<tr>
+						<th>{{ lang('RANK') }}</th>
+						<th>{{ lang('USERNAME') }}</th>
+						<th>{{ lang('CHASTITY_DAYS') }}</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for row in loops.leaderboard %}
+					<tr>
+						<td>
+							{% if row.RANK == 1 %}🥇
+							{% elseif row.RANK == 2 %}🥈
+							{% elseif row.RANK == 3 %}🥉
+							{% endif %}
+							{{ row.RANK }}
+						</td>
+						<td>{{ row.USERNAME }}</td>
+						<td><strong style="color:#ff6b00;">{{ row.DAYS }}</strong></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% endif %}
+
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

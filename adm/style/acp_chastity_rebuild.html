@@ -1,0 +1,29 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_REBUILD') }}</h1>
+
+<p>{{ lang('ACP_CHASTITY_REBUILD_EXPLAIN') }}</p>
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_REBUILD_STATUS') }}</legend>
+	<dl>
+		<dt><strong>{{ lang('ACP_CHASTITY_TOTAL_USERS') }}{{ lang('COLON') }}</strong></dt>
+		<dd>{{ REBUILD_TOTAL_USERS }}</dd>
+	</dl>
+	<dl>
+		<dt><strong>{{ lang('ACP_CHASTITY_ACTIVE_PERIODS') }}{{ lang('COLON') }}</strong></dt>
+		<dd>{{ REBUILD_ACTIVE_PERIODS }}</dd>
+	</dl>
+</fieldset>
+
+<form method="post" action="{{ U_ACTION }}">
+	<fieldset class="submit-buttons">
+		<p>{{ lang('ACP_CHASTITY_REBUILD_WARNING') }}</p>
+		<input class="button1" type="submit" name="rebuild" value="{{ lang('ACP_CHASTITY_REBUILD_SUBMIT') }}" onclick="return confirm('{{ lang('ACP_CHASTITY_REBUILD_CONFIRM') }}');" />
+	</fieldset>
+	{{ S_FORM_TOKEN }}
+</form>
+
+{% include 'overall_footer.html' %}

@@ -1,0 +1,112 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_SETTINGS') }}</h1>
+
+<p>{{ lang('ACP_CHASTITY_SETTINGS_EXPLAIN') }}</p>
+
+<form id="acp_chastity_settings" method="post" action="{{ U_ACTION }}">
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_SETTINGS') }}</legend>
+	<dl>
+		<dt><label for="chastity_enable">{{ lang('ACP_CHASTITY_ENABLE') }}{{ lang('COLON') }}</label></dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_enable" value="1" {{ CHASTITY_ENABLE ? 'checked="checked"' : '' }} /> {{ lang('YES') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_enable" value="0" {{ not CHASTITY_ENABLE ? 'checked="checked"' : '' }} /> {{ lang('NO') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_profile_display">{{ lang('ACP_CHASTITY_PROFILE_DISPLAY') }}{{ lang('COLON') }}</label></dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_profile_display" value="1" {{ CHASTITY_PROFILE_DISPLAY ? 'checked="checked"' : '' }} /> {{ lang('YES') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_profile_display" value="0" {{ not CHASTITY_PROFILE_DISPLAY ? 'checked="checked"' : '' }} /> {{ lang('NO') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_min_period_days">{{ lang('ACP_CHASTITY_MIN_PERIOD_DAYS') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_MIN_PERIOD_DAYS_EXPLAIN') }}</span>
+		</dt>
+		<dd><input type="number" id="chastity_min_period_days" name="chastity_min_period_days" value="{{ CHASTITY_MIN_PERIOD_DAYS }}" min="0" /></dd>
+	</dl>
+</fieldset>
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_RULES_SETTINGS') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_RULES_SETTINGS_EXPLAIN') }}</p>
+
+	{% set rules = [
+		['masturbation', 'CHASTITY_RULE_MASTURBATION', CHASTITY_RULE_MASTURBATION_ENABLED],
+		['ejaculation',  'CHASTITY_RULE_EJACULATION',  CHASTITY_RULE_EJACULATION_ENABLED],
+		['sleep_removal','CHASTITY_RULE_SLEEP_REMOVAL', CHASTITY_RULE_SLEEP_REMOVAL_ENABLED],
+		['public_removal','CHASTITY_RULE_PUBLIC_REMOVAL',CHASTITY_RULE_PUBLIC_REMOVAL_ENABLED],
+		['medical_removal','CHASTITY_RULE_MEDICAL_REMOVAL',CHASTITY_RULE_MEDICAL_REMOVAL_ENABLED]
+	] %}
+	{% for rule in rules %}
+	<dl>
+		<dt>
+			<label>{{ lang(rule[1]) }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_RULE_ENABLE_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_rule_{{ rule[0] }}_enabled" value="1" {{ rule[2] ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_rule_{{ rule[0] }}_enabled" value="0" {{ not rule[2] ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+	{% endfor %}
+</fieldset>
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_LOCKTOBER_SETTINGS') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_LOCKTOBER_SETTINGS_EXPLAIN') }}</p>
+
+	<dl>
+		<dt>
+			<label for="chastity_locktober_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_ENABLED_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_enabled" value="1" {{ CHASTITY_LOCKTOBER_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_enabled" value="0" {{ not CHASTITY_LOCKTOBER_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_year">{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR_EXPLAIN') }}</span>
+		</dt>
+		<dd><input type="number" id="chastity_locktober_year" name="chastity_locktober_year" value="{{ CHASTITY_LOCKTOBER_YEAR }}" min="2020" max="2050" /></dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_badge_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_BADGE_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_BADGE_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="1" {{ CHASTITY_LOCKTOBER_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="0" {{ not CHASTITY_LOCKTOBER_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_leaderboard_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_LEADERBOARD_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="1" {{ CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="0" {{ not CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+</fieldset>
+
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+	<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+</fieldset>
+
+{{ S_FORM_TOKEN }}
+</form>
+
+{% include 'overall_footer.html' %}

@@ -1,0 +1,94 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_CHASTITY_STATISTICS') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+
+		<h3>{{ lang('ACP_CHASTITY_GLOBAL_STATS') }}</h3>
+
+		<div class="content">
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_STATUS') }}{{ lang('COLON') }}</strong></dt>
+				<dd>
+					{% if S_CHASTITY_LOCKED %}
+						<span style="color: #BC2A4D; font-weight: bold;">{{ CHASTITY_STATUS }}</span>
+					{% else %}
+						<span style="color: #228B22; font-weight: bold;">{{ CHASTITY_STATUS }}</span>
+					{% endif %}
+				</dd>
+			</dl>
+			{% if CURRENT_DAYS > 0 %}
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_CURRENT_DAYS') }}{{ lang('COLON') }}</strong></dt>
+				<dd><span style="font-size: 1.2em; font-weight: bold;">{{ CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}</span></dd>
+			</dl>
+			{% endif %}
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_TOTAL_DAYS') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ TOTAL_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd>
+			</dl>
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_TOTAL_PERIODS') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ TOTAL_PERIODS }}</dd>
+			</dl>
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_YEAR_DAYS') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ CURRENT_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd>
+			</dl>
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_LONGEST_PERIOD') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ LONGEST_PERIOD }} {{ lang('CHASTITY_DAYS') }}</dd>
+			</dl>
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_AVERAGE_PERIOD') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ AVERAGE_PERIOD }} {{ lang('CHASTITY_DAYS') }}</dd>
+			</dl>
+		</div>
+
+		{% if loops.year_stats is defined and loops.year_stats|length %}
+		<h3>{{ lang('CHASTITY_STATS_BY_YEAR') }}</h3>
+		<table class="table1 zebra-table">
+			<thead>
+				<tr>
+					<th>{{ lang('CHASTITY_YEAR') }}</th>
+					<th>{{ lang('CHASTITY_DAYS') }}</th>
+					<th>{{ lang('CHASTITY_PERIODS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for year_stats in loops.year_stats %}
+				<tr>
+					<td><strong>{{ year_stats.YEAR }}</strong></td>
+					<td>{{ year_stats.DAYS }}</td>
+					<td>{{ year_stats.PERIODS }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+
+		{% if loops.month_stats is defined and loops.month_stats|length %}
+		<h3>{{ lang('CHASTITY_STATS_BY_MONTH') }}</h3>
+		<table class="table1 zebra-table">
+			<thead>
+				<tr>
+					<th>{{ lang('CHASTITY_MONTH') }}</th>
+					<th>{{ lang('CHASTITY_DAYS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for month_stats in loops.month_stats %}
+				<tr>
+					<td>{{ month_stats.MONTH }}</td>
+					<td>{{ month_stats.DAYS }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

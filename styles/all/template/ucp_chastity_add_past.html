@@ -1,0 +1,67 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_CHASTITY_ADD_PAST') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+
+		<p>{{ lang('UCP_CHASTITY_ADD_PAST_EXPLAIN') }}</p>
+
+		<form id="add_past_form" method="post" action="{{ U_ACTION }}">
+			<fieldset>
+				<legend>{{ lang('CHASTITY_ADD_PAST_PERIOD') }}</legend>
+
+				<dl>
+					<dt><label for="start_date">{{ lang('CHASTITY_START_DATE') }}{{ lang('COLON') }}</label></dt>
+					<dd><input type="date" id="start_date" name="start_date" max="{{ TODAY_DATE }}" required /></dd>
+				</dl>
+
+				<dl>
+					<dt><label for="end_date">{{ lang('CHASTITY_END_DATE') }}{{ lang('COLON') }}</label></dt>
+					<dd><input type="date" id="end_date" name="end_date" max="{{ TODAY_DATE }}" required /></dd>
+				</dl>
+
+				<dl>
+					<dt>
+						<label for="notes">{{ lang('CHASTITY_NOTES') }}{{ lang('COLON') }}</label><br>
+						<span>{{ lang('OPTIONAL') }}</span>
+					</dt>
+					<dd><textarea id="notes" name="notes" rows="3" cols="40"></textarea></dd>
+				</dl>
+			</fieldset>
+
+			<fieldset>
+				<legend>{{ lang('CHASTITY_RULES') }}</legend>
+				<p>{{ lang('CHASTITY_RULES_EXPLAIN') }}</p>
+
+				{% set rules = [
+					['masturbation',   'CHASTITY_RULE_MASTURBATION',   S_RULE_MASTURBATION_ENABLED,   false],
+					['ejaculation',    'CHASTITY_RULE_EJACULATION',    S_RULE_EJACULATION_ENABLED,    false],
+					['sleep_removal',  'CHASTITY_RULE_SLEEP_REMOVAL',  S_RULE_SLEEP_REMOVAL_ENABLED,  false],
+					['public_removal', 'CHASTITY_RULE_PUBLIC_REMOVAL', S_RULE_PUBLIC_REMOVAL_ENABLED, false],
+					['medical_removal','CHASTITY_RULE_MEDICAL_REMOVAL',S_RULE_MEDICAL_REMOVAL_ENABLED,true]
+				] %}
+				{% for rule in rules %}
+				{% if rule[2] %}
+				<dl>
+					<dt><label>{{ lang(rule[1]) }}{{ lang('COLON') }}</label></dt>
+					<dd>
+						<input type="radio" name="rule_{{ rule[0] }}" id="rule_{{ rule[0] }}_yes" value="1" {{ rule[3] ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule[0] }}_yes">{{ lang('CHASTITY_YES') }}</label>
+						<input type="radio" name="rule_{{ rule[0] }}" id="rule_{{ rule[0] }}_no" value="0" {{ not rule[3] ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule[0] }}_no">{{ lang('CHASTITY_NO') }}</label>
+					</dd>
+				</dl>
+				{% endif %}
+				{% endfor %}
+			</fieldset>
+
+			<fieldset class="submit-buttons">
+				<input type="submit" name="add_past_period" value="{{ lang('SUBMIT') }}" class="button1" />
+				<a href="{{ U_CALENDAR }}" class="button2">{{ lang('BACK_TO_PREV') }}</a>
+				{{ S_FORM_TOKEN }}
+			</fieldset>
+		</form>
+
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

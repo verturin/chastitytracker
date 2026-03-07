@@ -1,5 +1,39 @@
 # Changelog - Chastity Tracker Extension
 
+## Version 1.4.1 - Modernisation des templates Twig
+
+### Templates
+- ✅ **Migration vers Twig natif** : Tous les templates convertis de l'ancienne syntaxe phpBB (`<!-- IF -->`) vers Twig (`{% if %}`), natif depuis phpBB 3.1, plus rapide à parser et mieux mis en cache
+- ✅ **`lang('COLON')` partout** : Remplacement des deux-points codés en dur par la variable de langue phpBB, respectant l'espacement typographique selon la langue de l'utilisateur (ex. espace insécable en français)
+- ✅ **Bloc de garde `{% if S_DISPLAY_CHASTITY %}`** : Tout le code des templates d'événements est encapsulé dans un bloc unique — si l'utilisateur n'a pas la permission, le moteur Twig ignore l'intégralité du rendu en un seul test
+- ✅ **Boucles Twig** : Remplacement de `<!-- BEGIN -->...<!-- END -->` par `{% for %}...{% endfor %}`
+- ✅ **Includes Twig** : `<!-- INCLUDE -->` remplacé par `{% include %}`
+
+## Version 1.4.0 - Corrections architecturales
+
+### Corrections critiques
+
+#### Performance & Cache phpBB
+- ✅ **Suppression des configs JSON dans phpbb_config** : Les 4 entrées `chastity_*_groups` stockées en JSON dans `phpbb_config` ont été supprimées. Cette table est chargée intégralement en mémoire à chaque requête — y stocker des données variables est une erreur de performance.
+- ✅ **Système de permissions natif phpBB** : Le contrôle d'accès par groupe repose désormais exclusivement sur les permissions phpBB (`u_chastity_view`, `u_chastity_manage`, `m_chastity_moderate`), configurables depuis l'ACP → Permissions → Groupes. Ce système est optimisé, mis en cache correctement et bien connu des administrateurs.
+- ✅ **Suppression de `check_group_permission()`** : La méthode redondante qui dupliquait le système ACL phpBB a été retirée du listener.
+
+#### Structure des templates
+- ✅ **Migration vers le thème universel `all`** : Tous les templates ont été déplacés de `styles/prosilver/template/` vers `styles/all/template/`. Le dossier `all` est le fallback phpBB qui s'applique à tous les thèmes sans exception (prosilver, subsilver2, thèmes tiers, etc.).
+- ✅ **Suppression du dossier `adm/style/`** : Les templates ACP sont maintenant dans `styles/all/template/`, conforme aux bonnes pratiques phpBB 3.2+.
+- ✅ **CSS déplacé** : `chastity.css` déplacé dans `styles/all/theme/`.
+
+### Module ACP
+- ✅ **Suppression de l'onglet "Permissions"** : Cet onglet dupliquait inutilement le système de permissions natif phpBB. Les permissions se gèrent maintenant depuis l'ACP standard (Permissions → Groupes d'utilisateurs).
+
+### Guide de migration depuis v1.3.x
+Si vous mettez à jour depuis une version précédente :
+1. Désactivez l'extension depuis l'ACP
+2. Remplacez les fichiers
+3. Réactivez l'extension
+4. Configurez les permissions dans ACP → Permissions → Groupes → choisissez les groupes autorisés pour `u_chastity_view` et `u_chastity_manage`
+
+
 ## Version 1.3.1 - Corrections namespace et base de données
 
 ### Corrections

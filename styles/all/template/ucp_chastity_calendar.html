@@ -1,0 +1,222 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_CHASTITY_CALENDAR') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+
+		{% if HAS_ACTIVE_PERIOD %}
+		<div class="rules">
+			<div class="rule">
+				<strong>{{ lang('CHASTITY_CURRENT_PERIOD') }}{{ lang('COLON') }}</strong> {{ CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}
+			</div>
+		</div>
+		{% endif %}
+
+		{% if not HAS_ACTIVE_PERIOD %}
+		<form id="add_period_form" method="post" action="{{ U_ACTION }}">
+			<fieldset>
+				<legend>{{ lang('CHASTITY_ADD_PERIOD') }}</legend>
+
+				<dl>
+					<dt><label for="start_date">{{ lang('CHASTITY_START_DATE') }}{{ lang('COLON') }}</label></dt>
+					<dd><input type="date" id="start_date" name="start_date" value="{{ TODAY_DATE }}" max="{{ TODAY_DATE }}" required /></dd>
+				</dl>
+
+				<dl>
+					<dt>
+						<label>{{ lang('CHASTITY_PERMANENT') }}{{ lang('COLON') }}</label><br>
+						<span>{{ lang('CHASTITY_PERMANENT_EXPLAIN') }}</span>
+					</dt>
+					<dd>
+						<input type="radio" name="is_permanent" id="is_permanent_no" value="0" checked="checked" /> <label for="is_permanent_no">{{ lang('CHASTITY_TEMPORARY_MODE') }}</label><br>
+						<input type="radio" name="is_permanent" id="is_permanent_yes" value="1" /> <label for="is_permanent_yes">{{ lang('CHASTITY_PERMANENT_MODE') }}</label>
+					</dd>
+				</dl>
+
+				<dl>
+					<dt>
+						<label for="notes">{{ lang('CHASTITY_NOTES') }}{{ lang('COLON') }}</label><br>
+						<span>{{ lang('OPTIONAL') }}</span>
+					</dt>
+					<dd><textarea id="notes" name="notes" rows="3" cols="40"></textarea></dd>
+				</dl>
+			</fieldset>
+
+			<fieldset>
+				<legend>{{ lang('CHASTITY_RULES') }}</legend>
+				<p>{{ lang('CHASTITY_RULES_EXPLAIN') }}</p>
+
+				{% set rules = [
+					{key: 'masturbation', enabled: S_RULE_MASTURBATION_ENABLED},
+					{key: 'ejaculation', enabled: S_RULE_EJACULATION_ENABLED},
+					{key: 'sleep_removal', enabled: S_RULE_SLEEP_REMOVAL_ENABLED},
+					{key: 'public_removal', enabled: S_RULE_PUBLIC_REMOVAL_ENABLED},
+					{key: 'medical_removal', enabled: S_RULE_MEDICAL_REMOVAL_ENABLED}
+				] %}
+
+				{% for rule in rules if rule.enabled %}
+					<dl>
+						<dt><label for="rule_{{ rule.key }}">{{ lang('CHASTITY_RULE_' ~ rule.key|upper) }}{{ lang('COLON') }}</label></dt>
+						<dd>
+							<input type="radio" name="rule_{{ rule.key }}" id="rule_{{ rule.key }}_yes" value="1" {{ rule.key == 'medical_removal' ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule.key }}_yes">{{ lang('CHASTITY_YES') }}</label>
+							<input type="radio" name="rule_{{ rule.key }}" id="rule_{{ rule.key }}_no" value="0" {{ rule.key != 'medical_removal' ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule.key }}_no">{{ lang('CHASTITY_NO') }}</label>
+						</dd>
+					</dl>
+				{% endfor %}
+			</fieldset>
+
+			<fieldset class="submit-buttons">
+				<input type="submit" name="add_period" value="{{ lang('SUBMIT') }}" class="button1" />
+				{{ S_FORM_TOKEN }}
+			</fieldset>
+		</form>
+		{% endif %}
+
+		<h3>{{ lang('CHASTITY_CALENDAR') }}</h3>
+		
+		<!-- CALENDRIER VISUEL AVEC NAVIGATION -->
+		<div style="margin: 20px 0; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+			
+			<!-- En-tête avec navigation -->
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+				<a href="{{ U_ACTION }}&amp;month={{ PREV_MONTH }}&amp;year={{ PREV_YEAR }}" style="padding: 8px 15px; background: #BC2A4D; color: white; text-decoration: none; border-radius: 3px;">◀ Précédent</a>
+				<h4 style="margin: 0; color: #BC2A4D; font-size: 1.3em;">{{ MONTH_NAME }} {{ CALENDAR_YEAR }}</h4>
+				<a href="{{ U_ACTION }}&amp;month={{ NEXT_MONTH }}&amp;year={{ NEXT_YEAR }}" style="padding: 8px 15px; background: #BC2A4D; color: white; text-decoration: none; border-radius: 3px;">Suivant ▶</a>
+			</div>
+
+			<!-- Grille du calendrier -->
+			<table style="width: 100%; border-collapse: separate; border-spacing: 2px;">
+				<tr style="background: #333; color: white;">
+					<th style="padding: 10px; text-align: center;">Lun</th>
+					<th style="padding: 10px; text-align: center;">Mar</th>
+					<th style="padding: 10px; text-align: center;">Mer</th>
+					<th style="padding: 10px; text-align: center;">Jeu</th>
+					<th style="padding: 10px; text-align: center;">Ven</th>
+					<th style="padding: 10px; text-align: center;">Sam</th>
+					<th style="padding: 10px; text-align: center;">Dim</th>
+				</tr>
+				{% set cell_count = 0 %}
+				{% for day in loops.calendar_days %}
+					{% if cell_count % 7 == 0 %}<tr>{% endif %}
+					<td style="padding: 15px; text-align: center; 
+							   background: {% if day.IS_LOCKED and not day.OTHER_MONTH %}#d4edda{% else %}white{% endif %}; 
+							   {% if day.IS_TODAY %}border: 2px solid #BC2A4D; font-weight: bold;{% else %}border: 1px solid #ddd;{% endif %}
+							   {% if day.OTHER_MONTH %}opacity: 0.4;{% endif %}">
+						<strong style="font-size: 1.2em;">{{ day.DAY }}</strong>
+						{% if day.IS_LOCKED and not day.OTHER_MONTH %}
+							<br><span style="color: #28a745; font-size: 1.1em;">🔒</span>
+						{% endif %}
+					</td>
+					{% set cell_count = cell_count + 1 %}
+					{% if cell_count % 7 == 0 %}</tr>{% endif %}
+				{% endfor %}
+			</table>
+
+			<!-- Légende -->
+			<div style="margin-top: 15px; padding: 10px; background: white; border-radius: 3px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+				<span style="display: flex; align-items: center; gap: 5px;">
+					<span style="display: inline-block; width: 30px; height: 30px; background: #d4edda; border: 1px solid #28a745;"></span>
+					<strong>Verrouillé</strong>
+				</span>
+				<span style="display: flex; align-items: center; gap: 5px;">
+					<span style="display: inline-block; width: 30px; height: 30px; background: white; border: 1px solid #ddd;"></span>
+					<strong>Libre</strong>
+				</span>
+				<span style="display: flex; align-items: center; gap: 5px;">
+					<span style="display: inline-block; width: 30px; height: 30px; border: 2px solid #BC2A4D;"></span>
+					<strong>Aujourd'hui</strong>
+				</span>
+			</div>
+		</div>
+
+		<h4 style="margin-top: 30px;">Historique des périodes</h4>
+
+		{% if loops.periods is defined and loops.periods|length %}
+		<table class="table1 zebra-table">
+			<thead>
+				<tr>
+					<th>{{ lang('CHASTITY_START_DATE') }}</th>
+					<th>{{ lang('CHASTITY_END_DATE') }}</th>
+					<th>{{ lang('CHASTITY_STATUS') }}</th>
+					<th>{{ lang('CHASTITY_DAYS') }}</th>
+					<th>{{ lang('CHASTITY_NOTES') }}</th>
+					<th>{{ lang('CHASTITY_RULES') }}</th>
+					<th>{{ lang('ACTIONS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for periods in loops.periods %}
+				<tr class="{{ periods.IS_ACTIVE ? 'bg3' : '' }}">
+					<td>{{ periods.START_DATE }}</td>
+					<td>
+						{% if periods.IS_PERMANENT and periods.IS_ACTIVE %}
+							<strong style="color: #BC2A4D;">♾️ {{ lang('CHASTITY_PERMANENT') }}</strong>
+						{% else %}
+							{{ periods.END_DATE }}
+						{% endif %}
+					</td>
+					<td>
+						{% if periods.IS_ACTIVE %}
+							<strong style="color: #BC2A4D;">{{ periods.STATUS }}</strong>
+						{% else %}
+							{{ periods.STATUS }}
+						{% endif %}
+					</td>
+					<td>
+						{% if periods.IS_ACTIVE %}
+							<strong>{{ periods.DAYS_COUNT }}</strong>
+						{% else %}
+							{{ periods.DAYS_COUNT }}
+						{% endif %}
+					</td>
+					<td>{{ periods.NOTES }}</td>
+					<td>
+						<a href="#" onclick="document.getElementById('rules_{{ periods.PERIOD_ID }}').style.display = document.getElementById('rules_{{ periods.PERIOD_ID }}').style.display == 'none' ? 'block' : 'none'; return false;" class="button2">{{ lang('CHASTITY_VIEW_RULES') }}</a>
+						<div id="rules_{{ periods.PERIOD_ID }}" style="display: none; margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+							<strong>{{ lang('CHASTITY_RULES') }}{{ lang('COLON') }}</strong><br>
+							{% if S_RULE_MASTURBATION_ENABLED %}
+							✓ {{ lang('CHASTITY_RULE_MASTURBATION') }}{{ lang('COLON') }} {% if periods.RULE_MASTURBATION %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							{% endif %}
+							{% if S_RULE_EJACULATION_ENABLED %}
+							✓ {{ lang('CHASTITY_RULE_EJACULATION') }}{{ lang('COLON') }} {% if periods.RULE_EJACULATION %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							{% endif %}
+							{% if S_RULE_SLEEP_REMOVAL_ENABLED %}
+							✓ {{ lang('CHASTITY_RULE_SLEEP_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_SLEEP_REMOVAL %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							{% endif %}
+							{% if S_RULE_PUBLIC_REMOVAL_ENABLED %}
+							✓ {{ lang('CHASTITY_RULE_PUBLIC_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_PUBLIC_REMOVAL %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							{% endif %}
+							{% if S_RULE_MEDICAL_REMOVAL_ENABLED %}
+							✓ {{ lang('CHASTITY_RULE_MEDICAL_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_MEDICAL_REMOVAL %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}
+							{% endif %}
+						</div>
+					</td>
+					<td>
+						{% if periods.IS_ACTIVE %}
+						<form method="post" action="{{ U_ACTION }}" style="display: inline;">
+							<input type="hidden" name="period_id" value="{{ periods.PERIOD_ID }}" />
+							<input type="submit" name="end_period" value="{{ lang('CHASTITY_END_PERIOD') }}" class="button2" onclick="return confirm('{{ lang('CHASTITY_END_PERIOD_CONFIRM') }}');" />
+							{{ S_FORM_TOKEN }}
+						</form>
+						{% endif %}
+						{% if periods.CAN_DELETE %}
+						<form method="post" action="{{ U_ACTION }}" style="display: inline;">
+							<input type="hidden" name="period_id" value="{{ periods.PERIOD_ID }}" />
+							<input type="submit" name="delete_period" value="{{ lang('DELETE') }}" class="button2" onclick="return confirm('{{ lang('CONFIRM') }}');" />
+							{{ S_FORM_TOKEN }}
+						</form>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<p>{{ lang('CHASTITY_NO_PERIODS') }}</p>
+		{% endif %}
+
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

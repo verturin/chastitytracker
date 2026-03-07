@@ -1,13 +1,4 @@
 <?php
-/**
- *
- * Chastity Tracker Extension
- *
- * @copyright (c) 2024
- * @license GNU General Public License, version 2 (GPL-2.0)
- *
- */
-
 namespace verturin\chastitytracker\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,15 +11,10 @@ class main_listener implements EventSubscriberInterface
     protected $db;
     protected $auth;
     protected $periods_table;
-
-    public function __construct(
-        \phpbb\config\config $config,
-        \phpbb\template\template $template,
-        \phpbb\user $user,
-        \phpbb\db\driver\driver_interface $db,
-        \phpbb\auth\auth $auth,
-        $periods_table
-    )
+    protected $chastity_users_table;
+    protected $cache_table;
+    
+    public function __construct($config, $template, $user, $db, $auth, $periods_table, $chastity_users_table, $cache_table)
     {
         $this->config = $config;
         $this->template = $template;
@@ -36,131 +22,184 @@ class main_listener implements EventSubscriberInterface
         $this->db = $db;
         $this->auth = $auth;
         $this->periods_table = $periods_table;
+        $this->chastity_users_table = $chastity_users_table;
+        $this->cache_table = $cache_table;
     }
-
-    static public function getSubscribedEvents()
+    
+    public static function getSubscribedEvents()
     {
-        return array(
-            'core.viewtopic_modify_post_row' => 'display_chastity_status_postrow',
+        return [
+            'core.user_setup'              => 'load_language',
             'core.memberlist_view_profile' => 'display_chastity_status_profile',
-            'core.permissions' => 'add_permissions',
-        );
+            'core.permissions'             => 'add_permissions',
+            'core.modify_username_string'  => 'add_badge',
+            'core.viewtopic_modify_post_row' => 'set_post_row_var',
+        ];
     }
-
-    public function display_chastity_status_postrow($event)
+    
+    public function load_language($event)
     {
-        if (!$this->config['chastity_profile_display'])
+        $lang_set_ext = $event['lang_set_ext'];
+        
+        $lang_set_ext[] = [
+            'ext_name' => 'verturin/chastitytracker',
+            'lang_set' => 'common',
+        ];
+        
+        $event['lang_set_ext'] = $lang_set_ext;
+    }
+    
+    public function display_chastity_status_profile($event)
+    {
+        if (empty($this->config['chastity_enable']) || empty($this->config['chastity_profile_display']))
+        {
+            return;
+        }
+        
+        if (!$this->auth->acl_get('u_chastity_view'))
+        {
+            return;
+        }
+        
+        $member = $event['member'];
+        
+        if (empty($member['user_id']))
+        {
+            return;
+        }
+        
+        $user_id = (int) $member['user_id'];
+        
+        $sql = 'SELECT cu.chastity_status, cu.chastity_current_period, cu.chastity_total_days, p.start_date
+                FROM ' . $this->chastity_users_table . ' cu
+                LEFT JOIN ' . $this->periods_table . ' p
+                    ON p.period_id = cu.chastity_current_period
+                WHERE cu.user_id = ' . $user_id;
+
+        $result = $this->db->sql_query($sql);
+        $row = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        if (!$row)
         {
             return;
         }
 
-        if (!$this->auth->acl_get('u_chastity_view'))
+        $locked = ($row['chastity_status'] === 'locked');
+        $current_days = 0;
+
+        if ($locked && $row['start_date'])
+        {
+            $current_days = (int) floor((time() - (int) $row['start_date']) / 86400);
+        }
+
+        $this->template->assign_vars([
+            'CHASTITY_STATUS'       => $this->user->lang[$locked ? 'CHASTITY_STATUS_LOCKED' : 'CHASTITY_STATUS_FREE'],
+            'CHASTITY_CURRENT_DAYS' => $current_days,
+            'CHASTITY_TOTAL_DAYS'   => (int) $row['chastity_total_days'],
+            'S_CHASTITY_LOCKED'     => $locked,
+            'S_DISPLAY_CHASTITY'    => true,
+        ]);
+    }
+    
+    public function add_permissions($event)
+    {
+        $categories = $event['categories'];
+        $permissions = $event['permissions'];
+        
+        // Ajouter catégorie
+        $categories['chastity'] = 'ACL_CAT_CHASTITY';
+        
+        $permissions['u_chastity_view'] = [
+            'lang' => 'ACL_U_CHASTITY_VIEW',
+            'cat'  => 'chastity'
+        ];
+        
+        $permissions['u_chastity_manage'] = [
+            'lang' => 'ACL_U_CHASTITY_MANAGE',
+            'cat'  => 'chastity'
+        ];
+        
+        $permissions['m_chastity_moderate'] = [
+            'lang' => 'ACL_M_CHASTITY_MODERATE',
+            'cat'  => 'chastity'
+        ];
+        
+        $event['categories'] = $categories;
+        $event['permissions'] = $permissions;
+    }
+    
+    public function add_badge($event)
+    {
+        if (empty($this->config['chastity_profile_display']))
+        {
+            return;
+        }
+
+        // Pages autorisées (viewtopic = lecture d'un sujet)
+
+		// Desactivation pour fversion final 
+        // $allowed_pages = ['viewtopic.php'];
+
+        // if (!in_array($this->user->page['page_name'], $allowed_pages, true))
+        //{
+        //    return;
+        //}
+
+        //$ignored_modes = ['colour', 'username'];
+
+        //if (in_array($event['mode'], $ignored_modes, true))
+        //{
+        //    return;
+        //}
+
+        //$event['username_string'] .= '<br><span class="okdisplay-badge"><br>OK c est la</span>';
+    }
+    
+    public function set_post_row_var($event)
+    {
+        if (empty($this->config['chastity_profile_display']))
         {
             return;
         }
 
         $post_row = $event['post_row'];
-        $row = $event['row'];
-
-        // Récupérer le statut de chasteté de l'utilisateur
-        if (isset($row['user_id']))
+        $user_id = (int) $event['row']['user_id'];
+        
+        // Lire table cache
+        $sql = 'SELECT days_current_period, days_since_last_end 
+                FROM ' . $this->cache_table . ' 
+                WHERE user_id = ' . $user_id;
+        $result = $this->db->sql_query($sql);
+        $cache = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+        
+        if ($cache)
         {
-            $sql = 'SELECT chastity_status, chastity_current_period_id, chastity_total_days
-                FROM ' . USERS_TABLE . '
-                WHERE user_id = ' . (int) $row['user_id'];
-            $result = $this->db->sql_query($sql);
-            $user_data = $this->db->sql_fetchrow($result);
-            $this->db->sql_freeresult($result);
-
-            if ($user_data && $user_data['chastity_status'] == 'locked')
+            $days_current = (int) $cache['days_current_period'];
+            $days_since = (int) $cache['days_since_last_end'];
+            
+            if ($days_current > 0)
             {
-                // Récupérer les détails de la période active
-                $sql = 'SELECT start_date
-                    FROM ' . $this->periods_table . '
-                    WHERE period_id = ' . (int) $user_data['chastity_current_period_id'];
-                $result = $this->db->sql_query($sql);
-                $period = $this->db->sql_fetchrow($result);
-                $this->db->sql_freeresult($result);
-
-                if ($period)
-                {
-                    $days_locked = floor((time() - $period['start_date']) / 86400);
-                    $post_row['CHASTITY_STATUS'] = $this->user->lang['CHASTITY_STATUS_LOCKED'];
-                    $post_row['CHASTITY_DAYS'] = $days_locked;
-                    $post_row['S_CHASTITY_LOCKED'] = true;
-                }
+                // Verrouillé
+                $post_row['CHASTITY_STATUS'] = 'locked';
+                $post_row['CHASTITY_DAYS'] = $days_current;
             }
-            else if ($user_data)
+            else if ($days_since > 0)
             {
-                $post_row['CHASTITY_STATUS'] = $this->user->lang['CHASTITY_STATUS_FREE'];
-                $post_row['S_CHASTITY_LOCKED'] = false;
+                // Libre depuis X jours
+                $post_row['CHASTITY_STATUS'] = 'free';
+                $post_row['CHASTITY_DAYS'] = $days_since;
             }
-
-            if ($user_data)
+            else
             {
-                $post_row['CHASTITY_TOTAL_DAYS'] = (int) $user_data['chastity_total_days'];
+                // Pas de période
+                $post_row['CHASTITY_STATUS'] = 'none';
             }
+            
+            $post_row['OKDISPLAY_BADGE'] = true;
         }
-
+        
         $event['post_row'] = $post_row;
-    }
-
-    public function display_chastity_status_profile($event)
-    {
-        if (!$this->config['chastity_profile_display'])
-        {
-            return;
-        }
-
-        if (!$this->auth->acl_get('u_chastity_view'))
-        {
-            return;
-        }
-
-        $member = $event['member'];
-
-        // Récupérer le statut de chasteté
-        if ($member['chastity_status'] == 'locked')
-        {
-            // Récupérer les détails de la période active
-            $sql = 'SELECT start_date
-                FROM ' . $this->periods_table . '
-                WHERE period_id = ' . (int) $member['chastity_current_period_id'];
-            $result = $this->db->sql_query($sql);
-            $period = $this->db->sql_fetchrow($result);
-            $this->db->sql_freeresult($result);
-
-            if ($period)
-            {
-                $days_locked = floor((time() - $period['start_date']) / 86400);
-                
-                $this->template->assign_vars(array(
-                    'CHASTITY_STATUS' => $this->user->lang['CHASTITY_STATUS_LOCKED'],
-                    'CHASTITY_LOCKED_SINCE' => $this->user->format_date($period['start_date']),
-                    'CHASTITY_CURRENT_DAYS' => $days_locked,
-                    'CHASTITY_TOTAL_DAYS' => (int) $member['chastity_total_days'],
-                    'S_CHASTITY_LOCKED' => true,
-                    'S_DISPLAY_CHASTITY' => true,
-                ));
-            }
-        }
-        else
-        {
-            $this->template->assign_vars(array(
-                'CHASTITY_STATUS' => $this->user->lang['CHASTITY_STATUS_FREE'],
-                'CHASTITY_TOTAL_DAYS' => (int) $member['chastity_total_days'],
-                'S_CHASTITY_LOCKED' => false,
-                'S_DISPLAY_CHASTITY' => true,
-            ));
-        }
-    }
-
-    public function add_permissions($event)
-    {
-        $permissions = $event['permissions'];
-        $permissions['u_chastity_view'] = array('lang' => 'ACL_U_CHASTITY_VIEW', 'cat' => 'misc');
-        $permissions['u_chastity_manage'] = array('lang' => 'ACL_U_CHASTITY_MANAGE', 'cat' => 'misc');
-        $permissions['m_chastity_moderate'] = array('lang' => 'ACL_M_CHASTITY_MODERATE', 'cat' => 'misc');
-        $event['permissions'] = $permissions;
     }
 }

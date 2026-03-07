@@ -1,0 +1,32 @@
+<!-- EVENT memberlist_view_profile_custom_fields_after -->
+
+{% if S_DISPLAY_CHASTITY %}
+<dl>
+	<dt>{{ lang('CHASTITY_PROFILE_STATUS') }}{{ lang('COLON') }}</dt>
+	<dd>
+		{% if S_CHASTITY_LOCKED %}
+			<strong style="color: #BC2A4D; font-size: 1.1em;">🔒 {{ CHASTITY_STATUS }}</strong>
+		{% else %}
+			<span style="color: #228B22; font-size: 1.1em;">🔓 {{ CHASTITY_STATUS }}</span>
+		{% endif %}
+	</dd>
+</dl>
+{% if S_CHASTITY_LOCKED %}
+<dl>
+	<dt>{{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }}{{ lang('COLON') }}</dt>
+	<dd>{{ CHASTITY_LOCKED_SINCE }}</dd>
+</dl>
+<dl>
+	<dt>{{ lang('CHASTITY_CURRENT_DAYS') }}{{ lang('COLON') }}</dt>
+	<dd><strong style="font-size: 1.2em;">{{ CHASTITY_CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong></dd>
+</dl>
+{% endif %}
+{% if CHASTITY_TOTAL_DAYS > 0 %}
+<dl>
+	<dt>{{ lang('CHASTITY_PROFILE_TOTAL_DAYS') }}{{ lang('COLON') }}</dt>
+	<dd>{{ CHASTITY_TOTAL_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd>
+</dl>
+{% endif %}
+{% endif %}
+
+<!-- ENDEVENT memberlist_view_profile_custom_fields_after -->

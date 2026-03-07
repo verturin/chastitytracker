@@ -1,6 +1,6 @@
 services:
     verturin.chastitytracker.listener:
-        class: vendor\chastitytracker\event\main_listener
+        class: verturin\chastitytracker\event\main_listener
         arguments:
             - '@config'
             - '@template'
@@ -8,11 +8,13 @@ services:
             - '@dbal.conn'
             - '@auth'
             - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%verturin.chastitytracker.tables.chastity_users%'
+            - '%verturin.chastitytracker.tables.chastity_cache%'
         tags:
             - { name: event.listener }
 
     verturin.chastitytracker.controller:
-        class: vendor\chastitytracker\controller\main
+        class: verturin\chastitytracker\controller\main
         arguments:
             - '@config'
             - '@controller.helper'
@@ -27,3 +29,5 @@ services:
 
 parameters:
     verturin.chastitytracker.tables.chastity_periods: '%core.table_prefix%chastity_periods'
+    verturin.chastitytracker.tables.chastity_users: '%core.table_prefix%chastity_users'
+    verturin.chastitytracker.tables.chastity_cache: '%core.table_prefix%chastity_cache'
