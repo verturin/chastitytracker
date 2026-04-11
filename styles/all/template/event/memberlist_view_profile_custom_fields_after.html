@@ -1,32 +1,44 @@
 <!-- EVENT memberlist_view_profile_custom_fields_after -->
 
 {% if S_DISPLAY_CHASTITY %}
+
+{% if S_SHOW_STATUS %}
 <dl>
 	<dt>{{ lang('CHASTITY_PROFILE_STATUS') }}{{ lang('COLON') }}</dt>
 	<dd>
 		{% if S_CHASTITY_LOCKED %}
-			<strong style="color: #BC2A4D; font-size: 1.1em;">🔒 {{ CHASTITY_STATUS }}</strong>
+			<strong style="color: #BC2A4D; font-size: 1.1em;">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }}
+			{% if S_SHOW_DAYS %} {{ CHASTITY_CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}{% endif %}</strong>
 		{% else %}
-			<span style="color: #228B22; font-size: 1.1em;">🔓 {{ CHASTITY_STATUS }}</span>
+			<strong style="color: #228B22; font-size: 1.1em;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}
+			{% if S_SHOW_DAYS %} {{ lang('CHASTITY_DAYS_SINCE') }} {{ CHASTITY_DAYS_SINCE_END }} {{ lang('CHASTITY_DAYS') }}{% endif %}</strong>
 		{% endif %}
 	</dd>
 </dl>
-{% if S_CHASTITY_LOCKED %}
-<dl>
-	<dt>{{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }}{{ lang('COLON') }}</dt>
-	<dd>{{ CHASTITY_LOCKED_SINCE }}</dd>
-</dl>
-<dl>
-	<dt>{{ lang('CHASTITY_CURRENT_DAYS') }}{{ lang('COLON') }}</dt>
-	<dd><strong style="font-size: 1.2em;">{{ CHASTITY_CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong></dd>
-</dl>
 {% endif %}
-{% if CHASTITY_TOTAL_DAYS > 0 %}
+
+{% if S_SHOW_TOTAL_DAYS and CHASTITY_TOTAL_DAYS > 0 %}
 <dl>
 	<dt>{{ lang('CHASTITY_PROFILE_TOTAL_DAYS') }}{{ lang('COLON') }}</dt>
 	<dd>{{ CHASTITY_TOTAL_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd>
 </dl>
 {% endif %}
+
+{% if S_SHOW_YEAR_STATS %}
+<dl>
+	<dt>{{ lang('CHASTITY_YEAR_DAYS') }} {{ CHASTITY_CURRENT_YEAR }}{{ lang('COLON') }}</dt>
+	<dd><strong>{{ CHASTITY_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong></dd>
+</dl>
+{% endif %}
+
+{% if S_SHOW_BEST_YEAR and CHASTITY_BEST_YEAR > 0 %}
+<dl>
+	<dt>{{ lang('CHASTITY_BEST_YEAR') }}{{ lang('COLON') }}</dt>
+	<dd><strong>{{ CHASTITY_BEST_YEAR }}</strong> — {{ CHASTITY_BEST_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd>
+</dl>
+{% endif %}
+
+
 {% endif %}
 
 <!-- ENDEVENT memberlist_view_profile_custom_fields_after -->

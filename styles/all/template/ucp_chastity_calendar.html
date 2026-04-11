@@ -13,66 +13,6 @@
 		</div>
 		{% endif %}
 
-		{% if not HAS_ACTIVE_PERIOD %}
-		<form id="add_period_form" method="post" action="{{ U_ACTION }}">
-			<fieldset>
-				<legend>{{ lang('CHASTITY_ADD_PERIOD') }}</legend>
-
-				<dl>
-					<dt><label for="start_date">{{ lang('CHASTITY_START_DATE') }}{{ lang('COLON') }}</label></dt>
-					<dd><input type="date" id="start_date" name="start_date" value="{{ TODAY_DATE }}" max="{{ TODAY_DATE }}" required /></dd>
-				</dl>
-
-				<dl>
-					<dt>
-						<label>{{ lang('CHASTITY_PERMANENT') }}{{ lang('COLON') }}</label><br>
-						<span>{{ lang('CHASTITY_PERMANENT_EXPLAIN') }}</span>
-					</dt>
-					<dd>
-						<input type="radio" name="is_permanent" id="is_permanent_no" value="0" checked="checked" /> <label for="is_permanent_no">{{ lang('CHASTITY_TEMPORARY_MODE') }}</label><br>
-						<input type="radio" name="is_permanent" id="is_permanent_yes" value="1" /> <label for="is_permanent_yes">{{ lang('CHASTITY_PERMANENT_MODE') }}</label>
-					</dd>
-				</dl>
-
-				<dl>
-					<dt>
-						<label for="notes">{{ lang('CHASTITY_NOTES') }}{{ lang('COLON') }}</label><br>
-						<span>{{ lang('OPTIONAL') }}</span>
-					</dt>
-					<dd><textarea id="notes" name="notes" rows="3" cols="40"></textarea></dd>
-				</dl>
-			</fieldset>
-
-			<fieldset>
-				<legend>{{ lang('CHASTITY_RULES') }}</legend>
-				<p>{{ lang('CHASTITY_RULES_EXPLAIN') }}</p>
-
-				{% set rules = [
-					{key: 'masturbation', enabled: S_RULE_MASTURBATION_ENABLED},
-					{key: 'ejaculation', enabled: S_RULE_EJACULATION_ENABLED},
-					{key: 'sleep_removal', enabled: S_RULE_SLEEP_REMOVAL_ENABLED},
-					{key: 'public_removal', enabled: S_RULE_PUBLIC_REMOVAL_ENABLED},
-					{key: 'medical_removal', enabled: S_RULE_MEDICAL_REMOVAL_ENABLED}
-				] %}
-
-				{% for rule in rules if rule.enabled %}
-					<dl>
-						<dt><label for="rule_{{ rule.key }}">{{ lang('CHASTITY_RULE_' ~ rule.key|upper) }}{{ lang('COLON') }}</label></dt>
-						<dd>
-							<input type="radio" name="rule_{{ rule.key }}" id="rule_{{ rule.key }}_yes" value="1" {{ rule.key == 'medical_removal' ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule.key }}_yes">{{ lang('CHASTITY_YES') }}</label>
-							<input type="radio" name="rule_{{ rule.key }}" id="rule_{{ rule.key }}_no" value="0" {{ rule.key != 'medical_removal' ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule.key }}_no">{{ lang('CHASTITY_NO') }}</label>
-						</dd>
-					</dl>
-				{% endfor %}
-			</fieldset>
-
-			<fieldset class="submit-buttons">
-				<input type="submit" name="add_period" value="{{ lang('SUBMIT') }}" class="button1" />
-				{{ S_FORM_TOKEN }}
-			</fieldset>
-		</form>
-		{% endif %}
-
 		<h3>{{ lang('CHASTITY_CALENDAR') }}</h3>
 		
 		<!-- CALENDRIER VISUEL AVEC NAVIGATION -->
@@ -129,6 +69,70 @@
 				</span>
 			</div>
 		</div>
+
+		{% if not HAS_ACTIVE_PERIOD %}
+		<form id="add_period_form" method="post" action="{{ U_ACTION }}">
+			<fieldset>
+				<legend>{{ lang('CHASTITY_ADD_PERIOD') }}</legend>
+
+				<dl>
+					<dt><label for="start_date">{{ lang('CHASTITY_START_DATE') }}{{ lang('COLON') }}</label></dt>
+					<dd>
+						<input type="date" id="start_date" name="start_date" value="{{ TODAY_DATE }}" max="{{ TODAY_DATE }}" required />
+						<input type="time" name="start_time" value="00:00" style="margin-left:8px;" />
+						<span style="font-size:0.85em;color:#888;"> {{ lang('CHASTITY_TIME_OPTIONAL') }}</span>
+					</dd>
+				</dl>
+
+				<dl>
+					<dt>
+						<label>{{ lang('CHASTITY_PERMANENT') }}{{ lang('COLON') }}</label><br>
+						<span>{{ lang('CHASTITY_PERMANENT_EXPLAIN') }}</span>
+					</dt>
+					<dd>
+						<input type="radio" name="is_permanent" id="is_permanent_no" value="0" checked="checked" /> <label for="is_permanent_no">{{ lang('CHASTITY_TEMPORARY_MODE') }}</label><br>
+						<input type="radio" name="is_permanent" id="is_permanent_yes" value="1" /> <label for="is_permanent_yes">{{ lang('CHASTITY_PERMANENT_MODE') }}</label>
+					</dd>
+				</dl>
+
+				<dl>
+					<dt>
+						<label for="notes">{{ lang('CHASTITY_NOTES') }}{{ lang('COLON') }}</label><br>
+						<span>{{ lang('OPTIONAL') }}</span>
+					</dt>
+					<dd><textarea id="notes" name="notes" rows="3" cols="40"></textarea></dd>
+				</dl>
+			</fieldset>
+
+			<fieldset>
+				<legend>{{ lang('CHASTITY_RULES') }}</legend>
+				<p>{{ lang('CHASTITY_RULES_EXPLAIN') }}</p>
+
+				{% set rules = [
+					{key: 'masturbation', enabled: S_RULE_MASTURBATION_ENABLED},
+					{key: 'ejaculation', enabled: S_RULE_EJACULATION_ENABLED},
+					{key: 'sleep_removal', enabled: S_RULE_SLEEP_REMOVAL_ENABLED},
+					{key: 'public_removal', enabled: S_RULE_PUBLIC_REMOVAL_ENABLED},
+					{key: 'medical_removal', enabled: S_RULE_MEDICAL_REMOVAL_ENABLED}
+				] %}
+
+				{% for rule in rules if rule.enabled %}
+					<dl>
+						<dt><label for="rule_{{ rule.key }}">{{ lang('CHASTITY_RULE_' ~ rule.key|upper) }}{{ lang('COLON') }}</label></dt>
+						<dd>
+							<input type="radio" name="rule_{{ rule.key }}" id="rule_{{ rule.key }}_yes" value="1" {{ rule.key == 'medical_removal' ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule.key }}_yes">{{ lang('CHASTITY_YES') }}</label>
+							<input type="radio" name="rule_{{ rule.key }}" id="rule_{{ rule.key }}_no" value="0" {{ rule.key != 'medical_removal' ? 'checked="checked"' : '' }} /> <label for="rule_{{ rule.key }}_no">{{ lang('CHASTITY_NO') }}</label>
+						</dd>
+					</dl>
+				{% endfor %}
+			</fieldset>
+
+			<fieldset class="submit-buttons">
+				<input type="submit" name="add_period" value="{{ lang('SUBMIT') }}" class="button1" />
+				{{ S_FORM_TOKEN }}
+			</fieldset>
+		</form>
+		{% endif %}
 
 		<h4 style="margin-top: 30px;">Historique des périodes</h4>
 
@@ -196,6 +200,12 @@
 						{% if periods.IS_ACTIVE %}
 						<form method="post" action="{{ U_ACTION }}" style="display: inline;">
 							<input type="hidden" name="period_id" value="{{ periods.PERIOD_ID }}" />
+							<div style="margin-bottom: 5px;">
+								<label style="font-size: 0.9em;">{{ lang('CHASTITY_END_DATE_CUSTOM') }}<br>
+								<input type="date" name="end_date_custom" max="{{ TODAY_DATE }}" style="font-size: 0.9em;" />
+								<input type="time" name="end_time_custom" style="font-size: 0.9em; margin-left:6px;" /></label>
+								<span style="font-size: 0.8em; color: #888;">{{ lang('CHASTITY_END_DATE_OPTIONAL') }}</span>
+							</div>
 							<input type="submit" name="end_period" value="{{ lang('CHASTITY_END_PERIOD') }}" class="button2" onclick="return confirm('{{ lang('CHASTITY_END_PERIOD_CONFIRM') }}');" />
 							{{ S_FORM_TOKEN }}
 						</form>

@@ -1,0 +1,45 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_CHASTITY_REFRESH') }}</h2>
+
+<div class="panel">
+    <div class="inner">
+
+        <p>{{ lang('UCP_CHASTITY_REFRESH_EXPLAIN') }}</p>
+
+        {% if S_REFRESH_DONE %}
+            <div class="successbox">{{ lang('CHASTITY_REFRESH_DONE') }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ U_ACTION }}">
+            <fieldset>
+                <legend>{{ lang('CHASTITY_REFRESH_CACHE') }}</legend>
+                <dl>
+                    <dt><strong>{{ lang('CHASTITY_REFRESH_CACHE') }}{{ lang('COLON') }}</strong></dt>
+                    <dd>{{ lang('CHASTITY_REFRESH_CACHE_EXPLAIN') }}</dd>
+                </dl>
+                <fieldset class="submit-buttons">
+                    <input class="button1" type="submit" name="refresh_cache" value="{{ lang('CHASTITY_REFRESH_CACHE') }}" />
+                </fieldset>
+                {{ S_FORM_TOKEN }}
+            </fieldset>
+        </form>
+
+        <form method="post" action="{{ U_ACTION }}">
+            <fieldset>
+                <legend>{{ lang('CHASTITY_REFRESH_HISTORY') }}</legend>
+                <dl>
+                    <dt><strong>{{ lang('CHASTITY_REFRESH_HISTORY') }}{{ lang('COLON') }}</strong></dt>
+                    <dd>{{ lang('CHASTITY_REFRESH_HISTORY_EXPLAIN') }}</dd>
+                </dl>
+                <fieldset class="submit-buttons">
+                    <input class="button1" type="submit" name="refresh_history" value="{{ lang('CHASTITY_REFRESH_HISTORY') }}" />
+                </fieldset>
+                {{ S_FORM_TOKEN }}
+            </fieldset>
+        </form>
+
+    </div>
+</div>
+
+{% include 'ucp_footer.html' %}

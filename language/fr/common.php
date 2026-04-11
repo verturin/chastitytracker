@@ -26,6 +26,7 @@ $lang = array_merge($lang, array(
     'CHASTITY_STATUS_COMPLETED' => 'Terminé',
 
     // UCP - Menus
+    'UCP_CHASTITY'           => 'Suivi de Chasteté',
     'UCP_CHASTITY_TRACKER'   => 'Suivi de Chasteté',
     'UCP_CHASTITY_CALENDAR'  => 'Calendrier',
     'UCP_CHASTITY_STATISTICS'=> 'Statistiques',
@@ -40,7 +41,10 @@ $lang = array_merge($lang, array(
     'CHASTITY_DELETE_PERIOD'     => 'Supprimer la période',
     'CHASTITY_START_DATE'        => 'Date de début',
     'CHASTITY_END_DATE'          => 'Date de fin',
-    'CHASTITY_DAYS'              => 'Jours',
+    'CHASTITY_END_DATE_CUSTOM'   => 'Date de libération',
+    'CHASTITY_END_DATE_OPTIONAL' => '(laisser vide = aujourd\'hui)',
+	'CHASTITY_DAYS'              => 'Jours',
+	'CHASTITY_DAYS_SINCE'        => 'depuis',
     'CHASTITY_NOTES'             => 'Notes',
     'CHASTITY_NO_PERIODS'        => 'Aucune période enregistrée pour le moment.',
     'CHASTITY_CURRENT_PERIOD'    => 'Période en cours',
@@ -64,6 +68,8 @@ $lang = array_merge($lang, array(
     'CHASTITY_LONGEST_PERIOD'  => 'Période la plus longue',
     'CHASTITY_AVERAGE_PERIOD'  => 'Durée moyenne',
     'CHASTITY_STATS_BY_YEAR'   => 'Statistiques par année',
+    'CHASTITY_STATS'           => 'Statistiques',
+    'CHASTITY_BEST_YEAR'       => 'Meilleure année',
     'CHASTITY_STATS_BY_MONTH'  => 'Statistiques par mois (année en cours)',
     'CHASTITY_YEAR'            => 'Année',
     'CHASTITY_MONTH'           => 'Mois',
@@ -117,7 +123,13 @@ $lang = array_merge($lang, array(
     'CHASTITY_PROFILE_LOCKED_SINCE'=> 'Verrouillé depuis',
     'CHASTITY_PROFILE_TOTAL_DAYS'  => 'Total de jours en chasteté',
 
+	// Navlink
+    'CHASTITY_NAV_LINK_LABEL' => 'Mon suivi',
+    'CHASTITY_NAV_LINK_TITLE' => 'Accéder à mon suivi de chasteté',
+
+
     // ACP - Menus
+    'ACP_CHASTITY_TITLE'      => 'Suivi de Chasteté',
     'ACP_CHASTITY_TRACKER'    => 'Suivi de Chasteté',
     'ACP_CHASTITY_SETTINGS'   => 'Paramètres',
     'ACP_CHASTITY_STATISTICS' => 'Statistiques',
@@ -162,9 +174,89 @@ $lang = array_merge($lang, array(
     'ACP_CHASTITY_REBUILD_CONFIRM'  => 'Confirmer la reconstruction de tous les compteurs ?',
     'ACP_CHASTITY_REBUILD_DONE'     => 'Reconstruction terminée : %d utilisateur(s) mis à jour.',
 
+	// Maintenance / cache manuel
+	'ACP_CHASTITY_CACHE_UPDATE_EXPLAIN'   => 'Lancer manuellement le recalcul du cache pour tous les utilisateurs.',
+	'ACP_CHASTITY_CACHE_UPDATE_SUBMIT'    => 'Recalculer le cache',
+	'ACP_CHASTITY_HISTORY_UPDATE_EXPLAIN' => 'Lancer manuellement le recalcul de l\'historique annuel.',
+	'ACP_CHASTITY_HISTORY_UPDATE_SUBMIT'  => 'Recalculer l\'historique',
+
     // Permissions ACL
     'ACL_U_CHASTITY_VIEW'     => 'Peut voir le suivi de chasteté',
     'ACL_U_CHASTITY_MANAGE'   => 'Peut gérer ses propres périodes de chasteté',
     'ACL_M_CHASTITY_MODERATE' => 'Peut modérer les périodes de chasteté',
+    
+    // Maintenance v3.0.18
+    'ACP_CHASTITY_MAINTENANCE' => 'Maintenance',
+    'ACP_CHASTITY_MAINTENANCE_EXPLAIN' => 'Mise à jour manuelle des tables cache et historique.',
+    'ACP_CHASTITY_CACHE' => 'Cache de performance',
+    'ACP_CHASTITY_CACHE_ENTRIES' => 'Entrées en cache',
+    'ACP_CHASTITY_CACHE_INFO' => 'Informations',
+    'ACP_CHASTITY_CACHE_EXPLAIN' => 'Le cache stocke les statistiques actuelles pour affichage rapide dans les posts et profils.',
+    'ACP_CHASTITY_UPDATE_CACHE' => '🔄 Mettre à jour le cache',
+    'ACP_CHASTITY_HISTORY' => 'Historique annuel',
+    'ACP_CHASTITY_HISTORY_ENTRIES' => 'Entrées historique',
+    'ACP_CHASTITY_HISTORY_INFO' => 'Informations',
+    'ACP_CHASTITY_HISTORY_EXPLAIN' => 'L\'historique stocke les totaux par année pour chaque utilisateur.',
+    'ACP_CHASTITY_UPDATE_HISTORY' => '📊 Mettre à jour l\'historique',
+    'ACP_CHASTITY_USERS' => 'utilisateurs',
+    'ACP_CHASTITY_ENTRIES' => 'entrées',
+
+    // E1 — Intervalles de mise à jour
+    'ACP_CHASTITY_INTERVALS'                => 'Intervalles de mise à jour automatique',
+    'ACP_CHASTITY_INTERVALS_EXPLAIN'        => 'Fréquence de mise à jour du cache et de l\'historique lors des visites du forum.',
+    'ACP_CHASTITY_CACHE_INTERVAL'           => 'Intervalle du cache',
+    'ACP_CHASTITY_CRON_ENABLED'  => '✅ Cron actif — recalcul automatique en cours',
+    'ACP_CHASTITY_CRON_DISABLED' => '🔴 Cron désactivé — aucun recalcul automatique',
+    'ACP_CHASTITY_CRON_ENABLE'   => 'Activer le cron',
+    'ACP_CHASTITY_CRON_DISABLE'  => 'Désactiver le cron',
+    'ACP_CHASTITY_CACHE_INTERVAL_EXPLAIN'   => 'Délai minimum en minutes entre deux recalculs automatiques du cache.',
+    'ACP_CHASTITY_HISTORY_INTERVAL'         => 'Intervalle de l\'historique',
+    'ACP_CHASTITY_HISTORY_INTERVAL_EXPLAIN' => 'Délai minimum en minutes entre deux recalculs automatiques des totaux annuels.',
+    'ACP_CHASTITY_MINUTES'                  => 'minutes',
+
+    // E2 — Confidentialité
+    'UCP_CHASTITY_REFRESH'              => 'Actualiser mes données',
+    'UCP_CHASTITY_REFRESH_EXPLAIN'       => 'Forcer la mise à jour de votre cache de performance et de votre historique annuel.',
+    'CHASTITY_REFRESH_CACHE'             => 'Actualiser le cache',
+    'CHASTITY_REFRESH_CACHE_EXPLAIN'     => 'Met à jour vos statistiques de performance (jours actuels, jours de l\'année).',
+    'CHASTITY_REFRESH_HISTORY'           => 'Actualiser l\'historique',
+    'CHASTITY_REFRESH_HISTORY_EXPLAIN'   => 'Met à jour vos totaux annuels.',
+    'CHASTITY_REFRESH_DONE'              => 'Vos données ont été mises à jour.',
+    'UCP_CHASTITY_CHASTPRIVACY'                => 'Confidentialité',
+    'UCP_CHASTITY_CHASTPRIVACY_EXPLAIN'        => 'Choisissez quelles informations sont visibles par les autres membres.',
+    'CHASTITY_PREFS_PROFILE'            => 'Informations du profil',
+    'CHASTITY_PREFS_VISIBILITY'         => 'Visibilité',
+    'CHASTITY_PREFS_SHOW_STATUS'        => 'Afficher mon statut (verrouillé/libre)',
+    'CHASTITY_PREFS_SHOW_DAYS'          => 'Afficher le nombre de jours',
+    'CHASTITY_PREFS_SHOW_TOTAL'         => 'Afficher le total de jours',
+    'CHASTITY_PREFS_SHOW_YEAR_STATS'    => 'Afficher les jours de l\'année en cours',
+    'CHASTITY_PREFS_SHOW_BEST_YEAR'     => 'Afficher la meilleure année',
+    'CHASTITY_PREFS_SHOW_BEST_MONTH'    => 'Afficher le meilleur mois',
+    'CHASTITY_PREFS_SHOW_IN_POSTS'      => 'Afficher le badge dans mes messages',
+    'CHASTITY_PREFS_SHOW_IN_CONTACT'    => 'Afficher le statut sur ma page de contact',
+    'CHASTITY_PREFS_SAVED'              => 'Préférences enregistrées.',
+
+    // Meilleur mois — absent dans la version serveur
+    'CHASTITY_BEST_MONTH'                 => 'Meilleur mois',
+
+    // H1 — Heure facultative
+    'CHASTITY_TIME_OPTIONAL'              => '(heure facultative)',
+
+    // API2 — Nécessaire pour le template ucp_chastity_prefs.html
+    'CHASTITY_API_ACCESS'          => 'Accès API externe',
+    'CHASTITY_API_EXPLAIN'         => 'Permettez à des applications externes d\'afficher votre statut.',
+    'CHASTITY_API_ACTIVE'          => 'Accès API activé',
+    'CHASTITY_API_DISABLED'        => 'Accès API désactivé',
+    'CHASTITY_API_TOKEN_LABEL'     => 'Votre token personnel',
+    'CHASTITY_API_URL_EXAMPLE'     => 'URL d\'appel',
+    'CHASTITY_API_GENERATE'        => 'Activer l\'accès API et générer un token',
+    'CHASTITY_API_REVOKE'          => 'Révoquer l\'accès API',
+    'CHASTITY_API_REVOKE_CONFIRM'  => 'Révoquer ? Les applications utilisant ce token perdront l\'accès.',
+    'CHASTITY_API_TOKEN_GENERATED' => 'Token généré. Copiez-le maintenant.',
+    'CHASTITY_API_TOKEN_REVOKED'   => 'Accès API révoqué.',
+
+    // Messages retour ACP maintenance
+    'ACP_CHASTITY_CACHE_UPDATED'   => 'Cache recalculé pour %d utilisateur(s).',
+    'ACP_CHASTITY_HISTORY_UPDATED' => 'Historique recalculé pour %d entrée(s).',
 
 ));

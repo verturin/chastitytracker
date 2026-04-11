@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "Extension de suivi de chasteté avec calendrier visuel et statistiques",
     "homepage": "https://github.com/verturin/chastitytracker",
-    "version": "3.0.17",
+    "version": "3.0.29",
     "license": "GPL-2.0-only",
     "authors": [
         {

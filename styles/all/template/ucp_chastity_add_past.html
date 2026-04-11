@@ -13,12 +13,18 @@
 
 				<dl>
 					<dt><label for="start_date">{{ lang('CHASTITY_START_DATE') }}{{ lang('COLON') }}</label></dt>
-					<dd><input type="date" id="start_date" name="start_date" max="{{ TODAY_DATE }}" required /></dd>
+					<dd>
+						<input type="date" id="start_date" name="start_date" max="{{ TODAY_DATE }}" required />
+						<input type="time" name="start_time" value="00:00" style="margin-left:8px;" />
+					</dd>
 				</dl>
 
 				<dl>
 					<dt><label for="end_date">{{ lang('CHASTITY_END_DATE') }}{{ lang('COLON') }}</label></dt>
-					<dd><input type="date" id="end_date" name="end_date" max="{{ TODAY_DATE }}" required /></dd>
+					<dd>
+						<input type="date" id="end_date" name="end_date" max="{{ TODAY_DATE }}" required />
+						<input type="time" name="end_time" value="23:59" style="margin-left:8px;" />
+					</dd>
 				</dl>
 
 				<dl>

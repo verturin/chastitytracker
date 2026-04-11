@@ -1,0 +1,32 @@
+{% if S_DISPLAY_CHASTITY and S_SHOW_IN_CONTACT %}
+<div class="panel bg2">
+    <div class="inner">
+        <div class="column1">
+            <h3>{{ lang('CHASTITY_STATUS') }}{{ lang('COLON') }}</h3>
+            {% if S_SHOW_STATUS %}
+            <dl><dd>
+                {% if S_CHASTITY_LOCKED %}
+                    <strong style="color: #BC2A4D;">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }}
+                    {% if S_SHOW_DAYS %} {{ CHASTITY_CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}{% endif %}</strong>
+                {% else %}
+                    <strong style="color: #228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}
+                    {% if S_SHOW_DAYS %} {{ lang('CHASTITY_DAYS_SINCE') }} {{ CHASTITY_DAYS_SINCE_END }} {{ lang('CHASTITY_DAYS') }}{% endif %}</strong>
+                {% endif %}
+            </dd></dl>
+            {% endif %}
+        </div>
+        <div class="column2">
+            <h3>{{ lang('CHASTITY_STATS') }}{{ lang('COLON') }}</h3>
+            {% if S_SHOW_YEAR_STATS %}
+            <dl><dd>{{ lang('CHASTITY_YEAR_DAYS') }} {{ CHASTITY_CURRENT_YEAR }}{{ lang('COLON') }} <strong>{{ CHASTITY_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong></dd></dl>
+            {% endif %}
+            {% if S_SHOW_BEST_YEAR and CHASTITY_BEST_YEAR > 0 %}
+            <dl><dd>{{ lang('CHASTITY_BEST_YEAR') }}{{ lang('COLON') }} <strong>{{ CHASTITY_BEST_YEAR }}</strong> — {{ CHASTITY_BEST_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd></dl>
+            {% endif %}
+            {% if S_SHOW_TOTAL_DAYS and CHASTITY_TOTAL_DAYS > 0 %}
+            <dl><dd>{{ lang('CHASTITY_PROFILE_TOTAL_DAYS') }}{{ lang('COLON') }} {{ CHASTITY_TOTAL_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd></dl>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}

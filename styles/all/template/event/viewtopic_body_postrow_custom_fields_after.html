@@ -1,16 +1,16 @@
-<!-- IF postrow.OKDISPLAY_BADGE -->
+{% if postrow.CHASTITY_BADGE and postrow.S_SHOW_IN_POSTS %}
 <dd class="profile-chastity">
 	<center>
 	<br>
-	<!-- IF postrow.CHASTITY_STATUS == 'locked' -->
-		<strong>🔒 Verrouillé depuis <span style="color: #BC2A4D;">{{ postrow.CHASTITY_DAYS }} {{ lang('CHASTITY_DAYS') }}</span></strong>
-	<!-- ELSEIF postrow.CHASTITY_STATUS == 'free' -->
-		<strong>🔓 <span style="color: #228B22;">{{ lang('CHASTITY_STATUS_FREE') }} depuis {{ postrow.CHASTITY_DAYS }} {{ lang('CHASTITY_DAYS') }}</span></strong>
-	<!-- ELSEIF postrow.CHASTITY_STATUS == 'none' -->
-		<strong>🔓 <span style="color: #228B22;">{{ lang('CHASTITY_STATUS_FREE') }}</span></strong>
-	<!-- ENDIF -->
+	{% if postrow.CHASTITY_STATUS == 'locked' %}
+		<strong style="color: #BC2A4D;">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }} {{ postrow.CHASTITY_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong>
+	{% elseif postrow.CHASTITY_STATUS == 'free' %}
+		<strong style="color: #228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }} {{ lang('CHASTITY_DAYS_SINCE') }} {{ postrow.CHASTITY_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong>
+	{% elseif postrow.CHASTITY_STATUS == 'none' %}
+		<strong style="color: #228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}</strong>
+	{% endif %}
 	<br>
 	<br>
 	</center>
 </dd>
-<!-- ENDIF -->
+{% endif %}

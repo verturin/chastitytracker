@@ -1,0 +1,4 @@
+verturin_chastitytracker_home:
+    path: /chastity
+    defaults:
+        _controller: verturin.chastitytracker.controller::handle

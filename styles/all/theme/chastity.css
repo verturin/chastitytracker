@@ -144,3 +144,7 @@
     font-weight:bold;
     border-radius:12px;
 }
+
+@media (min-width: 700px) {
+    .chastity-nav-label { display: none; }
+}
