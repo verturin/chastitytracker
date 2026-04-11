@@ -1,221 +1,100 @@
-# Extension Chastity Tracker pour phpBB
+# Chastity Tracker — verturin/chastitytracker
+> Extension phpBB 3.2+ — Suivi de chasteté avec calendrier visuel, statistiques et défi Locktober
+
+[![Version](https://img.shields.io/badge/version-3.0.29-blue.svg)](CHANGELOG.md)
+[![phpBB](https://img.shields.io/badge/phpBB-%E2%89%A53.2.0-orange.svg)](https://www.phpbb.com)
+[![PHP](https://img.shields.io/badge/PHP-%E2%89%A57.1-8892BF.svg)](https://php.net)
+[![Licence](https://img.shields.io/badge/licence-GPL--2.0--only-green.svg)](LICENSE)
+
+---
 
 ## Description
 
-Cette extension permet aux membres d'un forum phpBB d'enregistrer et suivre leurs périodes de chasteté avec un calendrier complet et des statistiques détaillées.
+**Chastity Tracker** Extension phpBB permettant aux membres d'un forum de suivre et enregistrer leurs périodes de chasteté, avec calendrier visuel, statistiques détaillées, défi communautaire Locktober, préférences de confidentialité et token API personnel.
 
-### Fonctionnalités principales
+## Fonctionnalités
 
-- **Calendrier des périodes** : Enregistrez vos périodes de chasteté avec dates de début et de fin
-- **Suivi en temps réel** : Compteur de jours automatique pour la période active
-- **Statistiques complètes** :
-  - Total de jours en chasteté
-  - Nombre de périodes enregistrées
-  - Statistiques par année et par mois
-  - Période la plus longue
-  - Moyenne des périodes
-- **Affichage sur le profil** : Statut visible sur le profil utilisateur et dans les posts
-- **Contrôle d'accès** : Permissions par groupe d'utilisateurs
-- **Interface d'administration** : Statistiques globales et paramètres
+### Suivi personnel (UCP)
+- **Calendrier mensuel** avec navigation mois précédent/suivant — jours de chasteté mis en évidence
+- **Démarrage/fin de période** avec date et heure personnalisables
+- **Ajout de périodes passées** (dates historiques antérieures)
+- **Mode permanent** — port de cage sans date de fin prévue
+- **5 règles configurables** par période : masturbation, éjaculation, retrait cage (sommeil, public, médical)
+- **Statistiques personnelles** — total, périodes, meilleure année, répartition mensuelle et annuelle
+- **Préférences de confidentialité** — contrôle fin sur chaque information visible
+- **Token API personnel** — permet à des applications externes d'afficher le statut
+- **Actualisation manuelle** du cache de performance et de l'historique
+
+### Affichage communautaire
+- **Badge dans les posts** — statut et jours visibles sous le pseudo
+- **Statut sur le profil** — date de verrouillage, jours actuels, total, meilleure année
+- **Lien de navigation** dans le header avec icône cadenas SVG
+- **Défi Locktober** — classement des participants, badge de réussite, historique des éditions passées
+
+### Administration (ACP)
+- Activation/désactivation globale
+- Configuration individuelle des 5 règles proposées aux utilisateurs
+- Paramètres Locktober (année active, badges, classement public)
+- Statistiques forum globales — top 10 utilisateurs, périodes actives, totaux
+- Reconstruction manuelle des compteurs
+- Gestion du cron cache et historique — intervalle, activation/désactivation, recalcul manuel
+
+---
 
 ## Installation
 
-### 1. Téléchargement
+Voir [INSTALL.md](INSTALL.md) pour le guide complet.
 
-Téléchargez ou clonez cette extension dans le répertoire de votre forum phpBB.
-
-**IMPORTANT** : Le nom du dossier doit être exactement `chastitytracker` (pas `chastity_tracker`).
-
-### 2. Installation des fichiers
-
-Copiez le dossier `chastity_tracker` dans le répertoire :
 ```
 phpbb/ext/verturin/chastitytracker/
 ```
 
-La structure finale devrait être :
-```
-phpbb/
-├── ext/
-│   └── verturin/
-│       └── chastitytracker/
-│           ├── acp/
-│           ├── config/
-│           ├── controller/
-│           ├── event/
-│           ├── language/
-│           ├── migrations/
-│           ├── styles/
-│           ├── ucp/
-│           ├── composer.json
-│           └── ext.php
-```
-
-### 3. Activation de l'extension
-
-1. Connectez-vous au panneau d'administration (ACP)
-2. Allez dans l'onglet **Personnalisation**
-3. Cliquez sur **Gestion des extensions**
-4. Trouvez **Chastity Tracker** dans la liste
-5. Cliquez sur **Activer**
-
-L'extension créera automatiquement les tables de base de données nécessaires et installera les modules.
-
-### 4. Configuration des permissions
-
-Après activation, configurez les permissions :
-
-1. Allez dans **Permissions** > **Permissions des groupes**
-2. Sélectionnez les groupes qui auront accès à l'extension
-3. Accordez les permissions suivantes selon vos besoins :
-   - `Can view chastity tracker` : Voir le suivi de chasteté
-   - `Can manage own chastity periods` : Gérer ses propres périodes
-   - `Can moderate chastity periods` : Modérer les périodes (modérateurs)
-
-### 5. Configuration des paramètres
-
-1. Allez dans **Extensions** > **Chastity Tracker** > **Paramètres**
-2. Configurez les options :
-   - Activer/désactiver l'extension
-   - Afficher le statut sur les profils
-   - Définir un nombre minimum de jours par période
-
-## Utilisation
-
-### Pour les membres
-
-#### Accès au suivi de chasteté
-
-1. Cliquez sur votre nom d'utilisateur en haut à droite
-2. Sélectionnez **Panneau de l'utilisateur**
-3. Dans le menu de gauche, cliquez sur **Chastity Tracker**
-
-#### Démarrer une période
-
-1. Dans l'onglet **Calendrier**
-2. Remplissez le formulaire :
-   - Sélectionnez la date de début
-   - Ajoutez des notes (optionnel)
-3. Cliquez sur **Soumettre**
-
-#### Terminer une période
-
-1. Dans l'onglet **Calendrier**
-2. Cliquez sur le bouton **Terminer la période** à côté de votre période active
-3. Confirmez l'action
-
-Le nombre de jours sera calculé automatiquement et ajouté à vos statistiques.
-
-#### Voir les statistiques
-
-1. Cliquez sur l'onglet **Statistiques**
-2. Vous verrez :
-   - Votre statut actuel (verrouillé/libre)
-   - Le nombre de jours de votre période actuelle (si active)
-   - Le total de jours en chasteté
-   - Les statistiques par année
-   - Les statistiques par mois
-
-### Pour les administrateurs
-
-#### Voir les statistiques globales
-
-1. Connectez-vous au panneau d'administration
-2. Allez dans **Extensions** > **Chastity Tracker** > **Statistiques**
-3. Vous verrez :
-   - Le nombre total de périodes
-   - Le nombre total de jours
-   - Le nombre d'utilisateurs participants
-   - Les périodes actives
-   - Le top 10 des utilisateurs
-
-## Affichage sur les profils
-
-Si activé dans les paramètres, le statut de chasteté s'affichera :
-
-- **Sur le profil utilisateur** :
-  - Statut actuel (verrouillé 🔒 ou libre 🔓)
-  - Date de début de la période active
-  - Nombre de jours actuels
-  - Total de jours en chasteté
-
-- **Dans les posts du forum** :
-  - Icône et statut dans les informations du poster
-  - Nombre de jours actuels (si verrouillé)
-
-## Désactivation / Désinstallation
-
-### Désactivation
-
-1. Allez dans **Personnalisation** > **Gestion des extensions**
-2. Trouvez **Chastity Tracker**
-3. Cliquez sur **Désactiver**
-
-Les données seront conservées dans la base de données.
-
-### Désinstallation complète
-
-⚠️ **Attention** : Cette action supprimera TOUTES les données de l'extension (périodes, statistiques, etc.)
-
-1. Désactivez d'abord l'extension
-2. Cliquez sur **Supprimer les données**
-3. Confirmez l'action
-4. Supprimez le dossier `phpbb/ext/vendor/chastitytracker/`
-
-## Support et personnalisation
-
-### Langues disponibles
-
-- Anglais (EN)
-- Français (FR)
-
-Pour ajouter d'autres langues, copiez le fichier `language/en/common.php` et traduisez-le dans votre langue.
-
-### Personnalisation du style
-
-Le fichier CSS se trouve dans :
-```
-styles/prosilver/theme/chastity.css
-```
-
-Vous pouvez modifier les couleurs, tailles et styles selon vos préférences.
-
-### Compatibilité
-
-- phpBB 3.2.0 ou supérieur
-- PHP 7.1 ou supérieur
-
-## Sécurité et confidentialité
-
-- Les données sont stockées de manière sécurisée dans la base de données phpBB
-- L'accès est contrôlé par le système de permissions phpBB
-- Les utilisateurs ne peuvent voir que leurs propres périodes (sauf modérateurs)
-- Les modérateurs peuvent voir toutes les périodes selon les permissions accordées
+---
 
 ## Structure de la base de données
 
-L'extension crée une table principale :
+| Table | Description |
+|---|---|
+| `{prefix}chastity_users` | Statut courant par utilisateur |
+| `{prefix}chastity_periods` | Toutes les périodes de chasteté |
+| `{prefix}chastity_cache` | Cache de performance (mis à jour par cron) |
+| `{prefix}chastity_history` | Historique annuel agrégé |
+| `{prefix}chastity_user_prefs` | Préférences de confidentialité + token API |
 
-**phpbb_chastity_periods** :
-- period_id : Identifiant unique
-- user_id : Identifiant de l'utilisateur
-- start_date : Date de début
-- end_date : Date de fin (null si active)
-- status : Statut (active/completed)
-- days_count : Nombre de jours
-- notes : Notes de l'utilisateur
-- created_time : Date de création
-- updated_time : Date de modification
+---
 
-Et ajoute des colonnes à la table users :
-- chastity_status : Statut actuel (free/locked)
-- chastity_current_period_id : ID de la période active
-- chastity_total_days : Total de jours en chasteté
+## Permissions ACL
+
+| Permission | Description | Rôle par défaut |
+|---|---|---|
+| `u_chastity_view` | Voir le suivi de chasteté | ROLE_USER_STANDARD |
+| `u_chastity_manage` | Gérer ses propres périodes | ROLE_USER_STANDARD |
+| `u_chastity_prefs` | Gérer ses préférences de confidentialité | ROLE_USER_STANDARD |
+| `u_chastity_refresh` | Forcer l'actualisation de ses données | ROLE_USER_STANDARD |
+| `m_chastity_moderate` | Modérer les périodes (modérateurs) | Manuel |
+
+---
+
+## Compatibilité
+
+- phpBB 3.2.0 ou supérieur (3.3.x recommandé)
+- PHP 7.1 ou supérieur
+- MySQL / MariaDB
+- Compatible tous les thèmes phpBB (templates dans `styles/all/`)
+
+---
+
+## Langues
+
+- 🇫🇷 Français
+- 🇬🇧 Anglais
+
+---
 
 ## Licence
 
-GPL-2.0-only
+[GPL-2.0-only](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 ## Auteur
 
-Développé pour phpBB 3.x
+[Verturin](https://github.com/verturin)

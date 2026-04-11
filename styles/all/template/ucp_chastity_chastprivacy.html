@@ -1,0 +1,102 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_CHASTITY_CHASTPRIVACY') }}</h2>
+<div class="panel">
+    <div class="inner">
+        <p>{{ lang('UCP_CHASTITY_CHASTPRIVACY_EXPLAIN') }}</p>
+
+        <form method="post" action="{{ U_ACTION }}">
+            <fieldset>
+                <legend>{{ lang('CHASTITY_PREFS_PROFILE') }}</legend>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_STATUS') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_status" value="1" {% if SHOW_STATUS %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_status" value="0" {% if not SHOW_STATUS %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_DAYS') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_days" value="1" {% if SHOW_DAYS %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_days" value="0" {% if not SHOW_DAYS %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_TOTAL') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_total_days" value="1" {% if SHOW_TOTAL_DAYS %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_total_days" value="0" {% if not SHOW_TOTAL_DAYS %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_YEAR_STATS') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_year_stats" value="1" {% if SHOW_YEAR_STATS %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_year_stats" value="0" {% if not SHOW_YEAR_STATS %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_BEST_YEAR') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_best_year" value="1" {% if SHOW_BEST_YEAR %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_best_year" value="0" {% if not SHOW_BEST_YEAR %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_BEST_MONTH') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_best_month" value="1" {% if SHOW_BEST_MONTH %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_best_month" value="0" {% if not SHOW_BEST_MONTH %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+            </fieldset>
+
+            <fieldset>
+                <legend>{{ lang('CHASTITY_PREFS_VISIBILITY') }}</legend>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_IN_POSTS') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_in_posts" value="1" {% if SHOW_IN_POSTS %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_in_posts" value="0" {% if not SHOW_IN_POSTS %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_IN_CONTACT') }}{{ lang('COLON') }}</dt>
+                    <dd>
+                        <input type="radio" name="show_in_contact" value="1" {% if SHOW_IN_CONTACT %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_in_contact" value="0" {% if not SHOW_IN_CONTACT %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+            </fieldset>
+
+            <fieldset>
+                <legend>{{ lang('CHASTITY_API_ACCESS') }}</legend>
+                <p>{{ lang('CHASTITY_API_EXPLAIN') }}</p>
+
+                {% if API_ENABLED %}
+                    <p style="color:#228B22;">✅ {{ lang('CHASTITY_API_ACTIVE') }}</p>
+                    <p>
+                        <strong>{{ lang('CHASTITY_API_TOKEN_LABEL') }}{{ lang('COLON') }}</strong><br>
+                        <code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;">{{ API_TOKEN }}</code>
+                    </p>
+                    <code style="font-size:0.8em;">/chastity/api/user/{{ S_USER_ID }}?token={{ API_TOKEN }}</code>
+                    <br><br>
+                    <input type="submit" name="revoke_api_token" value="{{ lang('CHASTITY_API_REVOKE') }}" class="button2"
+                           onclick="return confirm('{{ lang('CHASTITY_API_REVOKE_CONFIRM') }}');" />
+                {% else %}
+                    <p style="color:#888;">🔒 {{ lang('CHASTITY_API_DISABLED') }}</p>
+                    <input type="submit" name="generate_api_token" value="{{ lang('CHASTITY_API_GENERATE') }}" class="button2" />
+                {% endif %}
+            </fieldset>
+
+            <fieldset class="submit-buttons">
+                <input type="submit" name="save_prefs" value="{{ lang('SUBMIT') }}" class="button1" />
+            </fieldset>
+
+            {{ S_FORM_TOKEN }}
+        </form>
+    </div>
+</div>
+
+{% include 'ucp_footer.html' %}

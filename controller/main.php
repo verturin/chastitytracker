@@ -7,6 +7,11 @@
 
 namespace verturin\chastitytracker\controller;
 
+if (!defined('IN_PHPBB'))
+{
+    exit;
+}
+
 class main
 {
     /** @var \phpbb\config\config */
@@ -29,6 +34,12 @@ class main
     protected $php_ext;
     /** @var string */
     protected $periods_table;
+    /** @var string */
+    protected $users_table;
+    /** @var string */
+    protected $cache_table;
+    /** @var string */
+    protected $history_table;
 
     public function __construct(
         \phpbb\config\config $config,
@@ -40,7 +51,10 @@ class main
         \phpbb\auth\auth $auth,
         string $root_path,
         string $php_ext,
-        string $periods_table
+        string $periods_table,
+        string $users_table,
+        string $cache_table,
+        string $history_table
     )
     {
         $this->config        = $config;
@@ -53,6 +67,9 @@ class main
         $this->root_path     = $root_path;
         $this->php_ext       = $php_ext;
         $this->periods_table = $periods_table;
+        $this->users_table   = $users_table;
+        $this->cache_table   = $cache_table;
+        $this->history_table = $history_table;
     }
 
     public function handle(): \Symfony\Component\HttpFoundation\Response

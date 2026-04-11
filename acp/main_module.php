@@ -1,6 +1,6 @@
 <?php
 /**
- * Chastity Tracker - ACP Module
+ * Chastity Tracker - ACP Module (corrigé)
  * @copyright (c) 2024 verturin
  * @license GNU General Public License, version 2 (GPL-2.0)
  */
@@ -18,6 +18,8 @@ class main_module
     {
         global $user, $template, $request, $db, $phpbb_container, $config;
 
+        // Initialisation
+        $this->u_action = $request->variable('u_action', '');
         $user->add_lang_ext('verturin/chastitytracker', 'common');
         $this->tpl_name   = 'acp_chastity_' . $mode;
         $this->page_title = $user->lang['ACP_CHASTITY_' . strtoupper($mode)];
@@ -31,15 +33,15 @@ class main_module
         {
             case 'settings':
                 $this->settings_mode($user, $template, $request, $config);
-            break;
+                break;
 
             case 'statistics':
                 $this->statistics_mode($user, $template, $db, $periods_table);
-            break;
+                break;
 
             case 'rebuild':
-                $this->rebuild_mode($user, $template, $request, $db, $periods_table);
-            break;
+                $this->rebuild_mode($user, $template, $request, $db, $config, $periods_table, $phpbb_container);
+                break;
         }
     }
 
@@ -68,24 +70,25 @@ class main_module
             trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
         }
 
+        // Assign template variables
         $template->assign_vars([
-            'CHASTITY_ENABLE'                         => $config['chastity_enable'] ?? 1,
-            'CHASTITY_PROFILE_DISPLAY'                => $config['chastity_profile_display'] ?? 0,
-            'CHASTITY_MIN_PERIOD_DAYS'                => $config['chastity_min_period_days'] ?? 0,
-            'CHASTITY_RULE_MASTURBATION_ENABLED'      => $config['chastity_rule_masturbation_enabled'] ?? 1,
-            'CHASTITY_RULE_EJACULATION_ENABLED'       => $config['chastity_rule_ejaculation_enabled'] ?? 1,
-            'CHASTITY_RULE_SLEEP_REMOVAL_ENABLED'     => $config['chastity_rule_sleep_removal_enabled'] ?? 1,
-            'CHASTITY_RULE_PUBLIC_REMOVAL_ENABLED'    => $config['chastity_rule_public_removal_enabled'] ?? 1,
-            'CHASTITY_RULE_MEDICAL_REMOVAL_ENABLED'   => $config['chastity_rule_medical_removal_enabled'] ?? 1,
-            'CHASTITY_LOCKTOBER_ENABLED'              => $config['chastity_locktober_enabled'] ?? 1,
-            'CHASTITY_LOCKTOBER_YEAR'                 => $config['chastity_locktober_year'] ?? date('Y'),
-            'CHASTITY_LOCKTOBER_BADGE_ENABLED'        => $config['chastity_locktober_badge_enabled'] ?? 1,
-            'CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED'  => $config['chastity_locktober_leaderboard_enabled'] ?? 1,
+            'CHASTITY_ENABLE'                         => (int) ($config['chastity_enable'] ?? 1),
+            'CHASTITY_PROFILE_DISPLAY'                => (int) ($config['chastity_profile_display'] ?? 0),
+            'CHASTITY_MIN_PERIOD_DAYS'                => (int) ($config['chastity_min_period_days'] ?? 0),
+            'CHASTITY_RULE_MASTURBATION_ENABLED'      => (int) ($config['chastity_rule_masturbation_enabled'] ?? 1),
+            'CHASTITY_RULE_EJACULATION_ENABLED'       => (int) ($config['chastity_rule_ejaculation_enabled'] ?? 1),
+            'CHASTITY_RULE_SLEEP_REMOVAL_ENABLED'     => (int) ($config['chastity_rule_sleep_removal_enabled'] ?? 1),
+            'CHASTITY_RULE_PUBLIC_REMOVAL_ENABLED'    => (int) ($config['chastity_rule_public_removal_enabled'] ?? 1),
+            'CHASTITY_RULE_MEDICAL_REMOVAL_ENABLED'   => (int) ($config['chastity_rule_medical_removal_enabled'] ?? 1),
+            'CHASTITY_LOCKTOBER_ENABLED'              => (int) ($config['chastity_locktober_enabled'] ?? 1),
+            'CHASTITY_LOCKTOBER_YEAR'                 => (int) ($config['chastity_locktober_year'] ?? date('Y')),
+            'CHASTITY_LOCKTOBER_BADGE_ENABLED'        => (int) ($config['chastity_locktober_badge_enabled'] ?? 1),
+            'CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED'  => (int) ($config['chastity_locktober_leaderboard_enabled'] ?? 1),
             'U_ACTION'                                => $this->u_action,
         ]);
     }
 
-    private function rebuild_mode($user, $template, $request, $db, $periods_table)
+    private function rebuild_mode($user, $template, $request, $db, $config, $periods_table, $phpbb_container)
     {
         $rebuilt = 0;
 
@@ -108,14 +111,14 @@ class main_module
 
             foreach ($user_ids as $uid)
             {
-                // Calculer le total des jours de toutes les périodes complétées
+                // Total des jours complétés
                 $sql = 'SELECT SUM(days_count) as total FROM ' . $periods_table . "
                         WHERE user_id = $uid AND status = 'completed'";
                 $result = $db->sql_query($sql);
                 $total_days = (int) $db->sql_fetchfield('total');
                 $db->sql_freeresult($result);
 
-                // Récupérer la période active éventuelle
+                // Période active
                 $sql = 'SELECT period_id, start_date FROM ' . $periods_table . "
                         WHERE user_id = $uid AND status = 'active'
                         ORDER BY start_date DESC LIMIT 1";
@@ -125,7 +128,8 @@ class main_module
 
                 if ($active)
                 {
-                    $active_days = (int) floor((time() - (int) $active['start_date']) / 86400);
+                    $start_time = is_numeric($active['start_date']) ? (int) $active['start_date'] : strtotime($active['start_date']);
+                    $active_days = (int) floor((time() - $start_time) / 86400);
                     $total_days += $active_days;
 
                     $db->sql_query('UPDATE ' . $this->chastity_users_table . "
@@ -149,7 +153,86 @@ class main_module
             trigger_error(sprintf($user->lang['ACP_CHASTITY_REBUILD_DONE'], $rebuilt) . adm_back_link($this->u_action));
         }
 
-        // Statistiques pour affichage avant rebuild
+        // Mise à jour cache et historique
+        if ($request->is_set_post('run_cache_update'))
+        {
+            if (!check_form_key('acp_chastity'))
+            {
+                trigger_error($user->lang['FORM_INVALID']);
+            }
+            $cache_updater = $phpbb_container->get('verturin.chastitytracker.cache_updater');
+            $count = $cache_updater->update_cache();
+            $config->set('chastity_cache_last_gc',   time(), true);
+            trigger_error(
+                sprintf($user->lang['ACP_CHASTITY_CACHE_UPDATED'], $count) . adm_back_link($this->u_action)
+            );
+        }
+
+        if ($request->is_set_post('run_history_update'))
+        {
+            if (!check_form_key('acp_chastity'))
+            {
+                trigger_error($user->lang['FORM_INVALID']);
+            }
+            $history_updater = $phpbb_container->get('verturin.chastitytracker.history_updater');
+            $count = $history_updater->update_history();
+            $config->set('chastity_history_last_gc', time(), true);
+            trigger_error(
+                sprintf($user->lang['ACP_CHASTITY_HISTORY_UPDATED'], $count) . adm_back_link($this->u_action)
+            );
+        }
+
+        if ($request->is_set_post('save_cache_interval'))
+        {
+            if (!check_form_key('acp_chastity'))
+            {
+                trigger_error($user->lang['FORM_INVALID']);
+            }
+            $config->set('chastity_cache_gc', max(1, (int) $request->variable('chastity_cache_gc', 60)));
+            trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
+        }
+
+        if ($request->is_set_post('save_history_interval'))
+        {
+            if (!check_form_key('acp_chastity'))
+            {
+                trigger_error($user->lang['FORM_INVALID']);
+            }
+            $config->set('chastity_history_gc', max(1, (int) $request->variable('chastity_history_gc', 1440)));
+            trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
+        }
+
+        if ($request->is_set_post('toggle_cache_cron'))
+        {
+            if (!check_form_key('acp_chastity'))
+            {
+                trigger_error($user->lang['FORM_INVALID']);
+            }
+            $current = (int) ($config['chastity_cache_cron_enabled'] ?? 1);
+            $config->set('chastity_cache_cron_enabled', $current ? 0 : 1);
+            trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
+        }
+
+        if ($request->is_set_post('toggle_history_cron'))
+        {
+            if (!check_form_key('acp_chastity'))
+            {
+                trigger_error($user->lang['FORM_INVALID']);
+            }
+            $current = (int) ($config['chastity_history_cron_enabled'] ?? 1);
+            $config->set('chastity_history_cron_enabled', $current ? 0 : 1);
+            trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
+        }
+
+        // Remettre les timers cron à l'heure actuelle pour éviter
+        // un recalcul automatique dans les minutes qui suivent
+        if ($rebuilt > 0)
+        {
+            $config->set('chastity_cache_last_gc',   time(), true);
+            $config->set('chastity_history_last_gc', time(), true);
+        }
+
+        // Statistiques
         $sql = 'SELECT COUNT(DISTINCT user_id) as total_users FROM ' . $periods_table;
         $result = $db->sql_query($sql);
         $total_users = (int) $db->sql_fetchfield('total_users');
@@ -161,9 +244,17 @@ class main_module
         $db->sql_freeresult($result);
 
         $template->assign_vars([
-            'REBUILD_TOTAL_USERS'   => $total_users,
-            'REBUILD_ACTIVE_PERIODS'=> $active_count,
-            'U_ACTION'              => $this->u_action,
+            'REBUILD_TOTAL_USERS'      => $total_users,
+            'REBUILD_ACTIVE_PERIODS'   => $active_count,
+            'U_ACTION'                 => $this->u_action,
+            'CHASTITY_CACHE_GC'        => (int) ($config['chastity_cache_gc']         ?? 60),
+            'CHASTITY_HISTORY_GC'      => (int) ($config['chastity_history_gc']       ?? 1440),
+            'S_CACHE_CRON_ENABLED'   => (bool) ($config['chastity_cache_cron_enabled'] ?? 1),
+            'S_HISTORY_CRON_ENABLED' => (bool) ($config['chastity_history_cron_enabled'] ?? 1),
+			'CHASTITY_CACHE_LAST_GC'   => (!empty($config['chastity_cache_last_gc']) && $config['chastity_cache_last_gc'] > 0)
+                                           ? $user->format_date((int) $config['chastity_cache_last_gc'], 'd/m/Y H:i') : '-',
+            'CHASTITY_HISTORY_LAST_GC' => (!empty($config['chastity_history_last_gc']) && $config['chastity_history_last_gc'] > 0)
+                                           ? $user->format_date((int) $config['chastity_history_last_gc'], 'd/m/Y H:i') : '-',
         ]);
     }
 
@@ -186,7 +277,7 @@ class main_module
 
         $sql = 'SELECT u.user_id, u.username, u.user_colour, SUM(p.days_count) as total_days, COUNT(p.period_id) as total_periods
                 FROM ' . $periods_table . ' p
-                LEFT JOIN ' . $this->chastity_users_table . ' u ON u.user_id = p.user_id
+                LEFT JOIN ' . USERS_TABLE . ' u ON u.user_id = p.user_id
                 GROUP BY p.user_id, u.username, u.user_colour, u.user_id
                 ORDER BY total_days DESC
                 LIMIT 10';

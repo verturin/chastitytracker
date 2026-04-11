@@ -1,0 +1,14 @@
+{% if S_CHASTITY_NAV_LINK %}
+<li class="icon-link nav-quick-link">
+    <a href="{{ U_CHASTITY_NAV_LINK }}"
+       class="headerbar-link"
+       title="{{ lang('CHASTITY_NAV_LINK_TITLE') }}">
+        <img src="{{ U_CHASTITY_LOCK_SVG }}"
+             style="width:20px; height:20px; vertical-align:middle;
+                    filter:brightness(0) saturate(100%) invert(22%) sepia(25%)
+                           saturate(800%) hue-rotate(180deg) brightness(95%);"
+             alt="{{ lang('CHASTITY_NAV_LINK_LABEL') }}" />
+        <span class="chastity-nav-label">{{ lang('CHASTITY_NAV_LINK_LABEL') }}</span>
+    </a>
+</li>
+{% endif %}

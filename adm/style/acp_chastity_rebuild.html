@@ -3,27 +3,85 @@
 <a id="maincontent"></a>
 
 <h1>{{ lang('ACP_CHASTITY_REBUILD') }}</h1>
-
 <p>{{ lang('ACP_CHASTITY_REBUILD_EXPLAIN') }}</p>
 
-<fieldset>
-	<legend>{{ lang('ACP_CHASTITY_REBUILD_STATUS') }}</legend>
-	<dl>
-		<dt><strong>{{ lang('ACP_CHASTITY_TOTAL_USERS') }}{{ lang('COLON') }}</strong></dt>
-		<dd>{{ REBUILD_TOTAL_USERS }}</dd>
-	</dl>
-	<dl>
-		<dt><strong>{{ lang('ACP_CHASTITY_ACTIVE_PERIODS') }}{{ lang('COLON') }}</strong></dt>
-		<dd>{{ REBUILD_ACTIVE_PERIODS }}</dd>
-	</dl>
-</fieldset>
+<form method="post" action="{{ U_ACTION }}">
+    <fieldset>
+        <legend>{{ lang('ACP_CHASTITY_REBUILD_STATUS') }}</legend>
+        <dl>
+            <dt><strong>{{ lang('ACP_CHASTITY_TOTAL_USERS') }}{{ lang('COLON') }}</strong></dt>
+            <dd>{{ REBUILD_TOTAL_USERS }}</dd>
+        </dl>
+        <dl>
+            <dt><strong>{{ lang('ACP_CHASTITY_ACTIVE_PERIODS') }}{{ lang('COLON') }}</strong></dt>
+            <dd>{{ REBUILD_ACTIVE_PERIODS }}</dd>
+        </dl>
+        <fieldset class="submit-buttons">
+            <p>{{ lang('ACP_CHASTITY_REBUILD_WARNING') }}</p>
+            <input class="button1" type="submit" name="rebuild" value="{{ lang('ACP_CHASTITY_REBUILD_SUBMIT') }}" onclick="return confirm('{{ lang('ACP_CHASTITY_REBUILD_CONFIRM') }}');" />
+        </fieldset>
+        {{ S_FORM_TOKEN }}
+    </fieldset>
+</form>
 
 <form method="post" action="{{ U_ACTION }}">
-	<fieldset class="submit-buttons">
-		<p>{{ lang('ACP_CHASTITY_REBUILD_WARNING') }}</p>
-		<input class="button1" type="submit" name="rebuild" value="{{ lang('ACP_CHASTITY_REBUILD_SUBMIT') }}" onclick="return confirm('{{ lang('ACP_CHASTITY_REBUILD_CONFIRM') }}');" />
-	</fieldset>
-	{{ S_FORM_TOKEN }}
+    <fieldset>
+        <legend>{{ lang('ACP_CHASTITY_MAINTENANCE') }} Cache — Cron</legend>
+        {% if S_CACHE_CRON_ENABLED %}
+            <p style="color:#28A745;font-weight:bold;">✅ {{ lang('ACP_CHASTITY_CRON_ENABLED') }}</p>
+        {% else %}
+            <p style="color:#DC3545;font-weight:bold;">🔴 {{ lang('ACP_CHASTITY_CRON_DISABLED') }}</p>
+        {% endif %}
+        <p>{{ lang('ACP_CHASTITY_CACHE_UPDATE_EXPLAIN') }}</p>
+        <dl>
+            <dt><label for="chastity_cache_gc">{{ lang('ACP_CHASTITY_CACHE_INTERVAL') }} (Cron){{ lang('COLON') }}</label><br>
+                <span>{{ lang('ACP_CHASTITY_CACHE_INTERVAL_EXPLAIN') }}</span>
+            </dt>
+            <dd>
+                <input type="number" id="chastity_cache_gc" name="chastity_cache_gc"
+                       value="{{ CHASTITY_CACHE_GC }}" min="1" max="10080" style="width:80px;" /> {{ lang('ACP_CHASTITY_MINUTES') }}
+                <span style="color:#888;font-size:0.9em;margin-left:12px;">— Dernier run : {{ CHASTITY_CACHE_LAST_GC }}</span>
+            </dd>
+        </dl>
+        <fieldset class="submit-buttons">
+            <input type="submit" name="run_cache_update" value="{{ lang('ACP_CHASTITY_CACHE_UPDATE_SUBMIT') }}" class="button2">
+            <input class="button1" type="submit" name="save_cache_interval" value="{{ lang('SUBMIT') }}" />
+            <input type="submit" name="toggle_cache_cron"
+                   value="{{ S_CACHE_CRON_ENABLED ? lang('ACP_CHASTITY_CRON_DISABLE') : lang('ACP_CHASTITY_CRON_ENABLE') }}"
+                   class="{{ S_CACHE_CRON_ENABLED ? 'button3' : 'button2' }}" />
+        </fieldset>
+        {{ S_FORM_TOKEN }}
+    </fieldset>
+</form>
+
+<form method="post" action="{{ U_ACTION }}">
+    <fieldset>
+        <legend>{{ lang('ACP_CHASTITY_HISTORY') }} — Cron</legend>
+        {% if S_HISTORY_CRON_ENABLED %}
+            <p style="color:#28A745;font-weight:bold;">✅ {{ lang('ACP_CHASTITY_CRON_ENABLED') }}</p>
+        {% else %}
+            <p style="color:#DC3545;font-weight:bold;">🔴 {{ lang('ACP_CHASTITY_CRON_DISABLED') }}</p>
+        {% endif %}
+        <p>{{ lang('ACP_CHASTITY_HISTORY_UPDATE_EXPLAIN') }}</p>
+        <dl>
+            <dt><label for="chastity_history_gc">{{ lang('ACP_CHASTITY_HISTORY_INTERVAL') }} (Cron){{ lang('COLON') }}</label><br>
+                <span>{{ lang('ACP_CHASTITY_HISTORY_INTERVAL_EXPLAIN') }}</span>
+            </dt>
+            <dd>
+                <input type="number" id="chastity_history_gc" name="chastity_history_gc"
+                       value="{{ CHASTITY_HISTORY_GC }}" min="1" max="100800" style="width:80px;" /> {{ lang('ACP_CHASTITY_MINUTES') }}
+                <span style="color:#888;font-size:0.9em;margin-left:12px;">— Dernier run : {{ CHASTITY_HISTORY_LAST_GC }}</span>
+            </dd>
+        </dl>
+        <fieldset class="submit-buttons">
+            <input type="submit" name="run_history_update" value="{{ lang('ACP_CHASTITY_HISTORY_UPDATE_SUBMIT') }}" class="button2">
+            <input class="button1" type="submit" name="save_history_interval" value="{{ lang('SUBMIT') }}" />
+            <input type="submit" name="toggle_history_cron"
+                   value="{{ S_HISTORY_CRON_ENABLED ? lang('ACP_CHASTITY_CRON_DISABLE') : lang('ACP_CHASTITY_CRON_ENABLE') }}"
+                   class="{{ S_HISTORY_CRON_ENABLED ? 'button3' : 'button2' }}" />
+        </fieldset>
+        {{ S_FORM_TOKEN }}
+    </fieldset>
 </form>
 
 {% include 'overall_footer.html' %}

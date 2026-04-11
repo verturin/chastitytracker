@@ -10,6 +10,8 @@ services:
             - '%verturin.chastitytracker.tables.chastity_periods%'
             - '%verturin.chastitytracker.tables.chastity_users%'
             - '%verturin.chastitytracker.tables.chastity_cache%'
+            - '%verturin.chastitytracker.tables.chastity_history%'
+            - '%verturin.chastitytracker.tables.chastity_user_prefs%'
         tags:
             - { name: event.listener }
 
@@ -26,8 +28,45 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%verturin.chastitytracker.tables.chastity_users%'
+            - '%verturin.chastitytracker.tables.chastity_cache%'
+            - '%verturin.chastitytracker.tables.chastity_history%'
+
+    verturin.chastitytracker.cache_updater:
+        class: verturin\chastitytracker\service\cache_updater
+        arguments:
+            - '@dbal.conn'
+            - '%core.table_prefix%'
+
+    verturin.chastitytracker.history_updater:
+        class: verturin\chastitytracker\service\history_updater
+        arguments:
+            - '@dbal.conn'
+            - '%core.table_prefix%'
+
+    verturin.chastitytracker.cron.task.cache:
+        class: 'verturin\chastitytracker\cron\task\chastity_cache_task'
+        arguments:
+            - '@config'
+            - '@verturin.chastitytracker.cache_updater'
+        calls:
+            - ['set_name', ['cron.task.verturin.chastitytracker.cache']]
+        tags:
+            - { name: 'cron.task' }
+
+    verturin.chastitytracker.cron.task.history:
+        class: 'verturin\chastitytracker\cron\task\chastity_history_task'
+        arguments:
+            - '@config'
+            - '@verturin.chastitytracker.history_updater'
+        calls:
+            - ['set_name', ['cron.task.verturin.chastitytracker.history']]
+        tags:
+            - { name: 'cron.task' }
 
 parameters:
     verturin.chastitytracker.tables.chastity_periods: '%core.table_prefix%chastity_periods'
     verturin.chastitytracker.tables.chastity_users: '%core.table_prefix%chastity_users'
     verturin.chastitytracker.tables.chastity_cache: '%core.table_prefix%chastity_cache'
+    verturin.chastitytracker.tables.chastity_history: '%core.table_prefix%chastity_history'
+    verturin.chastitytracker.tables.chastity_user_prefs: '%core.table_prefix%chastity_user_prefs'
