@@ -45,6 +45,10 @@ class main_module
                 $this->locktober_mode($user, $template, $request, $db, $periods_table, $auth, $config);
             break;
 
+            case 'yearview':
+                $this->yearview_mode($user, $template, $request, $db, $periods_table);
+            break;
+
             case 'chastprivacy':
                 $prefs_table = $phpbb_container->getParameter('verturin.chastitytracker.tables.chastity_user_prefs');
                 $this->prefs_mode($user, $template, $request, $db, $prefs_table, $config);
@@ -415,10 +419,13 @@ class main_module
             $end = $period['status'] === 'active' ? time() : (int) $period['end_date'];
             
             // Parcourir tous les jours de cette période
-            for ($day_timestamp = $start; $day_timestamp <= $end; $day_timestamp += 86400) {
-                $day_key = date('Y-m-d', $day_timestamp);
-                $locked_days[$day_key] = true;
-            }
+            // Normaliser à midi pour éviter le décalage heure d'été/hiver
+                $d = strtotime('12:00:00', $start);
+                $end_noon = strtotime('12:00:00', $end);
+                while ($d <= $end_noon) {
+                    $locked_days[date('Y-m-d', $d)] = true;
+                    $d = strtotime('+1 day', $d);
+                }
         }
         
         // Générer la grille du calendrier
@@ -626,10 +633,9 @@ foreach ($datetime_months as $num => $key) {
 				$days = (int) $period['days_count'];
 			}
 			$total_days += $days;
-			$year_stats[$start_year]['periods']++;
 			$longest = max($longest, $days);
 
-			// Répartir les jours par année — calcul direct sans boucle par jour
+			// Répartir les jours ET les périodes par année — chevauchements gérés
 			$p_start_ts  = (int) $period['start_date'];
 			$p_end_ts    = ($period['status'] === 'active') ? time() : (int) $period['end_date'];
 			$start_year  = (int) date('Y', $p_start_ts);
@@ -646,6 +652,7 @@ foreach ($datetime_months as $num => $key) {
 					(min($p_end_ts, $y_next) - max($p_start_ts, $y_start)) / 86400
 				);
 				$year_stats[$y]['days'] += max(0, $days_in_year);
+				$year_stats[$y]['periods']++;
 			}
 		}
 
@@ -925,6 +932,116 @@ foreach ($datetime_months as $num => $key) {
         $template->assign_vars([
             'U_ACTION'       => $this->u_action,
             'S_REFRESH_DONE' => $refresh_done,
+        ]);
+    }
+
+    private function yearview_mode($user, $template, $request, $db, $periods_table)
+    {
+        $user_id      = (int) $user->data['user_id'];
+        $view_year    = $request->variable('year', (int) date('Y'));
+        $current_year = (int) date('Y');
+
+        // Récupérer TOUTES les périodes de l'année
+        $year_start = mktime(0,  0,  0,  1,  1,  $view_year);
+        $year_end   = mktime(23, 59, 59, 12, 31, $view_year);
+
+        $sql = 'SELECT start_date, end_date, status FROM ' . $periods_table
+             . ' WHERE user_id = ' . $user_id
+             . ' AND ((start_date <= ' . $year_end
+             . '  AND (end_date >= ' . $year_start . " OR status = 'active'))"
+             . '  OR (start_date >= ' . $year_start . ' AND start_date <= ' . $year_end . '))';
+        $result  = $db->sql_query($sql);
+        $periods = $db->sql_fetchrowset($result);
+        $db->sql_freeresult($result);
+
+        // Tableau global des jours verrouillés + total en secondes — filtrés sur l'année
+        $locked_days        = [];
+        $total_year_seconds = 0;
+        foreach ($periods as $period) {
+            $ps = (int) $period['start_date'];
+            $pe = ($period['status'] === 'active') ? time() : (int) $period['end_date'];
+            // Borner aux limites de l'année (gère les périodes à cheval sur 2 ans)
+            $ps = max($ps, $year_start);
+            $pe = min($pe, $year_end);
+            if ($pe > $ps) {
+                $total_year_seconds += ($pe - $ps);
+            }
+            // Marquer les jours verrouillés pour la grille (boucle journalière)
+            // Normaliser à midi pour éviter le décalage heure d'été/hiver
+            $d = strtotime('12:00:00', $ps);
+            $pe_noon = strtotime('12:00:00', $pe);
+            while ($d <= $pe_noon) {
+                $day_str = date('Y-m-d', $d);
+                if (substr($day_str, 0, 4) === (string) $view_year) {
+                    $locked_days[$day_str] = true;
+                }
+                $d = strtotime('+1 day', $d);
+            }
+        }
+
+        $total_locked_year  = (int) floor($total_year_seconds / 86400);
+        $total_year_hours   = (int) floor(($total_year_seconds % 86400) / 3600);
+        $total_year_minutes = (int) floor(($total_year_seconds % 3600) / 60);
+        $today_str  = date('Y-m-d');
+        $month_names = [
+            1 => $user->lang['datetime']['January'],   2 => $user->lang['datetime']['February'],
+            3 => $user->lang['datetime']['March'],     4 => $user->lang['datetime']['April'],
+            5 => $user->lang['datetime']['May'],       6 => $user->lang['datetime']['June'],
+            7 => $user->lang['datetime']['July'],      8 => $user->lang['datetime']['August'],
+            9 => $user->lang['datetime']['September'], 10 => $user->lang['datetime']['October'],
+            11 => $user->lang['datetime']['November'], 12 => $user->lang['datetime']['December'],
+        ];
+
+        // Générer les 12 mois
+        for ($month = 1; $month <= 12; $month++) {
+            $m_first     = mktime(0, 0, 0, $month, 1, $view_year);
+            $days_in_m   = (int) date('t', $m_first);
+            $first_dow   = (int) date('N', $m_first); // 1=Lun
+            $locked_in_m = 0;
+
+            // Compter les jours verrouillés du mois
+            for ($d = 1; $d <= $days_in_m; $d++) {
+                $ds = sprintf('%04d-%02d-%02d', $view_year, $month, $d);
+                if (isset($locked_days[$ds])) $locked_in_m++;
+            }
+
+            // 1. Bloc parent EN PREMIER (obligatoire en phpBB pour les block_vars imbriqués)
+            $template->assign_block_vars('yearly_months', [
+                'MONTH_NAME'   => $month_names[$month],
+                'MONTH_NUM'    => $month,
+                'LOCKED_COUNT' => $locked_in_m,
+                'IS_CURRENT'   => ($month === (int) date('n') && $view_year === $current_year),
+            ]);
+
+            // 2. Cellules enfants APRÈS le parent
+            // Cellules vides avant le 1er
+            for ($e = 1; $e < $first_dow; $e++) {
+                $template->assign_block_vars('yearly_months.month_days', [
+                    'DAY' => '', 'LOCKED' => false, 'TODAY' => false, 'EMPTY' => true,
+                ]);
+            }
+            // Jours du mois
+            for ($d = 1; $d <= $days_in_m; $d++) {
+                $ds     = sprintf('%04d-%02d-%02d', $view_year, $month, $d);
+                $locked = isset($locked_days[$ds]);
+                $template->assign_block_vars('yearly_months.month_days', [
+                    'DAY'    => $d,
+                    'LOCKED' => $locked,
+                    'TODAY'  => ($ds === $today_str),
+                    'EMPTY'  => false,
+                ]);
+            }
+        }
+
+        $template->assign_vars([
+            'VIEW_YEAR'           => $view_year,
+            'PREV_YEAR'           => $view_year - 1,
+            'NEXT_YEAR'           => $view_year + 1,
+            'TOTAL_LOCKED_YEAR'   => $total_locked_year,
+            'TOTAL_YEAR_HOURS'    => $total_year_hours,
+            'TOTAL_YEAR_MINUTES'  => $total_year_minutes,
+            'S_IS_CURRENT_YEAR'   => ($view_year === $current_year),
+            'U_ACTION'            => $this->u_action,
         ]);
     }
 

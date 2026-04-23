@@ -122,7 +122,9 @@ $lang = array_merge($lang, array(
     'CHASTITY_PROFILE_STATUS'       => 'Chastity Status',
     'CHASTITY_PROFILE_LOCKED_SINCE' => 'Locked since',
     'CHASTITY_PROFILE_TOTAL_DAYS'   => 'Total days in chastity',
-
+	'CHASTITY_PROFILE_CALENDAR'     => 'Calendar',
+	'CHASTITY_PROFILE_MONTH'	    => 'Last Month',		
+	
 	// Navlink
     'CHASTITY_NAV_LINK_LABEL' => 'My tracking',
     'CHASTITY_NAV_LINK_TITLE' => 'Go to my chastity tracking',
@@ -133,6 +135,24 @@ $lang = array_merge($lang, array(
     'ACP_CHASTITY_SETTINGS'   => 'Settings',
     'ACP_CHASTITY_STATISTICS' => 'Statistics',
     'ACP_CHASTITY_REBUILD'    => 'Rebuild counters',
+
+'ACP_CHASTITY_BACKUP'                 => 'Backup',
+'ACP_CHASTITY_BACKUP_EXPLAIN'          => 'Export or restore chastity data (members and periods).',
+'ACP_CHASTITY_BACKUP_EXPORT'           => 'Export data',
+'ACP_CHASTITY_BACKUP_EXPORT_EXPLAIN'   => 'The file will contain %d members and %d periods.',
+'ACP_CHASTITY_BACKUP_EXPORT_BTN'       => 'Download backup (.sql)',
+'ACP_CHASTITY_BACKUP_RESTORE'          => 'Restore a backup',
+'ACP_CHASTITY_BACKUP_RESTORE_WARN'     => 'Restoring will erase all existing data before replacing it.',
+'ACP_CHASTITY_BACKUP_FILE'             => 'Backup file (.sql)',
+'ACP_CHASTITY_BACKUP_RESTORE_BTN'      => 'Restore',
+'ACP_CHASTITY_BACKUP_RESTORE_CONFIRM'  => 'Confirm restore? Current data will be erased.',
+'ACP_CHASTITY_BACKUP_RESTORED'         => 'Restore complete — %d records imported.',
+'ACP_CHASTITY_BACKUP_NO_FILE'          => 'No file selected.',
+'ACP_CHASTITY_BACKUP_INVALID'          => 'This is not a Chastity Tracker backup.',
+'CHASTITY_LEADERBOARD_TITLE'           => '🏆 Chastity Leaderboard',
+'CHASTITY_LEADERBOARD_YEAR'            => 'Top %d — Best period',
+'CHASTITY_LEADERBOARD_BEST_YEAR'       => 'Top — Best year',
+'CHASTITY_LEADERBOARD_ALLTIME'         => 'Top — All time',
 
     // ACP - Settings
     'ACP_CHASTITY_SETTINGS_EXPLAIN'        => 'Configure the Chastity Tracker extension settings.',
@@ -257,5 +277,12 @@ $lang = array_merge($lang, array(
     // ACP maintenance return messages
     'ACP_CHASTITY_CACHE_UPDATED'   => 'Cache recalculated for %d user(s).',
     'ACP_CHASTITY_HISTORY_UPDATED' => 'History recalculated for %d entry/entries.',
+
+    // C2 — Annual calendar UCP
+    'UCP_CHASTITY_YEARVIEW'             => 'Annual view',
+    'CHASTITY_YEARVIEW_TOTAL'           => 'locked days in',
+    'CHASTITY_YEARVIEW_LEGEND_LOCKED'   => 'Locked',
+    'CHASTITY_YEARVIEW_LEGEND_FREE'     => 'Free',
+    'CHASTITY_YEARVIEW_LEGEND_TODAY'    => 'Today',
 
 ));

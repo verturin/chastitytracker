@@ -1,0 +1,54 @@
+{% if S_CHASTITY_LEADERBOARD %}
+<div style="margin: 16px 0; padding: 0;">
+    <table style="width:100%; border-collapse:collapse; font-size:0.9em;">
+        <thead>
+            <tr style="background:#BC2A4D; color:#fff; cursor:pointer;"
+                onclick="var t=document.getElementById('chastity_leaderboard_body');var a=document.getElementById('chastity_leaderboard_arrow');if(t.style.display==='none'){t.style.display='';a.innerHTML='▼';}else{t.style.display='none';a.innerHTML='▶';}">
+                <th colspan="3" style="padding:8px 12px; text-align:center; font-size:1em;">
+                    <span id="chastity_leaderboard_arrow" style="display:inline-block;width:1em;">▶</span>
+                    🔒 {{ lang('CHASTITY_LEADERBOARD_TITLE') }}
+                </th>
+            </tr>
+        </thead>
+        <tbody id="chastity_leaderboard_body" style="display:none;">
+            <tr style="background:#2E4057; color:#fff;">
+                <th style="padding:6px 10px; text-align:center; width:33%;">
+                    {{ lang('CHASTITY_LEADERBOARD_YEAR', CHASTITY_LEADERBOARD_YEAR) }}
+                </th>
+                <th style="padding:6px 10px; text-align:center; width:33%;">
+                    {{ lang('CHASTITY_LEADERBOARD_BEST_YEAR') }}
+                </th>
+                <th style="padding:6px 10px; text-align:center; width:33%;">
+                    {{ lang('CHASTITY_LEADERBOARD_ALLTIME') }}
+                </th>
+            </tr>
+        {% for i in range(0, 5) %}
+            <tr style="background:{{ loop.index % 2 == 0 ? '#f5f5f5' : '#ffffff' }}; border-bottom:1px solid #eee;">
+                <td style="padding:5px 10px; text-align:center;">
+                    {% if loops.chastity_top_year[i] is defined %}
+                        <span style="color:#888;font-size:0.85em;">{{ loops.chastity_top_year[i].RANK }}.</span>
+                        {{ loops.chastity_top_year[i].USERNAME }}
+                        <span style="color:#BC2A4D;font-weight:bold;"> — {{ loops.chastity_top_year[i].DAYS }}j</span>
+                    {% else %}<span style="color:#ccc;">—</span>{% endif %}
+                </td>
+                <td style="padding:5px 10px; text-align:center;">
+                    {% if loops.chastity_top_best_year[i] is defined %}
+                        <span style="color:#888;font-size:0.85em;">{{ loops.chastity_top_best_year[i].RANK }}.</span>
+                        {{ loops.chastity_top_best_year[i].USERNAME }}
+                        <span style="color:#BC2A4D;font-weight:bold;"> — {{ loops.chastity_top_best_year[i].DAYS }}j</span>
+                        <span style="color:#888;font-size:0.8em;">({{ loops.chastity_top_best_year[i].YEAR }})</span>
+                    {% else %}<span style="color:#ccc;">—</span>{% endif %}
+                </td>
+                <td style="padding:5px 10px; text-align:center;">
+                    {% if loops.chastity_top_alltime[i] is defined %}
+                        <span style="color:#888;font-size:0.85em;">{{ loops.chastity_top_alltime[i].RANK }}.</span>
+                        {{ loops.chastity_top_alltime[i].USERNAME }}
+                        <span style="color:#BC2A4D;font-weight:bold;"> — {{ loops.chastity_top_alltime[i].DAYS }}j</span>
+                    {% else %}<span style="color:#ccc;">—</span>{% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}

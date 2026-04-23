@@ -20,7 +20,8 @@ class main_info
                 'statistics' => ['title' => 'UCP_CHASTITY_STATISTICS', 'auth' => 'ext_verturin/chastitytracker && acl_u_chastity_view', 'cat' => ['UCP_CHASTITY_TRACKER']],
                 'locktober'  => ['title' => 'UCP_CHASTITY_LOCKTOBER',  'auth' => 'ext_verturin/chastitytracker && acl_u_chastity_view', 'cat' => ['UCP_CHASTITY_TRACKER']],
                 'chastprivacy'    => ['title' => 'UCP_CHASTITY_CHASTPRIVACY',    'auth' => 'ext_verturin/chastitytracker && acl_u_chastity_prefs', 'cat' => ['UCP_CHASTITY_TRACKER']],
-                'refresh' => ['title' => 'UCP_CHASTITY_REFRESH', 'auth' => 'ext_verturin/chastitytracker && acl_u_chastity_refresh', 'cat' => ['UCP_CHASTITY_TRACKER']],				
+                'refresh' => ['title' => 'UCP_CHASTITY_REFRESH', 'auth' => 'ext_verturin/chastitytracker && acl_u_chastity_refresh', 'cat' => ['UCP_CHASTITY_TRACKER']],
+                'yearview'   => ['title' => 'UCP_CHASTITY_YEARVIEW', 'auth' => 'ext_verturin/chastitytracker && acl_u_chastity_view', 'cat' => ['UCP_CHASTITY_TRACKER']],				
             ],
         ];
     }
