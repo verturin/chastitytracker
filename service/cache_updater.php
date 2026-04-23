@@ -46,24 +46,42 @@ class cache_updater
             {
 				$days_current_period = (int) floor((time() - (int) $active['start_date']) / 86400);
 
-                $sql_year    = 'SELECT SUM(days_count) as total FROM ' . $periods_table . "
-                               WHERE user_id = $user_id AND status = 'completed' AND start_date >= $year_start";
+                // Périodes terminées qui touchent l'année (gère chevauchements)
+                $year_end = mktime(23, 59, 59, 12, 31, $current_year);
+                $sql_year    = 'SELECT start_date, end_date FROM ' . $periods_table . "
+                               WHERE user_id = $user_id AND status = 'completed' AND end_date >= $year_start";
                 $result_year = $this->db->sql_query($sql_year);
-                $year_total  = (int) $this->db->sql_fetchfield('total');
+                $year_seconds = 0;
+                while ($py = $this->db->sql_fetchrow($result_year))
+                {
+                    $ps = max((int) $py['start_date'], $year_start);
+                    $pe = min((int) $py['end_date'],   $year_end);
+                    if ($pe > $ps) { $year_seconds += ($pe - $ps); }
+                }
                 $this->db->sql_freeresult($result_year);
 
-                $active_start    = max((int) $active['start_date'], $year_start);
-                $days_in_year    = (int) floor((time() - $active_start) / 86400);
-                $days_current_year = $year_total + $days_in_year;
+                $active_start = max((int) $active['start_date'], $year_start);
+                $active_end   = min(time(), $year_end);
+                if ($active_end > $active_start) { $year_seconds += ($active_end - $active_start); }
+                $days_current_year = (int) floor($year_seconds / 86400);
 
             }
             else
             {
-                $sql_year          = 'SELECT SUM(days_count) as total FROM ' . $periods_table . "
-                                     WHERE user_id = $user_id AND status = 'completed' AND start_date >= $year_start";
-                $result_year       = $this->db->sql_query($sql_year);
-                $days_current_year = (int) $this->db->sql_fetchfield('total');
+                // Périodes terminées qui touchent l'année (gère chevauchements)
+                $year_end = mktime(23, 59, 59, 12, 31, $current_year);
+                $sql_year = 'SELECT start_date, end_date FROM ' . $periods_table . "
+                             WHERE user_id = $user_id AND status = 'completed' AND end_date >= $year_start";
+                $result_year = $this->db->sql_query($sql_year);
+                $year_seconds = 0;
+                while ($py = $this->db->sql_fetchrow($result_year))
+                {
+                    $ps = max((int) $py['start_date'], $year_start);
+                    $pe = min((int) $py['end_date'],   $year_end);
+                    if ($pe > $ps) { $year_seconds += ($pe - $ps); }
+                }
                 $this->db->sql_freeresult($result_year);
+                $days_current_year = (int) floor($year_seconds / 86400);
 
                 $sql_last    = 'SELECT end_date FROM ' . $periods_table . "
                                WHERE user_id = $user_id AND status = 'completed' AND end_date > 0
@@ -118,24 +136,41 @@ class cache_updater
         if ($active)
         {
 			$days_current_period = (int) floor((time() - (int) $active['start_date']) / 86400);
+            $year_end = mktime(23, 59, 59, 12, 31, $current_year);
             $result_year = $this->db->sql_query(
-                'SELECT SUM(days_count) as total FROM ' . $periods_table .
-                " WHERE user_id = $user_id AND status = 'completed' AND start_date >= $year_start"
+                'SELECT start_date, end_date FROM ' . $periods_table .
+                " WHERE user_id = $user_id AND status = 'completed' AND end_date >= $year_start"
             );
-            $active_start      = max((int) $active['start_date'], $year_start);
-            $days_in_year      = (int) floor((time() - $active_start) / 86400);
-            $days_current_year = (int) $this->db->sql_fetchfield('total') + $days_in_year;
+            $year_seconds = 0;
+            while ($py = $this->db->sql_fetchrow($result_year))
+            {
+                $ps = max((int) $py['start_date'], $year_start);
+                $pe = min((int) $py['end_date'],   $year_end);
+                if ($pe > $ps) { $year_seconds += ($pe - $ps); }
+            }
             $this->db->sql_freeresult($result_year);
+            $active_start = max((int) $active['start_date'], $year_start);
+            $active_end   = min(time(), $year_end);
+            if ($active_end > $active_start) { $year_seconds += ($active_end - $active_start); }
+            $days_current_year = (int) floor($year_seconds / 86400);
 
         }
         else
         {
+            $year_end = mktime(23, 59, 59, 12, 31, $current_year);
             $result_year = $this->db->sql_query(
-                'SELECT SUM(days_count) as total FROM ' . $periods_table .
-                " WHERE user_id = $user_id AND status = 'completed' AND start_date >= $year_start"
+                'SELECT start_date, end_date FROM ' . $periods_table .
+                " WHERE user_id = $user_id AND status = 'completed' AND end_date >= $year_start"
             );
-            $days_current_year = (int) $this->db->sql_fetchfield('total');
+            $year_seconds = 0;
+            while ($py = $this->db->sql_fetchrow($result_year))
+            {
+                $ps = max((int) $py['start_date'], $year_start);
+                $pe = min((int) $py['end_date'],   $year_end);
+                if ($pe > $ps) { $year_seconds += ($pe - $ps); }
+            }
             $this->db->sql_freeresult($result_year);
+            $days_current_year = (int) floor($year_seconds / 86400);
             $result_last = $this->db->sql_query(
                 'SELECT end_date FROM ' . $periods_table .
                 " WHERE user_id = $user_id AND status = 'completed' AND end_date > 0" .

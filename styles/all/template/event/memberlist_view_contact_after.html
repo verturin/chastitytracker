@@ -18,7 +18,7 @@
         <div class="column2">
             <h3>{{ lang('CHASTITY_STATS') }}{{ lang('COLON') }}</h3>
             {% if S_SHOW_YEAR_STATS %}
-            <dl><dd>{{ lang('CHASTITY_YEAR_DAYS') }} {{ CHASTITY_CURRENT_YEAR }}{{ lang('COLON') }} <strong>{{ CHASTITY_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong></dd></dl>
+            <dl><dd>{{ lang('CHASTITY_YEAR_DAYS') }} {{ CHASTITY_CURRENT_YEAR }}{{ lang('COLON') }} <strong>{{ CHASTITY_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}{% if CHASTITY_YEAR_HOURS > 0 or CHASTITY_YEAR_MINUTES > 0 %} {{ CHASTITY_YEAR_HOURS }}h {{ CHASTITY_YEAR_MINUTES }}min{% endif %}</strong></dd></dl>
             {% endif %}
             {% if S_SHOW_BEST_YEAR and CHASTITY_BEST_YEAR > 0 %}
             <dl><dd>{{ lang('CHASTITY_BEST_YEAR') }}{{ lang('COLON') }} <strong>{{ CHASTITY_BEST_YEAR }}</strong> — {{ CHASTITY_BEST_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd></dl>
@@ -28,5 +28,62 @@
             {% endif %}
         </div>
     </div>
+    <div class="inner">
+	{% if S_SHOW_STATUS %}
+		<h3>{{ lang('CHASTITY_PROFILE_MONTH') }}{{ lang('COLON') }}</h3>
+
+<dl>
+    <dt></dt>
+    <dd>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        {% for month in profile_months %}
+        <div style="flex:1;min-width:120px;">
+            <div style="font-size:0.75em;font-weight:bold;color:#BC2A4D;
+                        text-align:center;margin-bottom:3px;">
+                {{ month.MONTH_NAME }}
+            </div>
+            <table style="border-collapse:separate;border-spacing:1px;width:100%;">
+                <tr style="font-size:0.65em;color:#888;">
+                    <th style="text-align:center;">L</th>
+                    <th style="text-align:center;">M</th>
+                    <th style="text-align:center;">M</th>
+                    <th style="text-align:center;">J</th>
+                    <th style="text-align:center;">V</th>
+                    <th style="text-align:center;">S</th>
+                    <th style="text-align:center;">D</th>
+                </tr>
+                {% set col = 0 %}
+                {% for cell in profile_cal if cell.MONTH == month.MONTH_NUM %}
+                    {% if col % 7 == 0 %}<tr>{% endif %}
+                    <td style="
+                        width:18px;height:18px;text-align:center;font-size:0.7em;
+                        border-radius:2px;
+                        background:{% if cell.EMPTY %}transparent
+                                   {% elseif cell.LOCKED %}#d4edda
+                                   {% else %}#f8f8f8{% endif %};
+                        border:{% if cell.TODAY %}2px solid #BC2A4D
+                               {% elseif cell.EMPTY %}none
+                               {% else %}1px solid #e0e0e0{% endif %};">
+                        {% if not cell.EMPTY %}
+                            <span style="
+                                color:{% if cell.LOCKED %}#28a745
+                                      {% elseif cell.TODAY %}#BC2A4D
+                                      {% else %}#999{% endif %};
+                                font-weight:{% if cell.TODAY %}bold{% else %}normal{% endif %};">
+                                {{ cell.DAY }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    {% set col = col + 1 %}
+                    {% if col % 7 == 0 %}</tr>{% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        {% endfor %}
+        </div>
+    </dd>
+</dl>
+{% endif %}
+	</div>
 </div>
 {% endif %}

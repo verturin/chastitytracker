@@ -1,0 +1,89 @@
+{% include 'ucp_header.html' %}
+
+<h2>{{ lang('UCP_CHASTITY_YEARVIEW') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+
+		<!-- Navigation années -->
+		<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+			<a href="{{ U_ACTION }}&amp;year={{ PREV_YEAR }}"
+			   style="padding:8px 15px;background:#BC2A4D;color:white;text-decoration:none;border-radius:3px;">
+				◀ {{ PREV_YEAR }}
+			</a>
+			<h3 style="margin:0;color:#BC2A4D;font-size:1.5em;">{{ VIEW_YEAR }}</h3>
+			{% if not S_IS_CURRENT_YEAR %}
+			<a href="{{ U_ACTION }}&amp;year={{ NEXT_YEAR }}"
+			   style="padding:8px 15px;background:#BC2A4D;color:white;text-decoration:none;border-radius:3px;">
+				{{ NEXT_YEAR }} ▶
+			</a>
+			{% else %}
+			<span style="padding:8px 15px;"></span>
+			{% endif %}
+		</div>
+
+		<!-- Barre de synthèse -->
+		<div style="background:#f0f8f0;border:1px solid #28a745;border-radius:5px;padding:12px 20px;margin-bottom:24px;text-align:center;">
+			<strong style="font-size:1.2em;color:#28a745;">🔒 {{ TOTAL_LOCKED_YEAR }} {{ lang('CHASTITY_DAYS') }}{% if TOTAL_YEAR_HOURS > 0 or TOTAL_YEAR_MINUTES > 0 %} {{ TOTAL_YEAR_HOURS }}h {{ TOTAL_YEAR_MINUTES }}min{% endif %}</strong>
+			<span style="color:#666;margin-left:8px;">{{ lang('CHASTITY_YEARVIEW_TOTAL') }} {{ VIEW_YEAR }}</span>
+		</div>
+
+		<!-- Grille 12 mois (4 colonnes x 3 lignes) -->
+		<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:0 0 20px;">
+		{% for month in loops.yearly_months %}
+			<div style="border:1px solid {% if month.IS_CURRENT %}#BC2A4D{% else %}#ddd{% endif %};border-radius:6px;padding:8px;background:{% if month.IS_CURRENT %}#fff5f7{% else %}#fafafa{% endif %};">
+				<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:0.9em;">
+					<strong>{{ month.MONTH_NAME }}</strong>
+					{% if month.LOCKED_COUNT > 0 %}
+					<span style="color:#28a745;font-size:0.85em;">🔒 {{ month.LOCKED_COUNT }}j</span>
+					{% endif %}
+				</div>
+				<table style="width:100%;border-collapse:separate;border-spacing:1px;">
+					<tr>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">L</th>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">M</th>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">M</th>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">J</th>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">V</th>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">S</th>
+						<th style="font-size:0.65em;color:#888;text-align:center;padding:1px;">D</th>
+					</tr>
+					{% set col = 0 %}
+					{% for day in month.month_days %}
+						{% if col % 7 == 0 %}<tr>{% endif %}
+						<td style="
+							width:14.28%;height:18px;text-align:center;font-size:0.7em;border-radius:2px;cursor:default;
+							{% if day.EMPTY %}background:transparent;
+							{% elseif day.LOCKED %}background:#d4edda;color:#28a745;font-weight:bold;
+							{% else %}background:#f8f8f8;color:#aaa;{% endif %}
+							{% if day.TODAY %}outline:2px solid #BC2A4D;color:#BC2A4D;font-weight:bold;{% endif %}">
+							{% if not day.EMPTY %}{{ day.DAY }}{% endif %}
+						</td>
+						{% set col = col + 1 %}
+						{% if col % 7 == 0 %}</tr>{% endif %}
+					{% endfor %}
+				</table>
+			</div>
+		{% endfor %}
+		</div>
+
+		<!-- Légende -->
+		<div style="margin-top:20px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+			<span>
+				<span style="display:inline-block;width:16px;height:16px;border-radius:2px;vertical-align:middle;margin-right:4px;background:#d4edda;"></span>
+				{{ lang('CHASTITY_YEARVIEW_LEGEND_LOCKED') }}
+			</span>
+			<span>
+				<span style="display:inline-block;width:16px;height:16px;border-radius:2px;vertical-align:middle;margin-right:4px;background:#f8f8f8;border:1px solid #ddd;"></span>
+				{{ lang('CHASTITY_YEARVIEW_LEGEND_FREE') }}
+			</span>
+			<span>
+				<span style="display:inline-block;width:16px;height:16px;border-radius:2px;vertical-align:middle;margin-right:4px;outline:2px solid #BC2A4D;"></span>
+				{{ lang('CHASTITY_YEARVIEW_LEGEND_TODAY') }}
+			</span>
+		</div>
+
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

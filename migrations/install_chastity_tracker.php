@@ -179,7 +179,7 @@ class install_chastity_tracker extends \phpbb\db\migration\migration
             ['module.add', ['ucp', 0, 'UCP_CHASTITY_TRACKER']],
             ['module.add', ['ucp', 'UCP_CHASTITY_TRACKER', [
                 'module_basename' => '\verturin\chastitytracker\ucp\main_module',
-                'modes' => ['calendar', 'add_past', 'statistics', 'locktober', 'chastprivacy', 'refresh'],
+				'modes' => ['calendar', 'add_past', 'statistics', 'locktober', 'chastprivacy', 'refresh', 'yearview'],
             ]]],
 
             // Module ACP
@@ -207,6 +207,7 @@ class install_chastity_tracker extends \phpbb\db\migration\migration
             ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'statistics']],
             ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'add_past']],
             ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'calendar']],
+			['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'yearview']],		
             ['module.remove', ['ucp', 0, 'UCP_CHASTITY_TRACKER']],
 
             // ACP — modes d'abord, parent ensuite

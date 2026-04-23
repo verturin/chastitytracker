@@ -122,6 +122,8 @@ $lang = array_merge($lang, array(
     'CHASTITY_PROFILE_STATUS'      => 'Statut de chasteté',
     'CHASTITY_PROFILE_LOCKED_SINCE'=> 'Verrouillé depuis',
     'CHASTITY_PROFILE_TOTAL_DAYS'  => 'Total de jours en chasteté',
+    'CHASTITY_PROFILE_CALENDAR'    => 'Calendrier',
+	'CHASTITY_PROFILE_MONTH'	   => 'Derniers Mois',	
 
 	// Navlink
     'CHASTITY_NAV_LINK_LABEL' => 'Mon suivi',
@@ -134,6 +136,27 @@ $lang = array_merge($lang, array(
     'ACP_CHASTITY_SETTINGS'   => 'Paramètres',
     'ACP_CHASTITY_STATISTICS' => 'Statistiques',
     'ACP_CHASTITY_REBUILD'    => 'Reconstruire les compteurs',
+
+
+'ACP_CHASTITY_BACKUP'                 => 'Sauvegarde',
+'ACP_CHASTITY_BACKUP_EXPLAIN'          => 'Exportez ou restaurez les données de chasteté (membres et périodes).',
+'ACP_CHASTITY_BACKUP_EXPORT'           => 'Exporter les données',
+'ACP_CHASTITY_BACKUP_EXPORT_EXPLAIN'   => 'Le fichier contiendra %d membres et %d périodes.',
+'ACP_CHASTITY_BACKUP_EXPORT_BTN'       => 'Télécharger la sauvegarde (.sql)',
+'ACP_CHASTITY_BACKUP_RESTORE'          => 'Restaurer une sauvegarde',
+'ACP_CHASTITY_BACKUP_RESTORE_WARN'     => 'La restauration efface toutes les données existantes avant de les remplacer.',
+'ACP_CHASTITY_BACKUP_FILE'             => 'Fichier de sauvegarde (.sql)',
+'ACP_CHASTITY_BACKUP_RESTORE_BTN'      => 'Restaurer',
+'ACP_CHASTITY_BACKUP_RESTORE_CONFIRM'  => 'Confirmer la restauration ? Les données actuelles seront effacées.',
+'ACP_CHASTITY_BACKUP_RESTORED'         => 'Restauration terminée — %d enregistrements importés.',
+'ACP_CHASTITY_BACKUP_NO_FILE'          => 'Aucun fichier sélectionné.',
+'ACP_CHASTITY_BACKUP_INVALID'          => "Ce n'est pas une sauvegarde Chastity Tracker.",
+'CHASTITY_LEADERBOARD_TITLE'           => '🏆 Classement Chasteté',
+'CHASTITY_LEADERBOARD_YEAR'            => 'Top %d — Meilleure période',
+'CHASTITY_LEADERBOARD_BEST_YEAR'       => 'Top — Meilleure année',
+'CHASTITY_LEADERBOARD_ALLTIME'         => 'Top — Tous temps',
+
+	
 
     // ACP - Paramètres
     'ACP_CHASTITY_SETTINGS_EXPLAIN'          => 'Configurez les paramètres de l\'extension Suivi de Chasteté.',
@@ -258,5 +281,12 @@ $lang = array_merge($lang, array(
     // Messages retour ACP maintenance
     'ACP_CHASTITY_CACHE_UPDATED'   => 'Cache recalculé pour %d utilisateur(s).',
     'ACP_CHASTITY_HISTORY_UPDATED' => 'Historique recalculé pour %d entrée(s).',
+
+    // C2 — Calendrier annuel UCP
+    'UCP_CHASTITY_YEARVIEW'             => 'Vue annuelle',
+    'CHASTITY_YEARVIEW_TOTAL'           => 'jours verrouillés en',
+    'CHASTITY_YEARVIEW_LEGEND_LOCKED'   => 'Verrouillé',
+    'CHASTITY_YEARVIEW_LEGEND_FREE'     => 'Libre',
+    'CHASTITY_YEARVIEW_LEGEND_TODAY'    => 'Aujourd\'hui',
 
 ));

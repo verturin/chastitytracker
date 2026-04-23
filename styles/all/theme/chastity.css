@@ -148,3 +148,59 @@
 @media (min-width: 700px) {
     .chastity-nav-label { display: none; }
 }
+
+/* ── Calendrier annuel UCP ────────────────────── */
+.chastity-yearview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 0 0 20px;
+}
+@media (max-width: 900px) { .chastity-yearview-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .chastity-yearview-grid { grid-template-columns: repeat(2, 1fr); } }
+.chastity-yearview-month {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fafafa;
+}
+.chastity-yearview-current { border-color: #BC2A4D; background: #fff5f7; }
+.chastity-yearview-month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+.chastity-yearview-count { color: #28a745; font-size: 0.85em; }
+.chastity-yearview-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;
+}
+.chastity-yearview-dow th {
+    font-size: 0.65em;
+    color: #888;
+    text-align: center;
+    padding: 1px;
+}
+.chastity-yearview-table td {
+    width: 14.28%;
+    height: 18px;
+    text-align: center;
+    font-size: 0.7em;
+    border-radius: 2px;
+    cursor: default;
+}
+.chastity-yv-empty  { background: transparent; }
+.chastity-yv-locked { background: #d4edda; color: #28a745; font-weight: bold; }
+.chastity-yv-free   { background: #f8f8f8; color: #aaa; }
+.chastity-yv-today  { outline: 2px solid #BC2A4D; color: #BC2A4D !important; font-weight: bold; }
+/* Légende */
+.chastity-yv-legend {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 4px;
+}

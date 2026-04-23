@@ -1,0 +1,29 @@
+<!-- INCLUDE overall_header.html -->
+<h1>{{ lang('ACP_CHASTITY_BACKUP') }}</h1>
+<div class="panel">
+    <div class="inner">
+        <p>{{ lang('ACP_CHASTITY_BACKUP_EXPLAIN') }}</p>
+        <fieldset>
+            <legend>{{ lang('ACP_CHASTITY_BACKUP_EXPORT') }}</legend>
+            <p>{{ lang('ACP_CHASTITY_BACKUP_EXPORT_EXPLAIN', BACKUP_USERS, BACKUP_PERIODS) }}</p>
+            <form method="post" action="{{ U_ACTION }}">
+                <input type="submit" name="export_backup" value="{{ lang('ACP_CHASTITY_BACKUP_EXPORT_BTN') }}" class="button1" />
+                {{ S_FORM_TOKEN }}
+            </form>
+        </fieldset>
+        <fieldset>
+            <legend>{{ lang('ACP_CHASTITY_BACKUP_RESTORE') }}</legend>
+            <p style="color:#BC2A4D;">⚠️ {{ lang('ACP_CHASTITY_BACKUP_RESTORE_WARN') }}</p>
+            <form method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+                <dl>
+                    <dt>{{ lang('ACP_CHASTITY_BACKUP_FILE') }} :</dt>
+                    <dd><input type="file" name="backup_file" accept=".sql" /></dd>
+                </dl>
+                <input type="submit" name="restore_backup" value="{{ lang('ACP_CHASTITY_BACKUP_RESTORE_BTN') }}" class="button2"
+                    onclick="return confirm('{{ lang('ACP_CHASTITY_BACKUP_RESTORE_CONFIRM') }}');" />
+                {{ S_FORM_TOKEN }}
+            </form>
+        </fieldset>
+    </div>
+</div>
+<!-- INCLUDE overall_footer.html -->

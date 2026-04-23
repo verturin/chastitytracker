@@ -30,10 +30,13 @@ class history_updater
         {
             $user_id = (int) $row['user_id'];
 
-            $sql_years    = 'SELECT DISTINCT YEAR(FROM_UNIXTIME(start_date)) as year
-                             FROM ' . $periods_table . '
-                             WHERE user_id = ' . $user_id . ' AND start_date > 0
-                             ORDER BY year';
+            $sql_years    = 'SELECT DISTINCT y as year FROM (
+                                SELECT YEAR(FROM_UNIXTIME(start_date)) as y FROM ' . $periods_table . '
+                                    WHERE user_id = ' . $user_id . ' AND start_date > 0
+                                UNION
+                                SELECT YEAR(FROM_UNIXTIME(end_date)) as y FROM ' . $periods_table . '
+                                    WHERE user_id = ' . $user_id . ' AND end_date > 0
+                             ) years ORDER BY year';
             $result_years = $this->db->sql_query($sql_years);
 
             while ($year_row = $this->db->sql_fetchrow($result_years))
@@ -109,9 +112,13 @@ class history_updater
         $user_id = (int) $user_id;
 
         $result_years = $this->db->sql_query(
-            'SELECT DISTINCT YEAR(FROM_UNIXTIME(start_date)) as year
-             FROM ' . $periods_table . '
-             WHERE user_id = ' . $user_id . ' AND start_date > 0 ORDER BY year'
+            'SELECT DISTINCT y as year FROM (
+                SELECT YEAR(FROM_UNIXTIME(start_date)) as y FROM ' . $periods_table . '
+                    WHERE user_id = ' . $user_id . ' AND start_date > 0
+                UNION
+                SELECT YEAR(FROM_UNIXTIME(end_date)) as y FROM ' . $periods_table . '
+                    WHERE user_id = ' . $user_id . ' AND end_date > 0
+             ) years ORDER BY year'
         );
 
         while ($year_row = $this->db->sql_fetchrow($result_years))

@@ -34,13 +34,15 @@ class main_listener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'core.user_setup'              => 'load_language',
-            'core.memberlist_view_profile' => 'display_chastity_status_profile',
-            'core.permissions'             => 'add_permissions',
+            'core.user_setup'                => 'load_language',
+            'core.memberlist_view_profile'   => 'display_chastity_status_profile',
+            'core.permissions'               => 'add_permissions',
             'core.viewtopic_modify_post_row' => 'set_post_row_var',
-            'core.page_header'                => 'display_nav_link',
+            'core.page_header'               => [
+                ['display_nav_link'],
+                ['display_leaderboard'],
+            ],
         ];
-
     }
     
     public function load_language($event)
@@ -117,17 +119,33 @@ class main_listener implements EventSubscriberInterface
         // Jours de l'année en cours
         $current_year = (int) date('Y');
         $year_start   = mktime(0, 0, 0, 1, 1, $current_year);
-        $sql_year = 'SELECT SUM(days_count) as total FROM ' . $this->periods_table . "
-                    WHERE user_id = $user_id AND status = 'completed' AND start_date >= $year_start";
-        $result_year = $this->db->sql_query($sql_year);
-        $year_days = (int) $this->db->sql_fetchfield('total');
+        $year_end     = mktime(23, 59, 59, 12, 31, $current_year);
+
+        // Récupérer toutes les périodes terminées qui touchent l'année courante
+        $sql_year = 'SELECT start_date, end_date FROM ' . $this->periods_table . "
+                    WHERE user_id = $user_id AND status = 'completed' AND end_date >= $year_start";
+        $result_year  = $this->db->sql_query($sql_year);
+        $periods_year = $this->db->sql_fetchrowset($result_year);
         $this->db->sql_freeresult($result_year);
+
+        $year_seconds = 0;
+        foreach ($periods_year as $py) {
+            $ps = max((int) $py['start_date'], $year_start);
+            $pe = min((int) $py['end_date'],   $year_end);
+            if ($pe > $ps) {
+                $year_seconds += ($pe - $ps);
+            }
+        }
+        // Ajouter les secondes de la période active dans l'année
         if ($locked && $row['start_date'])
         {
-            $active_start  = max((int) $row['start_date'], $year_start);
-            $days_in_year  = (int) floor((time() - $active_start) / 86400);
-            $year_days    += $days_in_year;
+            $active_start   = max((int) $row['start_date'], $year_start);
+            $active_end     = min(time(), $year_end);
+            if ($active_end > $active_start) {
+                $year_seconds += ($active_end - $active_start);
+            }
         }
+        $year_days = (int) floor($year_seconds / 86400);
 
         // Meilleure année (depuis chastity_history)
         $sql_best_year = 'SELECT year, total_days FROM ' . $this->history_table . "
@@ -156,6 +174,70 @@ class main_listener implements EventSubscriberInterface
         $show_in_contact = $prefs ? (bool)$prefs['show_in_contact'] : (bool)$d_show;
 
 
+        // Mini-calendrier : 3 derniers mois (M-2, M-1, M courant)
+        for ($offset = 3; $offset >= 0; $offset--) {
+            $m = (int) date('n') - $offset;
+            $y = (int) date('Y');
+            if ($m <= 0) { $m += 12; $y--; }
+
+            $m_first = mktime(0, 0, 0, $m, 1, $y);
+            $m_last  = mktime(23, 59, 59, $m, (int) date('t', $m_first), $y);
+
+            // Périodes qui touchent ce mois
+            $sql_cal = 'SELECT start_date, end_date, status FROM ' . $this->periods_table
+                     . ' WHERE user_id = ' . $user_id
+                     . ' AND ((start_date <= ' . $m_last
+                     . '  AND (end_date >= ' . $m_first . " OR status = 'active'))"
+                     . '  OR (start_date >= ' . $m_first . ' AND start_date <= ' . $m_last . '))';
+            $res_cal     = $this->db->sql_query($sql_cal);
+            $periods_cal = $this->db->sql_fetchrowset($res_cal);
+            $this->db->sql_freeresult($res_cal);
+
+            // Jours verrouillés du mois
+            $locked_cal = [];
+            foreach ($periods_cal as $pc) {
+                $ps = (int) $pc['start_date'];
+                $pe = ($pc['status'] === 'active') ? time() : (int) $pc['end_date'];
+                // Normaliser à midi pour éviter le décalage heure d'été/hiver
+                $d = strtotime('12:00:00', $ps);
+                $pe_noon = strtotime('12:00:00', $pe);
+                while ($d <= $pe_noon) {
+                    $locked_cal[date('Y-m-d', $d)] = true;
+                    $d = strtotime('+1 day', $d);
+                }
+            }
+
+            $days_in_month = (int) date('t', $m_first);
+            $first_dow     = (int) date('N', $m_first); // 1=Lun, 7=Dim
+            $today_str     = date('Y-m-d');
+
+            // Cellules vides avant le 1er
+            for ($e = 1; $e < $first_dow; $e++) {
+                $this->template->assign_block_vars('profile_cal', [
+                    'MONTH' => $m, 'DAY' => '', 'LOCKED' => false, 'TODAY' => false, 'EMPTY' => true,
+                ]);
+            }
+            // Jours du mois
+            for ($d = 1; $d <= $days_in_month; $d++) {
+                $date_str = sprintf('%04d-%02d-%02d', $y, $m, $d);
+                $this->template->assign_block_vars('profile_cal', [
+                    'MONTH'  => $m,
+                    'DAY'    => $d,
+                    'LOCKED' => isset($locked_cal[$date_str]),
+                    'TODAY'  => ($date_str === $today_str),
+                    'EMPTY'  => false,
+                ]);
+            }
+
+            // Bloc mois pour le template
+            $this->template->assign_block_vars('profile_months', [
+                'MONTH_NAME' => $this->user->lang['datetime'][date('F', $m_first)],
+                'MONTH_NUM'  => $m,
+                'MONTH_YEAR' => $y,
+            ]);
+        }
+
+
 		$this->template->assign_vars([
             'CHASTITY_STATUS'          => $this->user->lang[$locked ? 'CHASTITY_STATUS_LOCKED' : 'CHASTITY_STATUS_FREE'],
             'CHASTITY_CURRENT_DAYS'    => $current_days,
@@ -166,9 +248,12 @@ class main_listener implements EventSubscriberInterface
             'CHASTITY_LOCKED_SINCE'    => ($locked && $row['start_date'])
                 ? $this->user->format_date((int) $row['start_date'], 'd/m/Y') : '',
             'CHASTITY_YEAR_DAYS'       => $year_days,
+            'CHASTITY_YEAR_HOURS'      => (int) floor(($year_seconds % 86400) / 3600),
+            'CHASTITY_YEAR_MINUTES'    => (int) floor(($year_seconds % 3600) / 60),
             'CHASTITY_CURRENT_YEAR'    => $current_year,
             'CHASTITY_BEST_YEAR_DAYS'  => $best_year_days,
             'CHASTITY_BEST_YEAR'       => $best_year,
+            'PROFILE_CAL_YEAR'  	   => (int) date('Y'),
             'S_SHOW_STATUS'            => $show_status,
             'S_SHOW_DAYS'              => $show_days,
             'S_SHOW_TOTAL_DAYS'        => $show_total_days,
@@ -210,6 +295,11 @@ class main_listener implements EventSubscriberInterface
 
         $permissions['u_chastity_refresh'] = [
             'lang' => 'ACL_U_CHASTITY_REFRESH',
+            'cat'  => 'chastity'
+        ];
+
+        $permissions['u_chastity_leaderboard'] = [
+            'lang' => 'ACL_U_CHASTITY_LEADERBOARD',
             'cat'  => 'chastity'
         ];
 
@@ -304,6 +394,170 @@ class main_listener implements EventSubscriberInterface
             'U_CHASTITY_LOCK_SVG' => $phpbb_root_path . 'ext/verturin/chastitytracker/styles/all/theme/images/chastity_lock.svg',
         ]);
     }
+
+public function display_leaderboard($event)
+{
+    if (empty($this->config['chastity_enable']) || empty($this->config['chastity_profile_display']))
+    {
+        return;
+    }
+    if (defined('IN_ADMIN')) { return; }
+    if (!$this->auth->acl_get('u_chastity_leaderboard')) { return; }
+
+    // Afficher uniquement sur la page d'index du forum
+    $page_name = $this->user->page['page_name'];
+    if ($page_name !== 'index.php') { return; }
+
+    $periods_table = $this->periods_table;
+    $history_table = $this->history_table;
+    $current_year  = (int) date('Y');
+    $year_start    = mktime(0, 0, 0, 1, 1, $current_year);
+    $year_end      = mktime(23, 59, 59, 12, 31, $current_year);
+
+    $this->template->assign_vars([
+        'S_CHASTITY_LEADERBOARD'    => true,
+        'CHASTITY_LEADERBOARD_YEAR' => $current_year,
+    ]);
+
+    // ────────────────────────────────────────────────────────────────
+    // COLONNE 1 : Top 5 meilleures périodes de l'année en cours
+    // Utilise days_count pour les périodes entièrement dans l'année,
+    // recalcule avec bornage pour les chevauchements début/fin d'année.
+    // Inclut les périodes actives (bornées sur l'année).
+    // ────────────────────────────────────────────────────────────────
+    $sql = 'SELECT p.user_id, p.start_date, p.end_date, p.status, p.days_count, u.username, u.user_colour
+            FROM ' . $periods_table . ' p
+            JOIN ' . USERS_TABLE . ' u ON u.user_id = p.user_id
+            WHERE p.start_date <= ' . $year_end . '
+            AND (p.end_date >= ' . $year_start . " OR p.status = 'active')";
+    $result = $this->db->sql_query($sql);
+    $best_per_user_year = [];
+    while ($row = $this->db->sql_fetchrow($result))
+    {
+        $uid = (int) $row['user_id'];
+        $ps  = (int) $row['start_date'];
+        $pe  = ($row['status'] === 'active') ? time() : (int) $row['end_date'];
+
+        // Si la période est entièrement dans l'année → days_count direct
+        if ($ps >= $year_start && $pe <= $year_end && $row['status'] === 'completed')
+        {
+            $days = (int) $row['days_count'];
+        }
+        else
+        {
+            // Chevauchement → borner et recalculer
+            $ps = max($ps, $year_start);
+            $pe = min($pe, $year_end);
+            if ($pe <= $ps) { continue; }
+            $days = (int) floor(($pe - $ps) / 86400);
+        }
+        if ($days <= 0) { continue; }
+        if (!isset($best_per_user_year[$uid]) || $days > $best_per_user_year[$uid]['days'])
+        {
+            $best_per_user_year[$uid] = [
+                'days' => $days, 'username' => $row['username'],
+                'colour' => $row['user_colour'], 'user_id' => $uid,
+            ];
+        }
+    }
+    $this->db->sql_freeresult($result);
+    usort($best_per_user_year, function($a, $b) { return $b['days'] - $a['days']; });
+    $rank = 1;
+    foreach (array_slice($best_per_user_year, 0, 5) as $entry)
+    {
+        $this->template->assign_block_vars('chastity_top_year', [
+            'RANK'     => $rank++,
+            'USERNAME' => get_username_string('full', $entry['user_id'], $entry['username'], $entry['colour']),
+            'DAYS'     => $entry['days'],
+        ]);
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // COLONNE 2 : Top 5 meilleures années tous temps
+    // Lecture directe de chastity_history — une seule entrée par utilisateur (la meilleure)
+    // ────────────────────────────────────────────────────────────────
+    $sql = 'SELECT h.user_id, h.year, h.total_days, u.username, u.user_colour
+            FROM ' . $history_table . ' h
+            JOIN ' . USERS_TABLE . ' u ON u.user_id = h.user_id
+            WHERE h.total_days > 0
+            AND h.total_days = (
+                SELECT MAX(h2.total_days) FROM ' . $history_table . ' h2
+                WHERE h2.user_id = h.user_id
+            )
+            ORDER BY h.total_days DESC
+            LIMIT 5';
+    $result = $this->db->sql_query($sql);
+    $rank = 1;
+    while ($row = $this->db->sql_fetchrow($result))
+    {
+        $this->template->assign_block_vars('chastity_top_best_year', [
+            'RANK'     => $rank++,
+            'USERNAME' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+            'YEAR'     => (int) $row['year'],
+            'DAYS'     => (int) $row['total_days'],
+        ]);
+    }
+    $this->db->sql_freeresult($result);
+
+    // ────────────────────────────────────────────────────────────────
+    // COLONNE 3 : Top 5 meilleure période tous temps
+    // Utilise days_count pour les terminées, calcul live pour les actives.
+    // ────────────────────────────────────────────────────────────────
+    // a) Top 5 des terminées (SQL direct, rapide)
+    $sql = 'SELECT p.user_id, p.days_count, u.username, u.user_colour
+            FROM ' . $periods_table . ' p
+            JOIN ' . USERS_TABLE . " u ON u.user_id = p.user_id
+            WHERE p.status = 'completed' AND p.days_count > 0
+            ORDER BY p.days_count DESC
+            LIMIT 5";
+    $result = $this->db->sql_query($sql);
+    $best_alltime = [];
+    while ($row = $this->db->sql_fetchrow($result))
+    {
+        $uid = (int) $row['user_id'];
+        $days = (int) $row['days_count'];
+        if (!isset($best_alltime[$uid]) || $days > $best_alltime[$uid]['days'])
+        {
+            $best_alltime[$uid] = [
+                'days' => $days, 'username' => $row['username'],
+                'colour' => $row['user_colour'], 'user_id' => $uid,
+            ];
+        }
+    }
+    $this->db->sql_freeresult($result);
+
+    // b) Vérifier les périodes actives (peuvent battre le record)
+    $sql = 'SELECT p.user_id, p.start_date, u.username, u.user_colour
+            FROM ' . $periods_table . ' p
+            JOIN ' . USERS_TABLE . " u ON u.user_id = p.user_id
+            WHERE p.status = 'active'";
+    $result = $this->db->sql_query($sql);
+    while ($row = $this->db->sql_fetchrow($result))
+    {
+        $uid  = (int) $row['user_id'];
+        $days = (int) floor((time() - (int) $row['start_date']) / 86400);
+        if ($days <= 0) { continue; }
+        if (!isset($best_alltime[$uid]) || $days > $best_alltime[$uid]['days'])
+        {
+            $best_alltime[$uid] = [
+                'days' => $days, 'username' => $row['username'],
+                'colour' => $row['user_colour'], 'user_id' => $uid,
+            ];
+        }
+    }
+    $this->db->sql_freeresult($result);
+    usort($best_alltime, function($a, $b) { return $b['days'] - $a['days']; });
+    $rank = 1;
+    foreach (array_slice($best_alltime, 0, 5) as $entry)
+    {
+        $this->template->assign_block_vars('chastity_top_alltime', [
+            'RANK'     => $rank++,
+            'USERNAME' => get_username_string('full', $entry['user_id'], $entry['username'], $entry['colour']),
+            'DAYS'     => $entry['days'],
+        ]);
+    }
+}
+
 
 
 }

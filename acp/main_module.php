@@ -26,6 +26,7 @@ class main_module
 
         $this->chastity_users_table = $phpbb_container->getParameter('verturin.chastitytracker.tables.chastity_users');
         $periods_table = $phpbb_container->getParameter('verturin.chastitytracker.tables.chastity_periods');
+		$users_table   = $phpbb_container->getParameter('verturin.chastitytracker.tables.chastity_users');		
 
         add_form_key('acp_chastity');
 
@@ -42,6 +43,10 @@ class main_module
             case 'rebuild':
                 $this->rebuild_mode($user, $template, $request, $db, $config, $periods_table, $phpbb_container);
                 break;
+
+			case 'backup':
+				$this->backup_mode($user, $template, $request, $db, $periods_table, $users_table);
+				break;
         }
     }
 
@@ -303,4 +308,113 @@ class main_module
             'AVERAGE_DAYS'   => $total > 0 ? round($days / $total, 1) : 0,
         ]);
     }
+
+private function backup_mode($user, $template, $request, $db, $periods_table, $users_table)
+{
+    // ── EXPORT ──
+    if ($request->is_set_post('export_backup'))
+    {
+        if (!check_form_key('acp_chastity')) { trigger_error($user->lang['FORM_INVALID']); }
+
+        $dump  = "-- Chastity Tracker Backup\n";
+        $dump .= "-- Date : " . date('Y-m-d H:i:s') . "\n\n";
+
+        $dump .= "TRUNCATE TABLE `" . $users_table . "`; \n";
+        $result = $db->sql_query('SELECT * FROM ' . $users_table);
+        while ($row = $db->sql_fetchrow($result))
+        {
+            $dump .= "INSERT INTO `" . $users_table . "` VALUES ("
+                . (int) $row['user_id'] . ", "
+                . "'" . $db->sql_escape($row['username']) . "', "
+                . "'" . $db->sql_escape($row['user_colour']) . "', "
+                . "'" . $db->sql_escape($row['chastity_status']) . "', "
+                . (int) $row['chastity_current_period'] . ", "
+                . (int) $row['chastity_total_days'] . ", "
+                . (int) $row['created_time'] . ", "
+                . (int) $row['updated_time']
+                . ");\n";
+        }
+        $db->sql_freeresult($result);
+
+        $dump .= "\nTRUNCATE TABLE `" . $periods_table . "`; \n";
+        $result = $db->sql_query('SELECT * FROM ' . $periods_table);
+        while ($row = $db->sql_fetchrow($result))
+        {
+            $dump .= "INSERT INTO `" . $periods_table . "` VALUES ("
+                . (int) $row['period_id'] . ", "
+                . (int) $row['user_id'] . ", "
+                . (int) $row['start_date'] . ", "
+                . (int) $row['end_date'] . ", "
+                . "'" . $db->sql_escape($row['status']) . "', "
+                . (int) $row['is_permanent'] . ", "
+                . (int) $row['is_locktober'] . ", "
+                . (int) $row['locktober_year'] . ", "
+                . (int) $row['locktober_completed'] . ", "
+                . (int) $row['days_count'] . ", "
+                . "'" . $db->sql_escape($row['notes']) . "', "
+                . (int) $row['rule_masturbation'] . ", "
+                . (int) $row['rule_ejaculation'] . ", "
+                . (int) $row['rule_sleep_removal'] . ", "
+                . (int) $row['rule_public_removal'] . ", "
+                . (int) $row['rule_medical_removal'] . ", "
+                . (int) $row['created_time'] . ", "
+                . (int) $row['updated_time']
+                . ");\n";
+        }
+        $db->sql_freeresult($result);
+
+        $filename = 'chastity_backup_' . date('Ymd_His') . '.sql';
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($dump));
+        echo $dump;
+        exit;
+    }
+
+    // ── RESTAURATION ──
+    if ($request->is_set_post('restore_backup'))
+    {
+        if (!check_form_key('acp_chastity')) { trigger_error($user->lang['FORM_INVALID']); }
+
+        $file_data = $request->file('backup_file');
+        if (empty($file_data['tmp_name']) || !is_uploaded_file($file_data['tmp_name']))
+        {
+            trigger_error($user->lang['ACP_CHASTITY_BACKUP_NO_FILE'] . adm_back_link($this->u_action));
+        }
+
+        $sql_content = file_get_contents($file_data['tmp_name']);
+        if (strpos($sql_content, 'Chastity Tracker Backup') === false)
+        {
+            trigger_error($user->lang['ACP_CHASTITY_BACKUP_INVALID'] . adm_back_link($this->u_action));
+        }
+
+        $lines = explode("\n", $sql_content);
+        $count = 0;
+        foreach ($lines as $line)
+        {
+            $line = trim($line);
+            if (empty($line) || strpos($line, '--') === 0) { continue; }
+            $db->sql_query($line);
+            if (strpos($line, 'INSERT') === 0) { $count++; }
+        }
+        trigger_error(sprintf($user->lang['ACP_CHASTITY_BACKUP_RESTORED'], $count) . adm_back_link($this->u_action));
+    }
+
+    $sql = 'SELECT COUNT(*) as total FROM ' . $users_table;
+    $result = $db->sql_query($sql);
+    $total_users = (int) $db->sql_fetchfield('total');
+    $db->sql_freeresult($result);
+
+    $sql = 'SELECT COUNT(*) as total FROM ' . $periods_table;
+    $result = $db->sql_query($sql);
+    $total_periods = (int) $db->sql_fetchfield('total');
+    $db->sql_freeresult($result);
+
+    $template->assign_vars([
+        'BACKUP_USERS'   => $total_users,
+        'BACKUP_PERIODS' => $total_periods,
+        'U_ACTION'       => $this->u_action,
+    ]);
+}
+
 }
