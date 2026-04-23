@@ -1,7 +1,7 @@
 # Chastity Tracker — verturin/chastitytracker
 > Extension phpBB 3.2+ — Suivi de chasteté avec calendrier visuel, statistiques et défi Locktober
 
-[![Version](https://img.shields.io/badge/version-3.0.29-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.30-blue.svg)](CHANGELOG.md)
 [![phpBB](https://img.shields.io/badge/phpBB-%E2%89%A53.2.0-orange.svg)](https://www.phpbb.com)
 [![PHP](https://img.shields.io/badge/PHP-%E2%89%A57.1-8892BF.svg)](https://php.net)
 [![Licence](https://img.shields.io/badge/licence-GPL--2.0--only-green.svg)](LICENSE)
