@@ -1,9 +1,9 @@
 {
     "stable": {
         "3.0": {
-            "current": "3.0.29",
-            "announcement": "https://github.com/verturin/chastitytracker/releases/tag/v3.0.29",
-            "download": "https://github.com/verturin/chastitytracker/releases/download/v3.0.29/chastitytracker-v3.0.29.zip",
+            "current": "3.0.30",
+            "announcement": "https://github.com/verturin/chastitytracker/releases/tag/v3.0.30",
+            "download": "https://github.com/verturin/chastitytracker/releases/download/v3.0.30/chastitytracker-v3.0.30.zip",
             "eol": null,
             "security": false
         }
