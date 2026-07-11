@@ -1,5 +1,7 @@
 {% include 'ucp_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <h2>{{ lang('CHASTITY_LOCKTOBER') }} {{ LOCKTOBER_YEAR }} 🎃</h2>
 
 <div class="panel">
@@ -22,7 +24,12 @@
 			{% endif %}
 		</div>
 		{% else %}
-			{% if IS_OCTOBER %}
+			{% if IS_TEST_MODE %}
+			<div class="content" style="background:#FFF3CD;padding:12px;border-radius:5px;text-align:center;margin-bottom:15px;">
+				<strong>⚠️ {{ lang('CHASTITY_LOCKTOBER_TEST_NOTICE') }}</strong>
+			</div>
+			{% endif %}
+			{% if CAN_PARTICIPATE %}
 			<div class="content" style="background:#f5f5f5;padding:20px;border-radius:5px;text-align:center;">
 				<h3>{{ lang('CHASTITY_LOCKTOBER_PARTICIPATE') }}</h3>
 				<p>{{ lang('CHASTITY_LOCKTOBER_JOIN_EXPLAIN') }}</p>
@@ -37,6 +44,21 @@
 				<p>{{ lang('CHASTITY_LOCKTOBER_NEXT_YEAR') }}</p>
 			</div>
 			{% endif %}
+		{% endif %}
+
+		{% if S_CHASTITY_LK_BADGES %}
+		<h3>🎖️ {{ lang('CHASTITY_LOCKTOBER_MY_BADGES') }}</h3>
+		<div class="chastity-special-badges chastity-profile-badges">
+			{% for b in loops.lk_member_badge %}
+			<div class="chastity-badge {{ b.SUCCESS ? 'chastity-badge-success' : 'chastity-badge-part' }}"
+				title="{{ b.SUCCESS ? lang('CHASTITY_BADGE_LOCKTOBER_SUCCESS') : lang('CHASTITY_BADGE_LOCKTOBER_PART') }} {{ b.YEAR }}">
+				{% if b.REWARD_IMAGE %}<img src="{{ b.REWARD_IMAGE }}" alt="" class="chastity-badge-reward-img" />{% else %}<span class="chastity-badge-icon">🎃</span>{% endif %}
+				<span class="chastity-badge-year">{{ b.YEAR }}</span>
+				<span class="chastity-badge-level">{{ b.SUCCESS ? '🏆 ' ~ lang('CHASTITY_BADGE_SUCCESS') : '✔️ ' ~ lang('CHASTITY_BADGE_PART') }}</span>
+				{% if b.REWARD_LABEL %}<span class="chastity-badge-reward-label">{{ b.REWARD_LABEL }}</span>{% endif %}
+			</div>
+			{% endfor %}
+		</div>
 		{% endif %}
 
 		{% if loops.completed_locktober is defined and loops.completed_locktober|length %}

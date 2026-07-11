@@ -1,0 +1,192 @@
+{% include 'ucp_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<h2>{{ lang('CHASTITY_SUBS_TITLE') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+		<p>{{ lang('CHASTITY_SUBS_INTRO') }}</p>
+
+		{# ───── Synthèse ───── #}
+		{% if ACTIVE_COUNT > 0 %}
+			<div style="padding:10px 15px;background:#E8F4FD;border-left:4px solid #2E4057;border-radius:4px;margin-bottom:15px;">
+				🔑 {{ lang('CHASTITY_SUBS_COUNT_SUMMARY')|format(ACTIVE_COUNT, LOCKED_COUNT) }}
+			</div>
+		{% endif %}
+
+		{# ───── Demandes en attente ───── #}
+		<fieldset>
+			<legend>⏳ {{ lang('CHASTITY_SUBS_PENDING_TITLE') }} ({{ PENDING_COUNT }})</legend>
+			{% if PENDING_COUNT > 0 %}
+				<table class="table1" style="width:100%;">
+					<thead>
+						<tr>
+							<th>{{ lang('CHASTITY_SUBS_PENDING_FROM') }}</th>
+							<th>{{ lang('CHASTITY_SUBS_PENDING_RECEIVED') }}</th>
+							<th>{{ lang('ACTIONS') }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for p in pending_subs %}
+							<tr>
+								<td><a href="memberlist.php?mode=viewprofile&amp;u={{ p.USER_ID }}" style="color:#{{ p.USER_COLOUR }};font-weight:bold;">{{ p.USERNAME }}</a></td>
+								<td>{{ p.CREATED_AT }}</td>
+								<td>
+									<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+										<input type="hidden" name="kh_id" value="{{ p.KH_ID }}" />
+										<button type="submit" name="accept_sub" value="1" class="button1">{{ lang('CHASTITY_SUBS_ACCEPT') }}</button>
+										<button type="submit" name="refuse_sub" value="1" class="button2" onclick="return confirm('{{ lang('CHASTITY_SUBS_REFUSE_CONFIRM') }}');">{{ lang('CHASTITY_SUBS_REFUSE') }}</button>
+										{{ S_FORM_TOKEN }}
+									</form>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<p style="color:#888;">{{ lang('CHASTITY_SUBS_PENDING_EMPTY') }}</p>
+			{% endif %}
+		</fieldset>
+
+		{# ───── Soumis actifs ───── #}
+		<fieldset style="margin-top:20px;">
+			<legend>🔑 {{ lang('CHASTITY_SUBS_ACTIVE_TITLE') }} ({{ ACTIVE_COUNT }})</legend>
+			{% if ACTIVE_COUNT > 0 %}
+				<table class="table1" style="width:100%;">
+					<thead>
+						<tr>
+							<th>{{ lang('USERNAME') }}</th>
+							<th>{{ lang('STATUS') }}</th>
+							<th>{{ lang('CHASTITY_SUBS_SINCE') }}</th>
+							<th>{{ lang('ACTIONS') }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for s in active_subs %}
+							<tr>
+								<td><a href="memberlist.php?mode=viewprofile&amp;u={{ s.USER_ID }}" style="color:#{{ s.USER_COLOUR }};font-weight:bold;">{{ s.USERNAME }}</a></td>
+								<td>
+									{% if s.IS_LOCKED %}
+										<span style="color:#BC2A4D;font-weight:bold;">{{ lang('CHASTITY_SUBS_LOCKED')|format(s.DAYS_CURRENT) }}</span>
+									{% else %}
+										<span style="color:#28A745;">{{ lang('CHASTITY_SUBS_FREE') }}</span>
+									{% endif %}
+								</td>
+								<td>{{ s.ACCEPTED_AT }}</td>
+								<td>
+									<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+										<input type="hidden" name="kh_id" value="{{ s.KH_ID }}" />
+										<button type="submit" name="end_sub" value="1" class="button2" onclick="return confirm('{{ lang('CHASTITY_SUBS_END_CONFIRM') }}');">{{ lang('CHASTITY_SUBS_END_RELATION') }}</button>
+										{{ S_FORM_TOKEN }}
+									</form>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<p style="color:#888;">{{ lang('CHASTITY_SUBS_ACTIVE_EMPTY') }}</p>
+			{% endif %}
+		</fieldset>
+
+		{# ───── Inviter des soumis ───── #}
+		<fieldset style="margin-top:20px;">
+			<legend>📨 {{ lang('CHASTITY_KH_INVITE_FORM') }}</legend>
+			<p style="color:#888;">{{ lang('CHASTITY_KH_INVITE_EXPLAIN') }}</p>
+			{% if invitable_members is defined and invitable_members|length > 0 %}
+				<form method="post" action="{{ U_ACTION }}">
+					<dl>
+						<dt>
+							<label for="sub_user_ids">{{ lang('CHASTITY_KH_INVITE_SELECT') }}{{ lang('COLON') }}</label>
+							<br><span style="font-size:0.85em;color:#888;font-weight:normal;">{{ lang('CHASTITY_KH_INVITE_MULTI_HINT') }}</span>
+						</dt>
+						<dd>
+							<select name="sub_user_ids[]" id="sub_user_ids" class="inputbox" multiple size="8" style="min-width:300px;">
+								{% for m in invitable_members %}
+									<option value="{{ m.USER_ID }}">{{ m.USERNAME }}</option>
+								{% endfor %}
+							</select>
+						</dd>
+					</dl>
+					<fieldset class="submit-buttons">
+						<input type="submit" name="invite_subs" value="{{ lang('CHASTITY_KH_INVITE_SUBMIT') }}" class="button1" />
+					</fieldset>
+					{{ S_FORM_TOKEN }}
+				</form>
+			{% else %}
+				<p style="color:#888;">{{ lang('CHASTITY_KH_INVITE_NO_MEMBERS') }}</p>
+			{% endif %}
+		</fieldset>
+
+		{# ───── Mes invitations envoyées en attente ───── #}
+		{% if INVITES_SENT_COUNT > 0 %}
+		<fieldset style="margin-top:20px;">
+			<legend>📤 {{ lang('CHASTITY_KH_INVITES_SENT_TITLE') }} ({{ INVITES_SENT_COUNT }})</legend>
+			<table class="table1" style="width:100%;">
+				<thead>
+					<tr>
+						<th>{{ lang('USERNAME') }}</th>
+						<th>{{ lang('CHASTITY_KH_INVITE_SENT_ON') }}</th>
+						<th>{{ lang('ACTIONS') }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for i in invites_sent %}
+						<tr>
+							<td><a href="memberlist.php?mode=viewprofile&amp;u={{ i.USER_ID }}" style="color:#{{ i.USER_COLOUR }};">{{ i.USERNAME }}</a></td>
+							<td>{{ i.CREATED_AT }}</td>
+							<td>
+								<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+									<input type="hidden" name="kh_id" value="{{ i.KH_ID }}" />
+									<button type="submit" name="end_sub" value="1" class="button2" onclick="return confirm('{{ lang('CHASTITY_KH_INVITE_CANCEL_CONFIRM') }}');">{{ lang('CHASTITY_KH_INVITE_CANCEL') }}</button>
+									{{ S_FORM_TOKEN }}
+								</form>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</fieldset>
+		{% endif %}
+
+		{# ───── Historique ───── #}
+		<fieldset style="margin-top:20px;">
+			<legend>{{ lang('CHASTITY_SUBS_HISTORY_TITLE') }}</legend>
+			{% if subs_history is defined and subs_history|length > 0 %}
+				<table class="table1" style="width:100%;">
+					<thead>
+						<tr>
+							<th>{{ lang('USERNAME') }}</th>
+							<th>{{ lang('CHASTITY_KH_HISTORY_FROM') }}</th>
+							<th>{{ lang('CHASTITY_KH_HISTORY_TO') }}</th>
+							<th>{{ lang('STATUS') }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for h in subs_history %}
+							<tr>
+								<td><a href="memberlist.php?mode=viewprofile&amp;u={{ h.USER_ID }}" style="color:#{{ h.USER_COLOUR }};">{{ h.USERNAME }}</a></td>
+								<td>{{ h.ACCEPTED_AT }}</td>
+								<td>{{ h.ENDED_AT }}</td>
+								<td>
+									{% if h.IS_REFUSED %}
+										<em>{{ lang('CHASTITY_KH_HISTORY_REFUSED') }}</em>
+									{% elseif h.END_BY_KH %}
+										<em>{{ lang('CHASTITY_SUBS_HISTORY_ENDED_BY_KH') }}</em>
+									{% else %}
+										<em>{{ lang('CHASTITY_SUBS_HISTORY_ENDED_BY_SUB') }}</em>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<p style="color:#888;">{{ lang('CHASTITY_SUBS_HISTORY_EMPTY') }}</p>
+			{% endif %}
+		</fieldset>
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

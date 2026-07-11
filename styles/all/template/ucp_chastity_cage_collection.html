@@ -1,0 +1,65 @@
+<!-- INCLUDE ucp_header.html -->
+
+<h2>{L_UCP_CHASTITY_CAGE_COLLECTION}</h2>
+
+<!-- IF .my_cages -->
+<div class="chastity-cage-grid">
+	<!-- BEGIN my_cages -->
+	<div class="chastity-cage-card<!-- IF not my_cages.IS_ACTIVE --> chastity-cage-archived<!-- ENDIF --><!-- IF my_cages.IS_CURRENT --> chastity-cage-current-card<!-- ENDIF -->">
+		<div class="chastity-cage-card-photo"<!-- IF my_cages.PHOTO_COUNT --> data-photos='[<!-- BEGIN photos -->"{BOARD_URL}ext/verturin/chastitytracker/images/cages/{my_cages.photos.FILENAME}"<!-- IF not my_cages.photos.S_LAST_ROW -->,<!-- ENDIF --><!-- END photos -->]'<!-- ENDIF -->>
+			<!-- IF my_cages.MAIN_PHOTO -->
+			<img src="{BOARD_URL}ext/verturin/chastitytracker/images/cages/{my_cages.MAIN_PHOTO}" alt="{my_cages.NAME}" />
+			<!-- ELSE -->
+			<div class="chastity-cage-no-photo">📷</div>
+			<!-- ENDIF -->
+			<!-- IF my_cages.IS_CURRENT --><div class="chastity-cage-current-badge">🔒 {L_CHASTITY_CAGE_IN_USE}</div><!-- ENDIF -->
+			<!-- IF my_cages.PHOTO_COUNT gt 1 --><div class="chastity-cage-photo-count">📷 {my_cages.PHOTO_COUNT}</div><!-- ENDIF -->
+		</div>
+		<div class="chastity-cage-card-info">
+			<h3>{my_cages.NAME}</h3>
+			<!-- IF my_cages.BRAND --><p class="brand">{my_cages.BRAND}</p><!-- ENDIF -->
+			<!-- IF my_cages.MATERIAL --><span class="material">{my_cages.MATERIAL}</span><!-- ENDIF -->
+			<!-- IF my_cages.TYPE --><p><small>{my_cages.TYPE}</small></p><!-- ENDIF -->
+			<!-- IF my_cages.RATING_COUNT -->
+			<p class="chastity-cage-rating-display">
+				<span class="stars">
+					<!-- IF my_cages.AVG_RATING gte 1 -->★<!-- ELSE -->☆<!-- ENDIF -->
+					<!-- IF my_cages.AVG_RATING gte 2 -->★<!-- ELSE -->☆<!-- ENDIF -->
+					<!-- IF my_cages.AVG_RATING gte 3 -->★<!-- ELSE -->☆<!-- ENDIF -->
+					<!-- IF my_cages.AVG_RATING gte 4 -->★<!-- ELSE -->☆<!-- ENDIF -->
+					<!-- IF my_cages.AVG_RATING gte 5 -->★<!-- ELSE -->☆<!-- ENDIF -->
+				</span>
+				<small>{my_cages.AVG_RATING}/5 ({my_cages.RATING_COUNT})</small>
+			</p>
+			<!-- ENDIF -->
+			<p><strong>{my_cages.TOTAL_DAYS}</strong> {L_CHASTITY_DAYS}</p>
+			<!-- IF my_cages.NOTES --><p class="desc"><em>{my_cages.NOTES}</em></p><!-- ENDIF -->
+			<p>
+				<!-- IF my_cages.IS_ACTIVE -->
+				<span style="color:green;">✅ {L_CHASTITY_CAGE_ACTIVE}</span>
+				<!-- ELSE -->
+				<span style="color:#888;">📦 {L_CHASTITY_CAGE_ARCHIVED}</span>
+				<!-- ENDIF -->
+			</p>
+		</div>
+		<div class="chastity-cage-card-actions">
+			<form method="post" action="{U_ACTION}" style="display:inline;">
+				<input type="hidden" name="cage_id" value="{my_cages.CAGE_ID}" />
+				<button type="submit" name="toggle_archive" value="1" class="button2"><!-- IF my_cages.IS_ACTIVE -->{L_CHASTITY_CAGE_ARCHIVE}<!-- ELSE -->{L_CHASTITY_CAGE_UNARCHIVE}<!-- ENDIF --></button>
+				{S_FORM_TOKEN}
+			</form>
+			<form method="post" action="{U_ACTION}" style="display:inline;">
+				<input type="hidden" name="cage_id" value="{my_cages.CAGE_ID}" />
+				<button type="submit" name="remove_cage" value="1" class="button2" onclick="return confirm('{L_CHASTITY_CAGE_REMOVE_FROM_COLLECTION}?');">🗑️</button>
+				{S_FORM_TOKEN}
+			</form>
+		</div>
+	</div>
+	<!-- END my_cages -->
+</div>
+<script src="{BOARD_URL}ext/verturin/chastitytracker/styles/all/theme/chastity_lightbox.js"></script>
+<!-- ELSE -->
+<div class="panel"><div class="inner"><p>{L_CHASTITY_CAGE_EMPTY_COLLECTION}</p></div></div>
+<!-- ENDIF -->
+
+<!-- INCLUDE ucp_footer.html -->

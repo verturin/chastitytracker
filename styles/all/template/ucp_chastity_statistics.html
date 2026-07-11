@@ -1,5 +1,7 @@
 {% include 'ucp_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <h2>{{ lang('UCP_CHASTITY_STATISTICS') }}</h2>
 
 <div class="panel">
@@ -18,10 +20,20 @@
 					{% endif %}
 				</dd>
 			</dl>
-			{% if CURRENT_DAYS > 0 %}
+			{% if S_CURRENT_LOCKED %}
 			<dl>
 				<dt><strong>{{ lang('CHASTITY_CURRENT_DAYS') }}{{ lang('COLON') }}</strong></dt>
-				<dd><span style="font-size: 1.2em; font-weight: bold;">{{ CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}</span></dd>
+				<dd><span style="font-size: 1.2em; font-weight: bold;">{{ CURRENT_SINCE_TEXT }}</span></dd>
+			</dl>
+			{% endif %}
+			{% if S_HAS_ACTIVE_PERIOD %}
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_CURRENT_PERIOD_EXITS') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ CURRENT_PERIOD_EXITS }}</dd>
+			</dl>
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_CURRENT_PERIOD_ACTIVITIES') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ CURRENT_PERIOD_ACTIVITIES }}</dd>
 			</dl>
 			{% endif %}
 			<dl>
@@ -32,6 +44,18 @@
 				<dt><strong>{{ lang('CHASTITY_TOTAL_PERIODS') }}{{ lang('COLON') }}</strong></dt>
 				<dd>{{ TOTAL_PERIODS }}</dd>
 			</dl>
+			{% if TOTAL_CAGEEXITS > 0 %}
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_TOTAL_CAGEEXITS') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ TOTAL_CAGEEXITS }}</dd>
+			</dl>
+			{% endif %}
+			{% if TOTAL_ACTIVITIES > 0 %}
+			<dl>
+				<dt><strong>{{ lang('CHASTITY_TOTAL_ACTIVITIES') }}{{ lang('COLON') }}</strong></dt>
+				<dd>{{ TOTAL_ACTIVITIES }}</dd>
+			</dl>
+			{% endif %}
 			<dl>
 				<dt><strong>{{ lang('CHASTITY_YEAR_DAYS') }}{{ lang('COLON') }}</strong></dt>
 				<dd>{{ CURRENT_YEAR_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd>
@@ -48,20 +72,31 @@
 
 		{% if loops.year_stats is defined and loops.year_stats|length %}
 		<h3>{{ lang('CHASTITY_STATS_BY_YEAR') }}</h3>
-		<table class="table1 zebra-table">
+		<table class="table1 zebra-table" style="width:100%;table-layout:fixed;">
+			<colgroup>
+				<col style="width:20%;" />
+				<col style="width:20%;" />
+				<col style="width:20%;" />
+				<col style="width:20%;" />
+				<col style="width:20%;" />
+			</colgroup>
 			<thead>
 				<tr>
-					<th>{{ lang('CHASTITY_YEAR') }}</th>
-					<th>{{ lang('CHASTITY_DAYS') }}</th>
-					<th>{{ lang('CHASTITY_PERIODS') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_YEAR') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_DAYS') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_CAGEEXITS') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_ACTIVITIES') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_PERIODS') }}</th>
 				</tr>
 			</thead>
 			<tbody>
 			{% for year_stats in loops.year_stats %}
 				<tr>
-					<td><strong>{{ year_stats.YEAR }}</strong></td>
-					<td>{{ year_stats.DAYS }}</td>
-					<td>{{ year_stats.PERIODS }}</td>
+					<td style="text-align:center;"><strong>{{ year_stats.YEAR }}</strong></td>
+					<td style="text-align:center;">{{ year_stats.DAYS }}</td>
+					<td style="text-align:center;">{{ year_stats.CAGEEXITS }}</td>
+					<td style="text-align:center;">{{ year_stats.ACTIVITIES }}</td>
+					<td style="text-align:center;">{{ year_stats.PERIODS }}</td>
 				</tr>
 			{% endfor %}
 			</tbody>
@@ -70,18 +105,28 @@
 
 		{% if loops.month_stats is defined and loops.month_stats|length %}
 		<h3>{{ lang('CHASTITY_STATS_BY_MONTH') }}</h3>
-		<table class="table1 zebra-table">
+		<table class="table1 zebra-table" style="width:100%;table-layout:fixed;">
+			<colgroup>
+				<col style="width:25%;" />
+				<col style="width:25%;" />
+				<col style="width:25%;" />
+				<col style="width:25%;" />
+			</colgroup>
 			<thead>
 				<tr>
-					<th>{{ lang('CHASTITY_MONTH') }}</th>
-					<th>{{ lang('CHASTITY_DAYS') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_MONTH') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_DAYS') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_CAGEEXITS') }}</th>
+					<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_ACTIVITIES') }}</th>
 				</tr>
 			</thead>
 			<tbody>
 			{% for month_stats in loops.month_stats %}
 				<tr>
-					<td>{{ month_stats.MONTH }}</td>
-					<td>{{ month_stats.DAYS }}</td>
+					<td style="text-align:center;">{{ month_stats.MONTH }}</td>
+					<td style="text-align:center;">{{ month_stats.DAYS }}</td>
+					<td style="text-align:center;">{{ month_stats.CAGEEXITS }}</td>
+					<td style="text-align:center;">{{ month_stats.ACTIVITIES }}</td>
 				</tr>
 			{% endfor %}
 			</tbody>

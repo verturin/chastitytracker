@@ -1,0 +1,422 @@
+{% include 'ucp_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<h2>📜 {{ lang('CHASTITY_CONTRACT_TITLE') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+		<p>{{ lang('CHASTITY_CONTRACT_INTRO') }}</p>
+
+		{% if S_HAS_CURRENT_AS_ENCAGE %}
+		<fieldset>
+			<legend>🔒 {{ lang('CHASTITY_CONTRACT_CURRENT_AS_ENCAGE_TITLE') }}</legend>
+			{% for c in loops.current_contracts if not c.IS_VIEWER_KH %}
+			<div style="padding:15px;background:#F4F4F4;border-radius:6px;margin-bottom:10px;">
+				<p>
+					<strong>{{ lang('CHASTITY_CONTRACT_KH') }}{{ lang('COLON') }}</strong> {{ c.OTHER_PARTY_NAME }}
+					&nbsp;·&nbsp;
+					<span class="chastity-contract-status chastity-contract-status-{{ c.CONTRACT_STATUS }}">{{ c.CONTRACT_STATUS_LABEL }}</span>
+				</p>
+				<p><strong>{{ lang('CHASTITY_CONTRACT_NB_ARTICLES') }}{{ lang('COLON') }}</strong> {{ c.CONTRACT_NB_ARTICLES }}</p>
+				<p style="font-size:0.85em;color:#777;">{{ lang('CHASTITY_CONTRACT_CREATED_ON') }} {{ c.CONTRACT_CREATED }}</p>
+				<a href="{{ U_ACTION }}&amp;view_contract={{ c.CONTRACT_ID }}" class="button1">{{ lang('CHASTITY_CONTRACT_OPEN') }}</a>
+				{% if c.CONTRACT_STATUS == 'active' %}
+				<a href="{{ U_ACTION }}&amp;view_contract={{ c.CONTRACT_ID }}&amp;preview_contract={{ c.CONTRACT_ID }}" class="button2" target="_blank">👁️ {{ lang('CHASTITY_CONTRACT_PREVIEW_FINAL') }}</a>
+				{% endif %}
+			</div>
+			{% endfor %}
+		</fieldset>
+		{% endif %}
+
+		{% if S_HAS_CURRENT_AS_KH %}
+		<fieldset>
+			<legend>🔑 {{ lang('CHASTITY_CONTRACT_CURRENT_AS_KH_TITLE') }}</legend>
+			{% for c in loops.current_contracts if c.IS_VIEWER_KH %}
+			<div style="padding:15px;background:#F4F4F4;border-radius:6px;margin-bottom:10px;">
+				<p>
+					<strong>{{ lang('CHASTITY_CONTRACT_ENCAGE') }}{{ lang('COLON') }}</strong> {{ c.OTHER_PARTY_NAME }}
+					&nbsp;·&nbsp;
+					<span class="chastity-contract-status chastity-contract-status-{{ c.CONTRACT_STATUS }}">{{ c.CONTRACT_STATUS_LABEL }}</span>
+				</p>
+				<p><strong>{{ lang('CHASTITY_CONTRACT_NB_ARTICLES') }}{{ lang('COLON') }}</strong> {{ c.CONTRACT_NB_ARTICLES }}</p>
+				<p style="font-size:0.85em;color:#777;">{{ lang('CHASTITY_CONTRACT_CREATED_ON') }} {{ c.CONTRACT_CREATED }}</p>
+				<a href="{{ U_ACTION }}&amp;view_contract={{ c.CONTRACT_ID }}" class="button1">{{ lang('CHASTITY_CONTRACT_OPEN') }}</a>
+				{% if c.CONTRACT_STATUS == 'active' %}
+				<a href="{{ U_ACTION }}&amp;view_contract={{ c.CONTRACT_ID }}&amp;preview_contract={{ c.CONTRACT_ID }}" class="button2" target="_blank">👁️ {{ lang('CHASTITY_CONTRACT_PREVIEW_FINAL') }}</a>
+				{% endif %}
+			</div>
+			{% endfor %}
+		</fieldset>
+		{% endif %}
+
+		{% if S_CAN_CREATE_CONTRACT %}
+		<fieldset>
+			<legend>{{ lang('CHASTITY_CONTRACT_NONE_TITLE') }}</legend>
+			<p>{{ lang('CHASTITY_CONTRACT_NONE_EXPLAIN') }}</p>
+			<form method="post" action="{{ U_ACTION }}">
+				<input type="submit" name="create_contract" value="{{ lang('CHASTITY_CONTRACT_CREATE') }}" class="button1" />
+				{{ S_FORM_TOKEN }}
+			</form>
+		</fieldset>
+		{% endif %}
+
+		{% if S_VIEW_CONTRACT %}
+		<fieldset>
+			<legend>📖 {{ lang('CHASTITY_CONTRACT_DETAIL_TITLE') }}</legend>
+			<p>
+				<strong>{{ lang('CHASTITY_CONTRACT_STATUS') }}{{ lang('COLON') }}</strong>
+				<span class="chastity-contract-status chastity-contract-status-{{ VIEW_CONTRACT_STATUS }}">{{ VIEW_CONTRACT_STATUS_LABEL }}</span>
+				{% if VIEW_CONTRACT_KH_NAME %}
+					&nbsp;·&nbsp; <strong>{% if S_VIEW_IS_KH %}{{ lang('CHASTITY_CONTRACT_ENCAGE') }}{% else %}{{ lang('CHASTITY_CONTRACT_KH') }}{% endif %}{{ lang('COLON') }}</strong> {{ VIEW_CONTRACT_KH_NAME }}
+				{% endif %}
+			</p>
+
+			<p>
+				<a href="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}&amp;export_contract={{ VIEW_CONTRACT_ID }}" class="button2" target="_blank">📄 {{ lang('CHASTITY_CONTRACT_EXPORT') }}</a>
+				{% if VIEW_CONTRACT_IS_DEFINITIVE %}
+				<a href="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}&amp;preview_contract={{ VIEW_CONTRACT_ID }}" class="button2" target="_blank">👁️ {{ lang('CHASTITY_CONTRACT_PREVIEW_FINAL') }}</a>
+				{% else %}
+				<a href="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}&amp;preview_contract={{ VIEW_CONTRACT_ID }}" class="button2" target="_blank">👁️ {{ lang('CHASTITY_CONTRACT_PREVIEW') }}</a>
+				{% endif %}
+			</p>
+
+			{% if S_CAN_SUBMIT %}
+			<fieldset style="border:2px solid #2E4057;">
+				<legend>✅ {{ lang('CHASTITY_CONTRACT_SUBMIT_TITLE') }}</legend>
+				<p>{{ lang('CHASTITY_CONTRACT_SUBMIT_EXPLAIN') }}</p>
+				{% if S_HAS_AUTO_RESOLVE_PENDING %}
+				<p style="font-style:italic;color:#666;background:#E8F4FD;padding:8px;border-radius:6px;">ℹ️ {{ lang('CHASTITY_CONTRACT_AUTO_RESOLVE_NOTE', PENDING_AUTO_RESOLVE_COUNT) }}</p>
+				{% endif %}
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" onsubmit="return confirm('{{ lang('CHASTITY_CONTRACT_SUBMIT_CONFIRM') }}');">
+					<input type="submit" name="submit_for_validation" value="{{ lang('CHASTITY_CONTRACT_SUBMIT_BUTTON') }}" class="button1" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</fieldset>
+			{% elseif S_HAS_UNAPPROVED_ARTICLES %}
+			<p style="font-style:italic;color:#666;background:#FFF3CD;padding:8px;border-radius:6px;">⚠️ {{ lang('CHASTITY_CONTRACT_ARTICLES_NOT_ALL_APPROVED') }}</p>
+			{% elseif S_NEEDS_SAFEWORD_TO_SUBMIT %}
+			<p style="font-style:italic;color:#a12727;background:#FFE8E8;padding:8px;border-radius:6px;">🔑 {{ lang('CHASTITY_CONTRACT_SAFEWORD_REQUIRED_NOTICE') }}</p>
+			{% endif %}
+
+			{% if VIEW_CONTRACT_STATUS == 'draft' and not S_VIEW_IS_KH %}
+			<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" onsubmit="return confirm('{{ lang('CHASTITY_CONTRACT_DRAFT_DELETE_CONFIRM') }}');">
+				<input type="submit" name="delete_draft_contract" value="{{ lang('CHASTITY_CONTRACT_DRAFT_DELETE') }}" class="button2" />
+				{{ S_FORM_TOKEN }}
+			</form>
+			{% endif %}
+
+			{% if S_IS_PENDING_VALIDATION %}
+			<fieldset style="border:2px solid #0d3d5c;background:#E8F4FD;">
+				<legend>⏳ {{ lang('CHASTITY_CONTRACT_PENDING_VAL_TITLE') }}</legend>
+
+				{% if S_CAN_ENTER_CODE %}
+					{% if S_WAITING_EXTERNAL_KH %}
+						<p>{{ lang('CHASTITY_CONTRACT_WAITING_EXTERNAL_KH') }}</p>
+					{% else %}
+						<p>{{ lang('CHASTITY_CONTRACT_ENTER_CODE_EXPLAIN') }}</p>
+					{% endif %}
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}">
+						<label>{{ lang('CHASTITY_CONTRACT_CODE') }}{{ lang('COLON') }}
+							<input type="text" name="validation_code_input" maxlength="6" size="8" />
+						</label>
+						<input type="submit" name="validate_with_code" value="{{ lang('SUBMIT') }}" class="button1" />
+						{{ S_FORM_TOKEN }}
+					</form>
+				{% else %}
+					<p>{{ lang('CHASTITY_CONTRACT_WAITING_VALIDATION') }}</p>
+				{% endif %}
+
+				{% if S_CAN_SUBMIT_ACTIONS %}
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="margin-top:10px;display:inline;">
+					<input type="submit" name="resend_validation" value="{{ lang('CHASTITY_CONTRACT_RESEND') }}" class="button2" />
+					{{ S_FORM_TOKEN }}
+				</form>
+				{% endif %}
+
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" onsubmit="return confirm('{{ lang('CONFIRM') }}');" style="margin-top:10px;">
+					<label>{{ lang('CHASTITY_CONTRACT_REJECTION_REASON') }}{{ lang('COLON') }}<br>
+						<textarea name="rejection_reason" rows="2" style="width:100%;max-width:400px;"></textarea>
+					</label><br>
+					<input type="submit" name="reject_pending_contract" value="{{ lang('CHASTITY_CONTRACT_REJECT_BACK_TO_DRAFT') }}" class="button2" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</fieldset>
+			{% endif %}
+
+			{% if VIEW_CONTRACT_FROZEN %}
+				<p style="font-style:italic;color:#888;">{{ lang('CHASTITY_CONTRACT_FROZEN_NOTICE') }}</p>
+			{% elseif S_NO_KH_YET %}
+				<p style="font-style:italic;color:#666;background:#E8F4FD;padding:8px;border-radius:6px;">ℹ️ {{ lang('CHASTITY_CONTRACT_NO_KH_NOTICE') }}</p>
+			{% endif %}
+
+			<fieldset style="margin-top:15px;">
+				<legend>🔑 {% if S_VIEW_IS_KH %}{{ lang('CHASTITY_CONTRACT_ENCAGE') }}{% else %}{{ lang('CHASTITY_CONTRACT_KH') }}{% endif %}</legend>
+				{% if S_HAS_KH_INSCRITE %}
+					<p>{{ VIEW_CONTRACT_KH_NAME }}</p>
+				{% elseif S_CAN_EDIT_KH_EXTERNAL %}
+					<p style="font-size:0.9em;color:#666;">{{ lang('CHASTITY_CONTRACT_KH_EXTERNAL_EXPLAIN') }}</p>
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}">
+						<dl>
+							<dt><label>{{ lang('CHASTITY_CONTRACT_KH_NAME') }}{{ lang('COLON') }}</label></dt>
+							<dd><input type="text" name="kh_external_name" maxlength="255" size="30" value="{{ KH_EXTERNAL_NAME }}" /></dd>
+						</dl>
+						<dl>
+							<dt><label>{{ lang('CHASTITY_CONTRACT_KH_EMAIL') }}{{ lang('COLON') }}</label></dt>
+							<dd><input type="email" name="kh_external_email" maxlength="255" size="30" value="{{ KH_EXTERNAL_EMAIL }}" /></dd>
+						</dl>
+						<dl>
+							<dt><label>{{ lang('CHASTITY_CONTRACT_KH_GENDER') }}{{ lang('COLON') }}</label></dt>
+							<dd>
+								<label style="margin-right:18px;font-weight:normal;"><input type="radio" name="kh_external_gender" value="female" {% if KH_EXTERNAL_GENDER != 'male' %}checked="checked"{% endif %} /> {{ lang('CHASTITY_CONTRACT_GENDER_FEMALE') }}</label>
+								<label style="font-weight:normal;"><input type="radio" name="kh_external_gender" value="male" {% if KH_EXTERNAL_GENDER == 'male' %}checked="checked"{% endif %} /> {{ lang('CHASTITY_CONTRACT_GENDER_MALE') }}</label>
+							</dd>
+						</dl>
+						<input type="submit" name="set_kh_external" value="{{ lang('SUBMIT') }}" class="button2" />
+						{{ S_FORM_TOKEN }}
+					</form>
+				{% elseif VIEW_CONTRACT_KH_NAME %}
+					<p>{{ VIEW_CONTRACT_KH_NAME }}</p>
+				{% endif %}
+			</fieldset>
+
+			{% if S_SUSPENDED_KH_ENDED %}
+			<p style="background:#FFE8E8;padding:10px;border-radius:6px;color:#a12727;font-weight:bold;">
+				⛔ {{ lang('CHASTITY_CONTRACT_SUSPENDED_KH_ENDED') }}
+			</p>
+			{% if not S_VIEW_IS_KH %}
+			<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="display:inline;">
+				<input type="submit" name="restart_after_kh_end" value="{{ lang('CHASTITY_CONTRACT_RESTART_AFTER_KH_END') }}" class="button1" />
+				{{ S_FORM_TOKEN }}
+			</form>
+			<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" onsubmit="return confirm('{{ lang('CHASTITY_CONTRACT_END_SUSPENDED_CONFIRM') }}');" style="display:inline;">
+				<input type="submit" name="end_suspended_contract" value="{{ lang('CHASTITY_CONTRACT_END_SUSPENDED') }}" class="button2" />
+				{{ S_FORM_TOKEN }}
+			</form>
+			{% endif %}
+			{% endif %}
+
+			<fieldset style="margin-top:15px;border:2px solid #a12727;">
+				<legend>🛑 {{ lang('CHASTITY_CONTRACT_SAFEWORD_TITLE') }}</legend>
+
+				{% if S_SAFEWORD_SUSPENDED %}
+					<p style="background:#FFE8E8;padding:10px;border-radius:6px;color:#a12727;font-weight:bold;">
+						⛔ {{ lang('CHASTITY_CONTRACT_SAFEWORD_ACTIVE_NOTICE') }}
+					</p>
+					{% if S_CAN_LIFT_SAFEWORD %}
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="display:inline;">
+						<input type="submit" name="lift_safeword" value="{{ lang('CHASTITY_CONTRACT_SAFEWORD_LIFT') }}" class="button1" />
+						{{ S_FORM_TOKEN }}
+					</form>
+					{% else %}
+						<p style="font-style:italic;color:#888;">{{ lang('CHASTITY_CONTRACT_SAFEWORD_WAIT_OTHER') }}</p>
+					{% endif %}
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" onsubmit="return confirm('{{ lang('CHASTITY_CONTRACT_END_SUSPENDED_CONFIRM') }}');" style="display:inline;">
+						<input type="submit" name="end_suspended_contract" value="{{ lang('CHASTITY_CONTRACT_END_SUSPENDED') }}" class="button2" />
+						{{ S_FORM_TOKEN }}
+					</form>
+				{% else %}
+					<p style="font-size:0.9em;color:#666;">{{ lang('CHASTITY_CONTRACT_SAFEWORD_EXPLAIN') }}</p>
+
+					{% if S_HAS_SAFEWORD %}
+					<p style="background:#FFF3CD;padding:10px;border-radius:6px;font-size:1.1em;">
+						{% if SAFEWORD_PLAIN %}
+							🔑 <strong>{{ lang('CHASTITY_CONTRACT_SAFEWORD_CURRENT') }}{{ lang('COLON') }}</strong> {{ SAFEWORD_PLAIN }}
+						{% else %}
+							⚠️ {{ lang('CHASTITY_CONTRACT_SAFEWORD_NEEDS_RESET') }}
+						{% endif %}
+					</p>
+					{% endif %}
+
+					{% if S_CAN_SET_SAFEWORD %}
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="margin-bottom:12px;">
+						<label>{{ lang('CHASTITY_CONTRACT_SAFEWORD_SET') }}{{ lang('COLON') }}
+							<input type="text" name="safeword" maxlength="255" size="20" placeholder="{% if S_HAS_SAFEWORD %}••••••••{% endif %}" />
+						</label>
+						<input type="submit" name="set_safeword" value="{{ lang('SUBMIT') }}" class="button2" />
+						{{ S_FORM_TOKEN }}
+					</form>
+					{% endif %}
+
+					{% if S_CAN_TRIGGER_SAFEWORD %}
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" onsubmit="return confirm('{{ lang('CHASTITY_CONTRACT_SAFEWORD_CONFIRM') }}');">
+						<label>{{ lang('CHASTITY_CONTRACT_SAFEWORD_TRIGGER_LABEL') }}{{ lang('COLON') }}
+							<input type="password" name="safeword_confirm" maxlength="255" size="20" />
+						</label>
+						<input type="submit" name="trigger_safeword" value="{{ lang('CHASTITY_CONTRACT_SAFEWORD_TRIGGER') }}" class="button2" style="background:#a12727;color:#fff;" />
+						{{ S_FORM_TOKEN }}
+					</form>
+					{% elseif not S_HAS_SAFEWORD %}
+						<p style="font-style:italic;color:#888;">{{ lang('CHASTITY_CONTRACT_SAFEWORD_NOT_SET') }}</p>
+					{% endif %}
+				{% endif %}
+			</fieldset>
+
+			{% if S_HAS_PENDING_TO_VALIDATE %}
+			<fieldset style="margin-top:15px;background:#FFF3CD;border:1px solid #d1b64a;">
+				<legend>⚖️ {{ lang('CHASTITY_CONTRACT_BULK_VALIDATE_TITLE') }}</legend>
+				<p style="margin:6px 0;">{{ lang('CHASTITY_CONTRACT_BULK_VALIDATE_EXPLAIN', PENDING_TO_VALIDATE_COUNT) }}</p>
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="display:inline;">
+					<input type="submit" name="approve_all_articles" value="✅ {{ lang('CHASTITY_CONTRACT_APPROVE_ALL') }}" class="button1" onclick="return confirm('{{ lang('CHASTITY_CONTRACT_APPROVE_ALL_CONFIRM') }}');" />
+					{{ S_FORM_TOKEN }}
+				</form>
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="display:inline;">
+					<input type="submit" name="reject_all_articles" value="❌ {{ lang('CHASTITY_CONTRACT_REJECT_ALL') }}" class="button2" onclick="return confirm('{{ lang('CHASTITY_CONTRACT_REJECT_ALL_CONFIRM') }}');" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</fieldset>
+			{% endif %}
+
+			{% if VIEW_CONTRACT_NATURE_HTML %}
+				{{ VIEW_CONTRACT_NATURE_HTML|raw }}
+			{% endif %}
+			{% if VIEW_CONTRACT_PREAMBLE_HTML %}
+				{{ VIEW_CONTRACT_PREAMBLE_HTML|raw }}
+			{% endif %}
+
+			{% if loops.contract_categories is defined and loops.contract_categories|length %}
+				{% for cat in loops.contract_categories %}
+				<h3 style="margin-top:18px;">{{ cat.NUMBER }}. {{ cat.CATEGORY_LABEL }}</h3>
+				{% for a in cat.articles %}
+				<div style="padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:6px;{% if a.IS_REJECTED %}opacity:0.6;{% endif %}">
+					<p style="margin:0 0 6px;">
+						<strong>{{ a.NUMBER }} — {{ a.TITLE }}</strong>
+						<span class="chastity-contract-status chastity-contract-status-{{ a.STATUS == 'approved' ? 'active' : (a.STATUS == 'rejected' ? 'ended' : 'pending_validation') }}" style="margin-left:8px;font-size:0.8em;">{{ a.STATUS_LABEL }}</span>
+					</p>
+					<p style="white-space:pre-line;">{{ a.BODY }}</p>
+					<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}" style="display:inline;">
+						<input type="hidden" name="link_id" value="{{ a.LINK_ID }}" />
+						{{ S_FORM_TOKEN }}
+						{% if a.CAN_VALIDATE %}
+							<input type="submit" name="approve_article" value="{{ lang('CHASTITY_CONTRACT_ARTICLE_APPROVE') }}" class="button1" />
+							<input type="submit" name="reject_article" value="{{ lang('CHASTITY_CONTRACT_ARTICLE_REJECT') }}" class="button2" />
+						{% endif %}
+						{% if a.CAN_REMOVE %}
+							<input type="submit" name="remove_article" value="{{ lang('DELETE') }}" class="button2" onclick="return confirm('{{ lang('CONFIRM') }}');" />
+						{% endif %}
+					</form>
+					{% if a.CAN_REQUEST_EDIT %}
+						<input type="button" value="{{ lang('CHASTITY_CONTRACT_ARTICLE_REQUEST_EDIT') }}" class="button2" onclick="document.getElementById('edit_art_{{ a.LINK_ID }}').style.display = (document.getElementById('edit_art_{{ a.LINK_ID }}').style.display === 'none' ? 'block' : 'none');" />
+						<div id="edit_art_{{ a.LINK_ID }}" style="display:none;margin-top:8px;padding:10px;background:#fafafa;border:1px solid #eee;border-radius:6px;">
+							<p style="font-size:0.85em;color:#666;">{{ lang('CHASTITY_CONTRACT_ARTICLE_EDIT_EXPLAIN') }}</p>
+							<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}">
+								<input type="hidden" name="link_id" value="{{ a.LINK_ID }}" />
+								<input type="text" name="article_title_edit" value="{{ a.TITLE }}" maxlength="255" style="width:100%;max-width:400px;" /><br>
+								<textarea name="article_body_edit" rows="3" style="width:100%;max-width:400px;margin-top:6px;">{{ a.BODY }}</textarea><br>
+								<input type="submit" name="request_article_edit" value="{{ lang('SUBMIT') }}" class="button1" />
+								{{ S_FORM_TOKEN }}
+							</form>
+						</div>
+					{% endif %}
+				</div>
+				{% endfor %}
+				{% endfor %}
+			{% else %}
+				<p>{{ lang('CHASTITY_CONTRACT_NO_ARTICLES') }}</p>
+			{% endif %}
+
+			{% if not VIEW_CONTRACT_FROZEN %}
+
+			{% if loops.library_categories is defined and loops.library_categories|length %}
+			<fieldset style="margin-top:15px;">
+				<legend>📚 {{ lang('ACP_CONTRACT_LIBRARY_TITLE') }}</legend>
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}">
+					<p style="font-size:0.9em;color:#666;">{{ lang('CHASTITY_CONTRACT_LIBRARY_PICK_EXPLAIN') }}</p>
+					{% for cat in loops.library_categories %}
+					<fieldset style="margin-bottom:10px;">
+						<legend>{{ cat.CATEGORY_LABEL }}</legend>
+						{% for a in cat.articles %}
+						<div style="padding:8px;margin-bottom:6px;border:1px solid #eee;border-radius:6px;background:#fafafa;">
+							<label style="display:block;">
+								<input type="checkbox" name="library_article_ids[]" value="{{ a.ID }}" style="margin-right:8px;" />
+								<strong>{{ a.TITLE }}</strong>
+								<span style="display:block;font-size:0.85em;color:#666;margin-left:24px;">{{ a.BODY }}</span>
+							</label>
+						</div>
+						{% endfor %}
+					</fieldset>
+					{% endfor %}
+					<input type="submit" name="update_library_selection" value="{{ lang('CHASTITY_CONTRACT_UPDATE_SELECTION') }}" class="button1" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</fieldset>
+			{% endif %}
+
+			<fieldset style="margin-top:15px;">
+				<legend>✏️ {{ lang('CHASTITY_CONTRACT_ARTICLE_CUSTOM') }}</legend>
+				<form method="post" action="{{ U_ACTION }}&amp;view_contract={{ VIEW_CONTRACT_ID }}">
+					<dl>
+						<dt><label>{{ lang('ACP_CONTRACT_CATEGORY') }}{{ lang('COLON') }}</label></dt>
+						<dd>
+							<select name="article_category">
+								{% for cat in loops.all_categories %}
+								<option value="{{ cat.KEY }}">{{ cat.LABEL }}</option>
+								{% endfor %}
+							</select>
+						</dd>
+					</dl>
+					<dl>
+						<dt><label>{{ lang('CHASTITY_CONTRACT_ARTICLE_TITLE') }}{{ lang('COLON') }}</label></dt>
+						<dd><input type="text" name="article_title" maxlength="255" size="50" /></dd>
+					</dl>
+					<dl>
+						<dt><label>{{ lang('CHASTITY_CONTRACT_ARTICLE_BODY') }}{{ lang('COLON') }}</label></dt>
+						<dd><textarea name="article_body" rows="4" style="width:100%;max-width:500px;"></textarea></dd>
+					</dl>
+
+					<input type="submit" name="propose_article" value="{{ lang('CHASTITY_CONTRACT_ARTICLE_PROPOSE_SUBMIT') }}" class="button1" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</fieldset>
+			{% endif %}
+		</fieldset>
+		{% endif %}
+
+		{% if loops.contract_history is defined and loops.contract_history|length %}
+		<fieldset>
+			<legend>{{ lang('CHASTITY_CONTRACT_HISTORY_TITLE') }}</legend>
+			<table class="table1 zebra-table">
+				<thead>
+					<tr>
+						<th>{{ lang('CHASTITY_CONTRACT_ROLE_AND_PARTY') }}</th>
+						<th>{{ lang('CHASTITY_CONTRACT_STATUS') }}</th>
+						<th>{{ lang('CHASTITY_CONTRACT_CREATED_ON') }}</th>
+						<th>{{ lang('CHASTITY_CONTRACT_ENDED_ON') }}</th>
+						<th>{{ lang('ACTIONS') }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for h in loops.contract_history %}
+					<tr>
+						<td>
+							<span class="chastity-contract-status chastity-contract-status-{{ h.IS_VIEWER_KH ? 'active' : 'pending_validation' }}" style="font-size:0.8em;">{% if h.IS_VIEWER_KH %}🔑 {{ lang('CHASTITY_CONTRACT_ROLE_KH') }}{% else %}🔒 {{ lang('CHASTITY_CONTRACT_ROLE_ENCAGE') }}{% endif %}</span><br>
+							{{ h.KH_NAME }}
+						</td>
+						<td>
+							{{ h.STATUS_LABEL }}
+							{% if h.IS_REPLACED and h.REPLACED_BY_ID %}
+								<br><a href="{{ U_ACTION }}&amp;view_contract={{ h.REPLACED_BY_ID }}&amp;preview_contract={{ h.REPLACED_BY_ID }}" style="font-size:0.8em;" target="_blank">{{ lang('CHASTITY_CONTRACT_SEE_REPLACEMENT') }}</a>
+							{% endif %}
+						</td>
+						<td>{{ h.CREATED }}</td>
+						<td>{{ h.ENDED }}</td>
+						<td>
+							<a href="{{ U_ACTION }}&amp;view_contract={{ h.CONTRACT_ID }}&amp;preview_contract={{ h.CONTRACT_ID }}" class="button2" target="_blank">👁️ {{ lang('CHASTITY_CONTRACT_PREVIEW_FINAL') }}</a>
+							{% if h.CAN_RESTART_FROM %}
+							<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+								<input type="hidden" name="from_archived_contract" value="{{ h.CONTRACT_ID }}" />
+								<input type="submit" name="create_contract" value="{{ lang('CHASTITY_CONTRACT_RESTART_FROM') }}" class="button2" />
+								{{ S_FORM_TOKEN }}
+							</form>
+							{% endif %}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</fieldset>
+		{% endif %}
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

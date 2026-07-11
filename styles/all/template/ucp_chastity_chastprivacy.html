@@ -1,11 +1,35 @@
 {% include 'ucp_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <h2>{{ lang('UCP_CHASTITY_CHASTPRIVACY') }}</h2>
 <div class="panel">
     <div class="inner">
         <p>{{ lang('UCP_CHASTITY_CHASTPRIVACY_EXPLAIN') }}</p>
 
         <form method="post" action="{{ U_ACTION }}">
+            <fieldset>
+                <legend>{{ lang('CHASTITY_PREFS_GENDER_LEGEND') }}</legend>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_GENDER') }}{{ lang('COLON') }}<br /><span>{{ lang('CHASTITY_PREFS_GENDER_EXPLAIN') }}</span></dt>
+                    <dd>
+                        <label><input type="radio" name="gender" value="male" {% if GENDER == 'male' %}checked{% endif %} /> {{ lang('CHASTITY_GENDER_MALE') }}</label>&nbsp;
+                        <label><input type="radio" name="gender" value="female" {% if GENDER == 'female' %}checked{% endif %} /> {{ lang('CHASTITY_GENDER_FEMALE') }}</label>&nbsp;
+                        <label><input type="radio" name="gender" value="other" {% if GENDER == 'other' %}checked{% endif %} /> {{ lang('CHASTITY_GENDER_OTHER') }}</label>
+                    </dd>
+                </dl>
+            </fieldset>
+
+            <fieldset>
+                <legend>🏆 {{ lang('CHASTITY_PREFS_RECORD_LEGEND') }}</legend>
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_RECORD_PM') }}{{ lang('COLON') }}<br /><span>{{ lang('CHASTITY_PREFS_RECORD_PM_EXPLAIN') }}</span></dt>
+                    <dd>
+                        <input type="radio" name="record_pm_receive" value="1" {% if RECORD_PM_RECEIVE %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="record_pm_receive" value="0" {% if not RECORD_PM_RECEIVE %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
+            </fieldset>
             <fieldset>
                 <legend>{{ lang('CHASTITY_PREFS_PROFILE') }}</legend>
                 <dl>
@@ -68,26 +92,15 @@
                         <input type="radio" name="show_in_contact" value="0" {% if not SHOW_IN_CONTACT %}checked{% endif %} /> {{ lang('NO') }}
                     </dd>
                 </dl>
-            </fieldset>
-
-            <fieldset>
-                <legend>{{ lang('CHASTITY_API_ACCESS') }}</legend>
-                <p>{{ lang('CHASTITY_API_EXPLAIN') }}</p>
-
-                {% if API_ENABLED %}
-                    <p style="color:#228B22;">✅ {{ lang('CHASTITY_API_ACTIVE') }}</p>
-                    <p>
-                        <strong>{{ lang('CHASTITY_API_TOKEN_LABEL') }}{{ lang('COLON') }}</strong><br>
-                        <code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;">{{ API_TOKEN }}</code>
-                    </p>
-                    <code style="font-size:0.8em;">/chastity/api/user/{{ S_USER_ID }}?token={{ API_TOKEN }}</code>
-                    <br><br>
-                    <input type="submit" name="revoke_api_token" value="{{ lang('CHASTITY_API_REVOKE') }}" class="button2"
-                           onclick="return confirm('{{ lang('CHASTITY_API_REVOKE_CONFIRM') }}');" />
-                {% else %}
-                    <p style="color:#888;">🔒 {{ lang('CHASTITY_API_DISABLED') }}</p>
-                    <input type="submit" name="generate_api_token" value="{{ lang('CHASTITY_API_GENERATE') }}" class="button2" />
-                {% endif %}
+                <dl>
+                    <dt>{{ lang('CHASTITY_PREFS_SHOW_CALENDAR_DETAILS') }}{{ lang('COLON') }}
+                        <br><span style="font-size:0.85em;color:#888;font-weight:normal;">{{ lang('CHASTITY_PREFS_SHOW_CALENDAR_DETAILS_EXPLAIN') }}</span>
+                    </dt>
+                    <dd>
+                        <input type="radio" name="show_calendar_details" value="1" {% if SHOW_CALENDAR_DETAILS %}checked{% endif %} /> {{ lang('YES') }}&nbsp;
+                        <input type="radio" name="show_calendar_details" value="0" {% if not SHOW_CALENDAR_DETAILS %}checked{% endif %} /> {{ lang('NO') }}
+                    </dd>
+                </dl>
             </fieldset>
 
             <fieldset class="submit-buttons">

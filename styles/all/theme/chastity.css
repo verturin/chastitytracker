@@ -1,22 +1,26 @@
-/* Chastity Tracker Extension CSS */
+/* Chastity Tracker Extension CSS — v3.4.2 */
 
+/* ── Base ─────────────────────────────────────────── */
 .profile-chastity {
     margin: 5px 0;
     padding: 5px;
-    background-color: #f9f9f9;
-    border-left: 3px solid #ddd;
+    background-color: transparent;
+    border-left: none;
 }
 
-.chastity-locked {
-    color: #BC2A4D;
-    font-weight: bold;
-}
+.chastity-locked,
+.profile-chastity .chastity-locked,
+.panel .chastity-locked,
+dd .chastity-locked,
+strong.chastity-locked { color: #BC2A4D !important; font-weight: bold; }
 
-.chastity-free {
-    color: #228B22;
-    font-weight: bold;
-}
+.chastity-free,
+.profile-chastity .chastity-free,
+.panel .chastity-free,
+dd .chastity-free,
+strong.chastity-free { color: #228B22 !important; font-weight: bold; }
 
+/* ── Stats box ────────────────────────────────────── */
 .chastity-stats-box {
     background-color: #f5f5f5;
     border: 1px solid #ddd;
@@ -24,43 +28,22 @@
     padding: 15px;
     margin: 10px 0;
 }
+.chastity-stats-box dl { margin: 5px 0; }
+.chastity-stats-box dt { font-weight: bold; width: 200px; display: inline-block; }
+.chastity-stats-box dd { display: inline; }
 
-.chastity-stats-box dl {
-    margin: 5px 0;
-}
-
-.chastity-stats-box dt {
-    font-weight: bold;
-    width: 200px;
-    display: inline-block;
-}
-
-.chastity-stats-box dd {
-    display: inline;
-}
-
-.chastity-calendar-table {
-    width: 100%;
-    margin: 10px 0;
-}
-
+/* ── Tableau historique ───────────────────────────── */
+.chastity-calendar-table { width: 100%; margin: 10px 0; }
 .chastity-calendar-table th {
     background-color: #e8e8e8;
     padding: 8px;
     text-align: left;
     font-weight: bold;
 }
+.chastity-calendar-table td { padding: 8px; border-bottom: 1px solid #e8e8e8; }
+.chastity-calendar-table tr.active { background-color: #fff3cd; font-weight: bold; }
 
-.chastity-calendar-table td {
-    padding: 8px;
-    border-bottom: 1px solid #e8e8e8;
-}
-
-.chastity-calendar-table tr.active {
-    background-color: #fff3cd;
-    font-weight: bold;
-}
-
+/* ── Formulaire période ───────────────────────────── */
 .chastity-period-form {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
@@ -68,20 +51,9 @@
     padding: 15px;
     margin: 15px 0;
 }
-
-.chastity-period-form dl {
-    margin: 10px 0;
-}
-
-.chastity-period-form dt {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.chastity-period-form dd {
-    margin-left: 0;
-}
-
+.chastity-period-form dl { margin: 10px 0; }
+.chastity-period-form dt { font-weight: bold; margin-bottom: 5px; }
+.chastity-period-form dd { margin-left: 0; }
 .chastity-period-form input[type="date"],
 .chastity-period-form textarea {
     width: 100%;
@@ -91,6 +63,7 @@
     border-radius: 3px;
 }
 
+/* ── Statut courant ───────────────────────────────── */
 .chastity-current-status {
     font-size: 1.2em;
     padding: 10px;
@@ -98,58 +71,145 @@
     border-radius: 5px;
     text-align: center;
 }
-
 .chastity-current-status.locked {
     background-color: #ffe6e6;
     border: 2px solid #BC2A4D;
     color: #BC2A4D;
 }
-
 .chastity-current-status.free {
     background-color: #e6ffe6;
     border: 2px solid #228B22;
     color: #228B22;
 }
 
-.chastity-action-buttons {
-    margin: 10px 0;
-}
-
+/* ── Boutons actions ──────────────────────────────── */
+.chastity-action-buttons { margin: 10px 0; }
 .chastity-action-buttons .button1,
-.chastity-action-buttons .button2 {
-    margin-right: 10px;
-}
+.chastity-action-buttons .button2 { margin-right: 10px; }
 
-.chastity-status {
-    margin-top: 3px;
-    font-size: 0.85em;
-}
-
-.chastity-status.locked {
-    color: #c0392b;
-    font-weight: bold;
-}
-
-.chastity-status.free {
-    color: #27ae60;
-}
+/* ── Badge posts ──────────────────────────────────── */
+.chastity-status { margin-top: 3px; font-size: 0.85em; }
+.chastity-status.locked { color: #c0392b !important; font-weight: bold; }
+.chastity-status.free { color: #27ae60 !important; }
+.chastity-post-badge { text-align: center; padding: 4px 0; }
 
 .okdisplay-badge {
-    display:inline-block;
-    margin-top:4px;
-    padding:2px 8px;
-    background:#28a745;
-    color:#fff;
-    font-size:11px;
-    font-weight:bold;
-    border-radius:12px;
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: #28a745;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 12px;
 }
 
+/* ── Nav link ─────────────────────────────────────── */
 @media (min-width: 700px) {
     .chastity-nav-label { display: none; }
 }
 
-/* ── Calendrier annuel UCP ────────────────────── */
+/* ══════════════════════════════════════════════════════
+   CALENDRIER MENSUEL UCP
+   ══════════════════════════════════════════════════════ */
+.chastity-cal-wrapper {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.chastity-cal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chastity-cal-nav-btn {
+    padding: 8px 15px;
+    background: #BC2A4D;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+}
+.chastity-cal-nav-btn:hover { background: #9b1f3d; color: white; text-decoration: none; }
+
+.chastity-cal-title {
+    margin: 0;
+    color: #BC2A4D;
+    font-size: 1.3em;
+}
+
+.chastity-cal-grid {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+.chastity-cal-grid th {
+    padding: 10px;
+    text-align: center;
+    background: #333;
+    color: white;
+}
+
+.chastity-cal-cell {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background: white;
+}
+.chastity-cal-cell-locked { background: #d4edda; }
+.chastity-cal-cell-other { opacity: 0.4; }
+.chastity-cal-cell-today { border: 2px solid #BC2A4D !important; font-weight: bold; }
+.chastity-cal-day { font-size: 1.2em; font-weight: bold; }
+.chastity-cal-lock-icon { color: #28a745; font-size: 1.1em; }
+
+/* ── Légende calendriers ──────────────────────────── */
+.chastity-legend {
+    margin-top: 15px;
+    padding: 10px;
+    background: white;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.chastity-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chastity-legend-box {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+}
+.chastity-legend-box-small {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.chastity-legend-today-box {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #BC2A4D;
+}
+
+/* ══════════════════════════════════════════════════════
+   VUE ANNUELLE (YEARVIEW)
+   ══════════════════════════════════════════════════════ */
 .chastity-yearview-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -158,6 +218,8 @@
 }
 @media (max-width: 900px) { .chastity-yearview-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 600px) { .chastity-yearview-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 400px) { .chastity-yearview-grid { grid-template-columns: 1fr; } }
+
 .chastity-yearview-month {
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -165,6 +227,7 @@
     background: #fafafa;
 }
 .chastity-yearview-current { border-color: #BC2A4D; background: #fff5f7; }
+
 .chastity-yearview-month-header {
     display: flex;
     justify-content: space-between;
@@ -173,6 +236,7 @@
     font-size: 0.9em;
 }
 .chastity-yearview-count { color: #28a745; font-size: 0.85em; }
+
 .chastity-yearview-table {
     width: 100%;
     border-collapse: separate;
@@ -192,15 +256,585 @@
     border-radius: 2px;
     cursor: default;
 }
-.chastity-yv-empty  { background: transparent; }
+.chastity-yv-empty { background: transparent; }
 .chastity-yv-locked { background: #d4edda; color: #28a745; font-weight: bold; }
-.chastity-yv-free   { background: #f8f8f8; color: #aaa; }
-.chastity-yv-today  { outline: 2px solid #BC2A4D; color: #BC2A4D !important; font-weight: bold; }
-/* Légende */
-.chastity-yv-legend {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border-radius: 2px;
-    vertical-align: middle;
-    margin-right: 4px;
+.chastity-yv-free { background: #f8f8f8; color: #aaa; }
+.chastity-yv-today { outline: 2px solid #BC2A4D; color: #BC2A4D !important; font-weight: bold; }
+
+/* ── Synthèse annuelle ────────────────────────────── */
+.chastity-yearview-summary {
+    background: #f0f8f0;
+    border: 1px solid #28a745;
+    border-radius: 5px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+    text-align: center;
 }
+.chastity-yearview-summary-count {
+    font-size: 1.2em;
+    color: #28a745;
+    font-weight: bold;
+}
+.chastity-yearview-summary-label { color: #666; margin-left: 8px; }
+
+/* ── Légende yearview/profil ──────────────────────── */
+.chastity-legend-compact {
+    margin-top: 20px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.chastity-legend-compact-bordered {
+    margin-top: 12px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 8px;
+}
+
+/* ══════════════════════════════════════════════════════
+   LEADERBOARD (page d'accueil)
+   ══════════════════════════════════════════════════════ */
+.chastity-leaderboard { margin: 16px 0; padding: 0; }
+.chastity-leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+
+.chastity-leaderboard-header {
+    background: #BC2A4D;
+    color: #fff;
+    cursor: pointer;
+}
+.chastity-leaderboard-header th {
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 1em;
+}
+.chastity-leaderboard-arrow {
+    display: inline-block;
+    width: 1em;
+}
+
+.chastity-leaderboard-subheader {
+    background: #2E4057;
+    color: #fff;
+}
+.chastity-leaderboard-subheader th {
+    padding: 6px 10px;
+    text-align: center;
+    width: 33%;
+}
+
+.chastity-leaderboard-row { border-bottom: 1px solid #eee; }
+.chastity-leaderboard-row:nth-child(even) { background: #f5f5f5; }
+.chastity-leaderboard-row:nth-child(odd) { background: #ffffff; }
+.chastity-leaderboard-cell { padding: 5px 10px; text-align: center; }
+.chastity-leaderboard-rank { color: #888; font-size: 0.85em; }
+.chastity-leaderboard-days { color: #BC2A4D; font-weight: bold; }
+.chastity-leaderboard-year { color: #888; font-size: 0.8em; }
+.chastity-leaderboard-empty { color: #ccc; }
+
+/* ══════════════════════════════════════════════════════
+   PROFIL (mini-calendriers)
+   ══════════════════════════════════════════════════════ */
+.chastity-profile-months {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.chastity-profile-month {
+    min-width: 0;
+}
+.chastity-profile-month-name {
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #BC2A4D;
+    text-align: center;
+    margin-bottom: 3px;
+}
+.chastity-profile-cal {
+    border-collapse: separate;
+    border-spacing: 1px;
+    width: 100%;
+}
+.chastity-profile-cal-dow {
+    font-size: 0.65em;
+    color: #888;
+    text-align: center;
+}
+.chastity-profile-cal td {
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    font-size: 0.7em;
+    border-radius: 2px;
+}
+
+/* ── Calendrier responsive mobile ─────────────────── */
+@media (max-width: 600px) {
+    .chastity-cal-cell { padding: 8px; }
+    .chastity-cal-day { font-size: 1em; }
+    .chastity-cal-grid th { padding: 6px; font-size: 0.85em; }
+    .chastity-legend { gap: 10px; font-size: 0.85em; }
+    .chastity-legend-box { width: 20px; height: 20px; }
+    .chastity-legend-today-box { width: 20px; height: 20px; }
+    .chastity-profile-months { gap: 4px; grid-template-columns: repeat(2, 1fr); }
+    .chastity-profile-month { min-width: 0; }
+}
+
+/* v3.5.0 — Système de cages */
+.chastity-cage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+.chastity-cage-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+.chastity-cage-card-photo {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.chastity-cage-card-photo img { width: 100%; height: 100%; object-fit: cover; }
+.chastity-cage-no-photo { font-size: 3em; color: #ccc; }
+.chastity-cage-card-info { padding: 12px; }
+.chastity-cage-card-info h3 { margin: 0 0 4px 0; }
+.chastity-cage-card-info .brand { color: #666; margin: 0 0 4px 0; font-size: 0.9em; }
+.chastity-cage-card-info .material {
+    display: inline-block;
+    background: #e8f4fd;
+    color: #1976d2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    margin-bottom: 6px;
+}
+.chastity-cage-card-info .desc { font-size: 0.85em; color: #555; }
+.chastity-cage-card-actions { padding: 8px 12px 12px; text-align: center; }
+@media (max-width: 600px) {
+    .chastity-cage-grid { grid-template-columns: 1fr; }
+}
+
+/* Cage actuellement utilisée */
+.chastity-cage-current-card {
+    border: 2px solid #28a745;
+    box-shadow: 0 0 12px rgba(40,167,69,0.3);
+}
+.chastity-cage-current-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+    z-index: 2;
+}
+.chastity-cage-card-photo {
+    position: relative;
+}
+.chastity-cage-archived {
+    opacity: 0.65;
+}
+
+/* Notation 5 étoiles */
+.chastity-cage-rating-display .stars { color: #f5a623; font-size: 1.2em; letter-spacing: 2px; }
+.chastity-cage-rate-form { margin-top: 8px; font-size: 0.9em; }
+.chastity-cage-rate-form summary { cursor: pointer; color: #2E4057; padding: 4px 0; }
+.chastity-cage-rate-form summary:hover { color: #BC2A4D; }
+
+/* Widget étoiles : row-reverse + chaque label = 1 étoile.
+   Astuce CSS : sur hover/check, on colore l'étoile pointée + toutes ses sœurs précédentes
+   (qui sont à sa droite visuellement vu le row-reverse). */
+.chastity-cage-stars-input {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    margin: 8px 0;
+    padding: 0;
+}
+.chastity-cage-stars-input input[type=radio] {
+    position: absolute !important;
+    opacity: 0 !important;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+.chastity-cage-stars-input label {
+    cursor: pointer;
+    color: #ccc;
+    font-size: 1.8em;
+    line-height: 1;
+    padding: 0 3px;
+    transition: color 0.15s;
+    user-select: none;
+}
+.chastity-cage-stars-input label:hover,
+.chastity-cage-stars-input label:hover ~ label,
+.chastity-cage-stars-input input[type=radio]:checked ~ label {
+    color: #f5a623;
+}
+
+/* Lightbox photos cages */
+.chastity-cage-card-photo {
+    cursor: pointer;
+}
+.chastity-lightbox-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+}
+.chastity-lightbox-overlay.active { display: flex; }
+.chastity-lightbox-content {
+    position: relative;
+    max-width: 95vw;
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.chastity-lightbox-content img {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+}
+.chastity-lightbox-close {
+    position: absolute;
+    top: -36px;
+    right: 0;
+    font-size: 32px;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+}
+.chastity-lightbox-prev,
+.chastity-lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 40px;
+    color: white;
+    background: rgba(0,0,0,0.4);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+}
+.chastity-lightbox-prev { left: -60px; }
+.chastity-lightbox-next { right: -60px; }
+.chastity-lightbox-counter {
+    color: white;
+    margin-top: 12px;
+    font-size: 0.9em;
+}
+.chastity-cage-photo-count {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+}
+@media (max-width: 700px) {
+    .chastity-lightbox-prev { left: 4px; }
+    .chastity-lightbox-next { right: 4px; }
+}
+
+/* ─── Badges cadenas / clé à côté du pseudo (v3.7.0) ─────────── */
+.chastity-lock-badge,
+.chastity-kh-badge {
+    display: inline-block;
+    margin-left: 2px;
+    font-size: 0.9em;
+    vertical-align: middle;
+    cursor: help;
+    text-decoration: none;
+}
+.chastity-kh-badge {
+    color: #DAA520;
+}
+
+/* Sub verrouillé sous contrôle d'un KH actif (cadenas teinté doré) */
+.chastity-lock-under-kh {
+    filter: hue-rotate(-20deg) saturate(1.3);
+    text-shadow: 0 0 3px rgba(218, 165, 32, 0.6);
+}
+
+/* ─── Barre de progression Locktober (profil) — v3.8.0 ─── */
+.chastity-locktober-bar {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    height: 18px;
+    background: #f0e0d0;
+    border: 1px solid #ff8c00;
+    border-radius: 9px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+.chastity-locktober-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+    transition: width 0.4s ease;
+}
+.chastity-locktober-bar-text {
+    position: relative;
+    z-index: 1;
+    display: block;
+    line-height: 18px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+/* ─── Mini-barre Locktober (carte profil dans les posts) — v3.8.0 ─── */
+.chastity-locktober-mini {
+    margin-top: 4px;
+    display: flex;
+    justify-content: center;
+}
+.chastity-locktober-mini-bar {
+    position: relative;
+    width: 150px;
+    height: 18px;
+    background: #f0e0d0;
+    border: 1px solid #ff8c00;
+    border-radius: 9px;
+    overflow: hidden;
+    display: inline-block;
+}
+.chastity-locktober-mini-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+    transition: width 0.4s ease;
+}
+.chastity-locktober-mini-text {
+    position: relative;
+    z-index: 1;
+    display: block;
+    line-height: 18px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+/* ─── Récompenses / Anneaux (style Apple Watch) — v3.8.1 ─── */
+.chastity-rings-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+.chastity-rings-card {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    width: 240px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.chastity-rings-title {
+    margin: 0 0 10px;
+    color: #2E4057;
+    font-size: 1.1em;
+}
+.chastity-rings-svg-wrap { display: flex; justify-content: center; }
+.chastity-rings-svg { width: 160px; height: 160px; }
+.ring-track { fill: none; stroke-width: 12; opacity: 0.45; }
+.ring-fill {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.6s ease;
+}
+.chastity-rings-legend {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    text-align: left;
+    font-size: 0.9em;
+}
+.chastity-rings-legend li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+}
+.ring-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.ring-name { flex: 1; }
+.ring-val { font-weight: bold; color: #555; white-space: nowrap; }
+.ring-val.ring-done { color: #28a745; }
+.chastity-rings-empty { color: #888; font-style: italic; }
+
+/* Mini-anneaux sur le profil public */
+.chastity-profile-rings {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+.chastity-profile-ring-block { text-align: center; }
+.chastity-profile-ring-block svg { width: 80px; height: 80px; }
+.chastity-profile-ring-label { font-size: 0.8em; color: #555; margin-top: 2px; }
+
+/* ─── Badges spéciaux (Locktober) — v3.8.1 ─── */
+.chastity-special-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 12px 0;
+}
+.chastity-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    min-height: 110px;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    background: #fafafa;
+    text-align: center;
+    box-sizing: border-box;
+}
+.chastity-badge-success { border-color: #ffb300; background: linear-gradient(160deg,#fff8e1,#ffe082); }
+.chastity-badge-part    { border-color: #b0bec5; background: #eceff1; }
+.chastity-badge-icon { font-size: 1.8em; line-height: 1; }
+.chastity-badge-year { font-weight: bold; color: #2E4057; margin-top: 2px; }
+.chastity-badge-level { font-size: 0.78em; color: #555; margin-top: 2px; }
+
+/* Badges mini sur le profil */
+.chastity-profile-badges { justify-content: center; }
+.chastity-badge-mini {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.82em;
+    font-weight: bold;
+    border: 1px solid #ccc;
+}
+.chastity-badge-mini.chastity-badge-success { border-color: #ffb300; background: #fff3cd; color: #7a5c00; }
+.chastity-badge-mini.chastity-badge-part    { border-color: #b0bec5; background: #eceff1; color: #455a64; }
+
+/* Anneaux compacts dans la carte profil des posts — v3.8.1 */
+.chastity-post-rings {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+}
+.chastity-post-ring-block { text-align: center; }
+.chastity-post-rings svg { width: 52px; height: 52px; }
+.chastity-post-ring-label { font-size: 0.72em; color: #555; margin-top: 1px; }
+
+/* Image de récompense d'année Locktober — v3.8.1 */
+.chastity-badge-reward-img { max-width: 48px; max-height: 48px; }
+.chastity-badge-reward-label { font-size: 0.75em; color: #7a5c00; font-style: italic; margin-top: 2px; }
+
+/* ─── Badge de palier de fidélité Locktober — v3.8.1 ─── */
+.chastity-milestone-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe082 100%);
+    border: 2px solid #ffb300;
+}
+.chastity-milestone-img { max-width: 64px; max-height: 64px; }
+.chastity-milestone-icon { font-size: 2.4em; }
+.chastity-milestone-text { line-height: 1.4; color: #5d4200; }
+.chastity-milestone-mini { display: inline-block; }
+
+/* Badge journée spéciale — v3.8.1 */
+.chastity-badge-sday { border-color: #c2185b; background: linear-gradient(160deg,#fce4ec,#f8bbd0); }
+.chastity-badge-mini.chastity-badge-sday { border-color: #c2185b; background: #fce4ec; color: #880e4f; }
+
+/* ─── Compteurs de périodes parfaites — v3.8.1 ─── */
+.chastity-perfect-counts {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+}
+.chastity-perfect-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    min-height: 110px;
+    text-align: center;
+    padding: 10px 6px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%);
+    border: 2px solid #9575cd;
+    box-sizing: border-box;
+}
+.chastity-perfect-num { display: block; font-size: 1.4em; font-weight: bold; color: #4527a0; }
+.chastity-perfect-lbl { display: block; font-size: 0.72em; color: #5e35b1; margin-top: 2px; }
+
+/* Anneau dans les compteurs de périodes parfaites — v3.8.1 */
+.chastity-perfect-ring { margin-bottom: 4px; }
+.chastity-perfect-ring svg { width: 48px; height: 48px; }
+
+/* Badge palier non obtenu (grisé, à venir) — v3.8.1 */
+.chastity-badge-locked { opacity: 0.45; filter: grayscale(100%); border-style: dashed !important; }
+.chastity-badge-locked .chastity-badge-level { color: #888; font-style: italic; }
+
+/* CTR — Contrat de chasteté (v3.9.2/3.9.3) */
+.chastity-contract-status { display:inline-block; padding:3px 10px; border-radius:5px; font-weight:600; font-size:0.9em; }
+.chastity-contract-status-draft { background:#FFF3CD; color:#6b5300; }
+.chastity-contract-status-pending_validation { background:#E8F4FD; color:#0d3d5c; }
+.chastity-contract-status-active { background:#D4EDDA; color:#155724; }
+.chastity-contract-status-suspended { background:#FFE8E8; color:#a12727; }
+.chastity-contract-status-ended { background:#e0e0e0; color:#555; }
+.chastity-contract-status-replaced { background:#F0E8FF; color:#5a3d8c; }
