@@ -1,0 +1,83 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_KEYHOLDERS') }}</h1>
+<p>{{ lang('ACP_KH_EXPLAIN') }}</p>
+
+<form method="post" action="{{ U_ACTION }}" style="margin-bottom:15px;">
+	<fieldset>
+		<legend>🔍 {{ lang('ACP_KH_FILTER') }}</legend>
+		<label>
+			{{ lang('STATUS') }}{{ lang('COLON') }}
+			<select name="status">
+				<option value="all" {% if FILTER_STATUS == 'all' %}selected{% endif %}>{{ lang('ACP_KH_STATUS_ALL') }}</option>
+				<option value="pending" {% if FILTER_STATUS == 'pending' %}selected{% endif %}>⏳ {{ lang('ACP_KH_STATUS_PENDING') }} ({{ COUNT_PENDING }})</option>
+				<option value="active" {% if FILTER_STATUS == 'active' %}selected{% endif %}>✅ {{ lang('ACP_KH_STATUS_ACTIVE') }} ({{ COUNT_ACTIVE }})</option>
+				<option value="ended" {% if FILTER_STATUS == 'ended' %}selected{% endif %}>🔚 {{ lang('ACP_KH_STATUS_ENDED') }} ({{ COUNT_ENDED }})</option>
+				<option value="refused" {% if FILTER_STATUS == 'refused' %}selected{% endif %}>❌ {{ lang('ACP_KH_STATUS_REFUSED') }} ({{ COUNT_REFUSED }})</option>
+			</select>
+		</label>
+		<input type="submit" name="apply_filter" value="{{ lang('SUBMIT') }}" class="button1" />
+		{% if FILTER_STATUS != 'all' %}
+			<input type="submit" name="clear_filter" value="{{ lang('ACP_KH_FILTER_CLEAR') }}" class="button2" />
+		{% endif %}
+	</fieldset>
+</form>
+
+<fieldset>
+	<legend>{{ lang('ACP_KH_LIST') }}</legend>
+	{% if duos is defined and duos|length > 0 %}
+		<table class="table1" style="width:100%;">
+			<thead>
+				<tr>
+					<th>{{ lang('ACP_KH_SUB') }}</th>
+					<th>{{ lang('ACP_KH_KH') }}</th>
+					<th>{{ lang('STATUS') }}</th>
+					<th>{{ lang('ACP_KH_REQUESTED') }}</th>
+					<th>{{ lang('ACP_KH_ACCEPTED') }}</th>
+					<th>{{ lang('ACP_KH_ENDED') }}</th>
+					<th>{{ lang('ACTIONS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for d in duos %}
+					<tr>
+						<td>
+							<a href="{{ U_ACTION }}&amp;u={{ d.SUB_USER_ID }}" style="color:#{{ d.SUB_COLOUR }};font-weight:bold;">{{ d.SUB_USERNAME }}</a>
+							{% if d.SUB_LOCKED %}<span title="Verrouillé">🔒</span>{% endif %}
+						</td>
+						<td>
+							<a href="{{ U_ACTION }}&amp;u={{ d.KH_USER_ID }}" style="color:#{{ d.KH_COLOUR }};font-weight:bold;">{{ d.KH_USERNAME }}</a>
+						</td>
+						<td>
+							{% if d.IS_PENDING %}<span style="color:#E67E22;">⏳ {{ lang('ACP_KH_STATUS_PENDING') }}</span>
+							{% elseif d.IS_ACTIVE %}<span style="color:#28A745;font-weight:bold;">✅ {{ lang('ACP_KH_STATUS_ACTIVE') }}</span>
+							{% elseif d.IS_ENDED %}<span style="color:#888;">🔚 {{ lang('ACP_KH_STATUS_ENDED') }}{% if d.END_BY_ADMIN %} <em>(admin)</em>{% endif %}</span>
+							{% elseif d.IS_REFUSED %}<span style="color:#BC2A4D;">❌ {{ lang('ACP_KH_STATUS_REFUSED') }}</span>
+							{% endif %}
+						</td>
+						<td>{{ d.CREATED_AT }}</td>
+						<td>{{ d.ACCEPTED_AT }}</td>
+						<td>{{ d.ENDED_AT }}</td>
+						<td>
+							{% if d.IS_PENDING or d.IS_ACTIVE %}
+								<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+									<input type="hidden" name="kh_id" value="{{ d.KH_ID }}" />
+									<input type="hidden" name="hash" value="{{ HASH }}" />
+									<button type="submit" name="force_end" value="1" class="button2" onclick="return confirm('{{ lang('ACP_KH_FORCE_END_CONFIRM') }}');">{{ lang('ACP_KH_FORCE_END') }}</button>
+								</form>
+							{% else %}
+								<em style="color:#888;">—</em>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p style="color:#888;">{{ lang('ACP_KH_LIST_EMPTY') }}</p>
+	{% endif %}
+</fieldset>
+
+{% include 'overall_footer.html' %}

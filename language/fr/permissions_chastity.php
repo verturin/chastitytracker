@@ -17,5 +17,7 @@ $lang = array_merge($lang, array(
     'ACL_U_CHASTITY_REFRESH'  => 'Peut forcer la mise à jour de son cache et historique',
     'ACL_M_CHASTITY_MODERATE' => 'Peut modérer les périodes de chasteté',
     'ACL_U_CHASTITY_PREFS'  => 'Peut gérer ses préférences de confidentialité',
+    'ACL_U_CHASTITY_LOCK_BADGE' => 'Peut voir le badge cadenas dans les posts',
+    'ACL_U_CHASTITY_CONTRACT' => 'Peut créer et gérer un contrat de chasteté',
 	
 ));

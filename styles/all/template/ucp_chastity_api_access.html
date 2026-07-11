@@ -1,0 +1,197 @@
+{% include 'ucp_header.html' %}
+
+<div class="panel">
+    <div class="inner">
+        <h2>{{ lang('UCP_CHASTITY_API_ACCESS') }}</h2>
+
+        {# Statut API en haut pour voir directement l'état #}
+        {% if API_ENABLED %}
+        <div style="background:#D4EDDA;border-left:4px solid #228B22;padding:10px 14px;margin:0 0 18px;border-radius:0 4px 4px 0;">
+            <strong style="color:#228B22;font-size:1.05em;">✅ {{ lang('CHASTITY_API_ACTIVE') }}</strong>
+            <div style="margin-top:6px;font-size:0.9em;">
+                <strong>{{ lang('CHASTITY_API_TOKEN_LABEL') }}{{ lang('COLON') }}</strong>
+                <code style="background:#fff;padding:2px 6px;border-radius:3px;word-break:break-all;font-size:0.85em;">{{ API_TOKEN }}</code>
+            </div>
+        </div>
+        {% else %}
+        <div style="background:#FFF3CD;border-left:4px solid #BC2A4D;padding:10px 14px;margin:0 0 18px;border-radius:0 4px 4px 0;">
+            <strong style="color:#BC2A4D;">🔒 {{ lang('CHASTITY_API_DISABLED') }}</strong>
+            <form method="post" action="{{ U_ACTION }}" style="display:inline;margin-left:12px;">
+                <input type="submit" name="generate_api_token" value="{{ lang('CHASTITY_API_GENERATE') }}" class="button1" />
+                {{ S_FORM_TOKEN }}
+            </form>
+        </div>
+        {% endif %}
+
+        {# Personnalisation des badges (pseudo affiché, masquage statut, phrase) — sauvegardé avec le formulaire #}
+        <form method="post" action="{{ U_ACTION }}" id="ucp_badge_prefs">
+            <fieldset>
+                <legend>{{ lang('CHASTITY_BADGE_CUSTOMIZATION') }}</legend>
+                <p>{{ lang('CHASTITY_BADGE_CUSTOMIZATION_EXPLAIN') }}</p>
+
+                <dl>
+                    <dt>
+                        <label for="badge_alias">{{ lang('CHASTITY_BADGE_ALIAS') }}{{ lang('COLON') }}</label>
+                        <br><span style="font-size:0.85em;color:#888;">{{ lang('CHASTITY_BADGE_ALIAS_EXPLAIN') }}</span>
+                    </dt>
+                    <dd>
+                        <input id="badge_alias" type="text" name="badge_alias" value="{{ BADGE_ALIAS }}" maxlength="50" size="30" class="inputbox" placeholder="{{ lang('CHASTITY_BADGE_ALIAS_PLACEHOLDER') }}" />
+                    </dd>
+                </dl>
+
+                <dl>
+                    <dt>
+                        <label>{{ lang('CHASTITY_BADGE_HIDE_STATUS') }}{{ lang('COLON') }}</label>
+                        <br><span style="font-size:0.85em;color:#888;">{{ lang('CHASTITY_BADGE_HIDE_STATUS_EXPLAIN') }}</span>
+                    </dt>
+                    <dd>
+                        <label><input type="radio" name="badge_hide_status" value="1" {% if BADGE_HIDE_STATUS %}checked{% endif %} /> {{ lang('YES') }}</label>
+                        &nbsp;
+                        <label><input type="radio" name="badge_hide_status" value="0" {% if not BADGE_HIDE_STATUS %}checked{% endif %} /> {{ lang('NO') }}</label>
+                    </dd>
+                </dl>
+
+                <dl>
+                    <dt>
+                        <label for="badge_tagline">{{ lang('CHASTITY_BADGE_TAGLINE') }}{{ lang('COLON') }}</label>
+                        <br><span style="font-size:0.85em;color:#888;">{{ lang('CHASTITY_BADGE_TAGLINE_EXPLAIN') }}</span>
+                    </dt>
+                    <dd>
+                        <input id="badge_tagline" type="text" name="badge_tagline" value="{{ BADGE_TAGLINE }}" maxlength="150" size="50" class="inputbox" placeholder="{{ lang('CHASTITY_BADGE_TAGLINE_PLACEHOLDER') }}" />
+                        <br><small id="tagline_counter" style="color:#888;">{{ BADGE_TAGLINE|length }}/150</small>
+                    </dd>
+                </dl>
+
+                <fieldset class="submit-buttons">
+                    <input type="submit" name="save_tagline" value="{{ lang('SUBMIT') }}" class="button1" />
+                    {% if API_ENABLED %}
+                    <button type="button" id="refresh_badges_btn" class="button2" onclick="refreshBadges()" style="margin-left:8px;">🔄 {{ lang('CHASTITY_API_REFRESH_BADGES') }}</button>
+                    {% endif %}
+                </fieldset>
+            </fieldset>
+
+            {# Aperçu en direct juste sous le formulaire (sans sauvegarder) #}
+            {% if API_ENABLED %}
+            <fieldset style="margin-top:15px;border:1px solid #ddd;border-radius:6px;padding:12px;">
+                <legend style="font-weight:bold;padding:0 8px;">{{ lang('CHASTITY_API_BADGE_PREVIEW') }}</legend>
+                <p style="font-size:0.85em;margin-bottom:12px;color:#888;">{{ lang('CHASTITY_API_REFRESH_BADGES_EXPLAIN') }}</p>
+
+                <div style="margin:12px 0;padding:12px;background:#FFF8E7;border-left:4px solid #DAA520;border-radius:4px;">
+                    <strong style="color:#8B6914;">🔑 {{ lang('CHASTITY_API_KH_LEGEND_TITLE') }}</strong>
+                    <p style="margin:8px 0 0 0;font-size:0.9em;line-height:1.5;">
+                        {{ lang('CHASTITY_API_KH_LEGEND_EXPLAIN') }}
+                    </p>
+                </div>
+
+                <div style="margin:12px 0;padding:12px;background:#FDEFF3;border-left:4px solid #BC2A4D;border-radius:4px;">
+                    <strong style="color:#BC2A4D;">📜 {{ lang('CHASTITY_API_CONTRACT_LEGEND_TITLE') }}</strong>
+                    <p style="margin:8px 0 0 0;font-size:0.9em;line-height:1.5;">
+                        {{ lang('CHASTITY_API_CONTRACT_LEGEND_EXPLAIN') }}
+                    </p>
+                </div>
+
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;padding:6px;border-bottom:1px solid #ddd;width:50%;">🔒 {{ lang('CHASTITY_STATUS_LOCKED') }}</th>
+                            <th style="text-align:left;padding:6px;border-bottom:1px solid #ddd;width:50%;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:8px;vertical-align:top;"><strong>dark ({{ lang('CHASTITY_API_BADGE_DEFAULT') }}) :</strong><br><img class="chastity-badge-preview" data-style="dark" data-mode="locked" src="{{ API_URL_BADGE }}" alt="dark locked" style="max-width:100%;margin-top:4px;" /></td>
+                            <td style="padding:8px;vertical-align:top;"><strong>dark :</strong><br><img class="chastity-badge-preview" data-style="dark" data-mode="free" src="{{ API_URL_BADGE }}&amp;preview=free" alt="dark free" style="max-width:100%;margin-top:4px;" /></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;vertical-align:top;"><strong>medium :</strong><br><img class="chastity-badge-preview" data-style="medium" data-mode="locked" src="{{ API_URL_BADGE }}&amp;style=medium" alt="medium locked" style="max-width:100%;margin-top:4px;" /></td>
+                            <td style="padding:8px;vertical-align:top;"><strong>medium :</strong><br><img class="chastity-badge-preview" data-style="medium" data-mode="free" src="{{ API_URL_BADGE }}&amp;style=medium&amp;preview=free" alt="medium free" style="max-width:100%;margin-top:4px;" /></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;vertical-align:top;"><strong>light :</strong><br><img class="chastity-badge-preview" data-style="light" data-mode="locked" src="{{ API_URL_BADGE }}&amp;style=light" alt="light locked" style="max-width:100%;margin-top:4px;" /></td>
+                            <td style="padding:8px;vertical-align:top;"><strong>light :</strong><br><img class="chastity-badge-preview" data-style="light" data-mode="free" src="{{ API_URL_BADGE }}&amp;style=light&amp;preview=free" alt="light free" style="max-width:100%;margin-top:4px;" /></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:8px;vertical-align:top;"><strong>mini :</strong><br><img class="chastity-badge-preview" data-style="mini" data-mode="locked" src="{{ API_URL_BADGE }}&amp;style=mini" alt="mini locked" style="max-width:100%;margin-top:4px;" /></td>
+                            <td style="padding:8px;vertical-align:top;"><strong>mini :</strong><br><img class="chastity-badge-preview" data-style="mini" data-mode="free" src="{{ API_URL_BADGE }}&amp;style=mini&amp;preview=free" alt="mini free" style="max-width:100%;margin-top:4px;" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p style="font-size:0.85em;margin-top:12px;">
+                    <strong>{{ lang('CHASTITY_API_BADGE_BBCODE') }}</strong><br>
+                    <code style="font-size:0.85em;word-break:break-all;">[url={{ CHASTITY_DISCOVER_URL }}][img]{{ API_URL_BADGE }}&amp;style=medium[/img][/url]</code>
+                </p>
+            </fieldset>
+            {% endif %}
+
+            <script>
+            function refreshBadges() {
+                var aliasInput = document.querySelector('input[name="badge_alias"]');
+                var hideRadios = document.querySelectorAll('input[name="badge_hide_status"]');
+                var taglineInput = document.querySelector('input[name="badge_tagline"]');
+
+                var alias = aliasInput ? aliasInput.value : '';
+                var hide_status = 0;
+                hideRadios.forEach(function(r) { if (r.checked) hide_status = r.value; });
+                var tagline = taglineInput ? taglineInput.value : '';
+
+                var ts = Date.now();
+                document.querySelectorAll('img.chastity-badge-preview').forEach(function(img) {
+                    var style = img.getAttribute('data-style');
+                    var mode = img.getAttribute('data-mode');
+                    var baseUrl = {{ API_URL_BADGE|json_encode|raw }};
+                    var params = ['_t=' + ts];
+                    if (style && style !== 'dark') params.push('style=' + style);
+                    if (mode === 'free') params.push('preview=free');
+                    params.push('alias=' + encodeURIComponent(alias));
+                    params.push('hide_status=' + hide_status);
+                    params.push('tagline=' + encodeURIComponent(tagline));
+                    var sep = baseUrl.indexOf('?') > -1 ? '&' : '?';
+                    img.src = baseUrl + sep + params.join('&');
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var inp = document.querySelector('input[name="badge_tagline"]');
+                var ctr = document.getElementById('tagline_counter');
+                if (inp && ctr) {
+                    inp.addEventListener('input', function() { ctr.textContent = inp.value.length + '/150'; });
+                }
+            });
+            </script>
+            {{ S_FORM_TOKEN }}
+        </form>
+
+        {% if API_ENABLED %}
+        {# URLs et bouton de révocation seulement (le statut + token + bouton générer sont en haut) #}
+        <form method="post" action="{{ U_ACTION }}" id="ucp_api">
+            <fieldset>
+                <legend>{{ lang('CHASTITY_API_ACCESS') }}</legend>
+                <p>{{ lang('CHASTITY_API_EXPLAIN') }}</p>
+
+                <p style="font-size:0.85em;margin-top:10px;">
+                    <strong>{{ lang('CHASTITY_API_URL_JSON') }}</strong><br>
+                    <code style="font-size:0.85em;word-break:break-all;">{{ API_URL_JSON }}</code>
+                </p>
+                <p style="font-size:0.85em;margin-top:10px;">
+                    <strong>{{ lang('CHASTITY_API_URL_BADGE') }}</strong><br>
+                    <code style="font-size:0.85em;word-break:break-all;">{{ API_URL_BADGE }}</code>
+                </p>
+
+                <p style="font-size:0.85em;margin-top:12px;">
+                    <strong>{{ lang('CHASTITY_API_BADGE_BBCODE') }}</strong><br>
+                    <code style="font-size:0.85em;word-break:break-all;">[url={{ CHASTITY_DISCOVER_URL }}][img]{{ API_URL_BADGE }}&amp;style=medium[/img][/url]</code>
+                </p>
+
+                <br>
+                <input type="submit" name="revoke_api_token" value="{{ lang('CHASTITY_API_REVOKE') }}" class="button2"
+                       onclick="return confirm('{{ lang('CHASTITY_API_REVOKE_CONFIRM') }}');" />
+            </fieldset>
+
+            {{ S_FORM_TOKEN }}
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% include 'ucp_footer.html' %}

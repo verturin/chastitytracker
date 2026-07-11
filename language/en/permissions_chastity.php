@@ -17,5 +17,7 @@ $lang = array_merge($lang, array(
     'ACL_U_CHASTITY_REFRESH'  => 'Can force refresh of their own cache and history',
     'ACL_M_CHASTITY_MODERATE' => 'Can moderate chastity periods',
     'ACL_U_CHASTITY_PREFS'  => 'Can manage own privacy preferences',
+    'ACL_U_CHASTITY_LOCK_BADGE' => 'Can see the lock badge in posts',
+    'ACL_U_CHASTITY_CONTRACT' => 'Can create and manage a chastity contract',
 	
 ));

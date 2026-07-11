@@ -1,0 +1,13 @@
+Subject: {SUBJECT}
+
+Hello {KH_NAME},
+
+{USERNAME} has submitted a chastity contract to you for review and approval.
+
+You can view it here:
+{U_CONTRACT_PREVIEW}
+
+{VALIDATION_INSTRUCTIONS}
+
+---
+This message was sent automatically by the {SITENAME} forum.

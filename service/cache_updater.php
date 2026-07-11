@@ -21,6 +21,7 @@ class cache_updater
     {
         $cache_table   = $this->table_prefix . 'chastity_cache';
         $periods_table = $this->table_prefix . 'chastity_periods';
+        $users_table   = $this->table_prefix . 'chastity_users';
 
         $current_year = (int) date('Y');
         $year_start   = mktime(0, 0, 0, 1, 1, $current_year);
@@ -107,6 +108,17 @@ class cache_updater
                     last_update         = ' . time()               . ',
                     next_update         = 0');
 
+            // Mettre à jour le total de jours dans chastity_users : secondes
+            // réelles cumulées, pas les days_count déjà arrondis individuellement.
+            $sql_total = 'SELECT SUM(end_date - start_date) as total_seconds FROM ' . $periods_table . "
+                          WHERE user_id = $user_id AND status = 'completed' AND end_date > start_date";
+            $result_total = $this->db->sql_query($sql_total);
+            $total_seconds_cu = (int) $this->db->sql_fetchfield('total_seconds');
+            $this->db->sql_freeresult($result_total);
+            $total_days   = (int) floor($total_seconds_cu / 86400) + $days_current_period;
+            $this->db->sql_query('UPDATE ' . $users_table . '
+                SET chastity_total_days = ' . $total_days . '
+                WHERE user_id = ' . $user_id);
 
             $count++;
         }
@@ -192,5 +204,17 @@ class cache_updater
                 last_update         = ' . time()               . ',
                 next_update         = 0'
         );
+
+        // Mettre à jour le total de jours dans chastity_users : secondes
+        // réelles cumulées, pas les days_count déjà arrondis individuellement.
+        $sql_total = 'SELECT SUM(end_date - start_date) as total_seconds FROM ' . $periods_table . "
+                      WHERE user_id = $user_id AND status = 'completed' AND end_date > start_date";
+        $result_total = $this->db->sql_query($sql_total);
+        $total_seconds_cu2 = (int) $this->db->sql_fetchfield('total_seconds');
+        $this->db->sql_freeresult($result_total);
+        $total_days   = (int) floor($total_seconds_cu2 / 86400) + $days_current_period;
+        $this->db->sql_query('UPDATE ' . $this->table_prefix . 'chastity_users
+            SET chastity_total_days = ' . $total_days . '
+            WHERE user_id = ' . $user_id);
     }
 }

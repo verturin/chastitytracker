@@ -1,0 +1,112 @@
+{% include 'ucp_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<h2>{{ lang('CHASTITY_KH_TITLE') }}</h2>
+
+<div class="panel">
+	<div class="inner">
+		<p>{{ lang('CHASTITY_KH_INTRO') }}</p>
+
+		{# ───── Relation actuelle (active ou pending) ───── #}
+		{% if KH_CURRENT %}
+			<fieldset>
+				<legend>{{ lang('CHASTITY_KH_CURRENT_TITLE') }}</legend>
+				<div style="padding:15px;background:#F4F4F4;border-radius:6px;">
+					<p style="font-size:1.1em;">
+						🔑 <strong><a href="memberlist.php?mode=viewprofile&amp;u={{ KH_USER_ID }}" style="color:#{{ KH_USER_COLOUR }};">{{ KH_USERNAME }}</a></strong>
+					</p>
+					<p>
+						{% if KH_INVITED_BY_KH %}
+							<span style="color:#2E4057;font-weight:bold;">📨 {{ lang('CHASTITY_KH_INVITED_BY_KH') }}</span>
+						{% elseif KH_IS_PENDING %}
+							<span style="color:#E67E22;font-weight:bold;">{{ lang('CHASTITY_KH_STATUS_PENDING') }}</span>
+						{% else %}
+							<span style="color:#28A745;font-weight:bold;">{{ lang('CHASTITY_KH_STATUS_ACTIVE') }}</span>
+						{% endif %}
+					</p>
+					<p>{{ lang('CHASTITY_KH_REQUESTED_ON') }} : {{ KH_CREATED_AT }}</p>
+					{% if KH_ACCEPTED_AT %}
+						<p>{{ lang('CHASTITY_KH_ACCEPTED_ON') }} : {{ KH_ACCEPTED_AT }}</p>
+					{% endif %}
+					<form method="post" action="{{ U_ACTION }}" style="margin-top:15px;">
+						<input type="hidden" name="kh_id" value="{{ KH_ID }}" />
+						{% if KH_INVITED_BY_KH %}
+							<button type="submit" name="accept_kh_invite" value="1" class="button1">{{ lang('CHASTITY_SUBS_ACCEPT') }}</button>
+							<button type="submit" name="refuse_kh_invite" value="1" class="button2" onclick="return confirm('{{ lang('CHASTITY_SUBS_REFUSE_CONFIRM') }}');">{{ lang('CHASTITY_SUBS_REFUSE') }}</button>
+						{% else %}
+							<button type="submit" name="end_kh" value="1" class="button2" onclick="return confirm('{{ lang('CHASTITY_KH_END_CONFIRM') }}');">
+								{{ lang('CHASTITY_KH_END_RELATION') }}
+							</button>
+						{% endif %}
+						{{ S_FORM_TOKEN }}
+					</form>
+				</div>
+			</fieldset>
+		{% else %}
+			<fieldset>
+				<legend>{{ lang('CHASTITY_KH_REQUEST_FORM') }}</legend>
+				<p style="color:#888;">{{ lang('CHASTITY_KH_NO_CURRENT') }}</p>
+				<form method="post" action="{{ U_ACTION }}">
+					<dl>
+						<dt>
+							<label for="kh_username">{{ lang('CHASTITY_KH_USERNAME_LABEL') }}{{ lang('COLON') }}</label>
+							<br><span style="font-size:0.85em;color:#888;font-weight:normal;">{{ lang('CHASTITY_KH_USERNAME_EXPLAIN') }}</span>
+						</dt>
+						<dd>
+							<select name="kh_username" id="kh_username" class="inputbox" style="min-width:300px;">
+								<option value="">— {{ lang('CHASTITY_KH_SELECT_MEMBER') }} —</option>
+								{% for m in member_list %}
+									<option value="{{ m.USERNAME }}">{{ m.USERNAME }}</option>
+								{% endfor %}
+							</select>
+						</dd>
+					</dl>
+					<fieldset class="submit-buttons">
+						<input type="submit" name="request_kh" value="{{ lang('CHASTITY_KH_SUBMIT_REQUEST') }}" class="button1" />
+					</fieldset>
+					{{ S_FORM_TOKEN }}
+				</form>
+			</fieldset>
+		{% endif %}
+
+		{# ───── Historique ───── #}
+		<fieldset style="margin-top:20px;">
+			<legend>{{ lang('CHASTITY_KH_HISTORY_TITLE') }}</legend>
+			{% if kh_history is defined and kh_history|length > 0 %}
+				<table class="table1" style="width:100%;">
+					<thead>
+						<tr>
+							<th>{{ lang('CHASTITY_KH_TITLE') }}</th>
+							<th>{{ lang('CHASTITY_KH_HISTORY_FROM') }}</th>
+							<th>{{ lang('CHASTITY_KH_HISTORY_TO') }}</th>
+							<th>{{ lang('STATUS') }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for h in kh_history %}
+							<tr>
+								<td><a href="memberlist.php?mode=viewprofile&amp;u={{ h.USER_ID }}" style="color:#{{ h.USER_COLOUR }};">{{ h.USERNAME }}</a></td>
+								<td>{{ h.ACCEPTED_AT }}</td>
+								<td>{{ h.ENDED_AT }}</td>
+								<td>
+									{% if h.IS_REFUSED %}
+										<em>{{ lang('CHASTITY_KH_HISTORY_REFUSED') }}</em>
+									{% elseif h.END_BY_SUB %}
+										<em>{{ lang('CHASTITY_KH_HISTORY_ENDED_BY_SUB') }}</em>
+									{% else %}
+										<em>{{ lang('CHASTITY_KH_HISTORY_ENDED_BY_KH') }}</em>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<p style="color:#888;">{{ lang('CHASTITY_KH_HISTORY_EMPTY') }}</p>
+			{% endif %}
+		</fieldset>
+	</div>
+</div>
+
+{% include 'ucp_footer.html' %}

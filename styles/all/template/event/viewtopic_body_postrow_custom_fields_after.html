@@ -1,16 +1,64 @@
-{% if postrow.CHASTITY_BADGE and postrow.S_SHOW_IN_POSTS %}
-<dd class="profile-chastity">
-	<center>
-	<br>
-	{% if postrow.CHASTITY_STATUS == 'locked' %}
-		<strong style="color: #BC2A4D;">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }} {{ postrow.CHASTITY_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong>
-	{% elseif postrow.CHASTITY_STATUS == 'free' %}
-		<strong style="color: #228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }} {{ lang('CHASTITY_DAYS_SINCE') }} {{ postrow.CHASTITY_DAYS }} {{ lang('CHASTITY_DAYS') }}</strong>
-	{% elseif postrow.CHASTITY_STATUS == 'none' %}
-		<strong style="color: #228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}</strong>
+{% if (postrow.CHASTITY_BADGE or postrow.S_CHASTITY_POST_RINGS) and postrow.S_SHOW_IN_POSTS %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<dd class="profile-chastity" style="text-align:center;">
+	<div class="chastity-post-badge" style="text-align:center;">
+	{% if postrow.S_CHASTITY_POST_HAS_CONTRACT %}
+		<div style="text-align:center;margin-bottom:4px;"><span class="chastity-contract-status chastity-contract-status-active">📜 {{ lang('CHASTITY_PROFILE_UNDER_CONTRACT') }}</span></div>
 	{% endif %}
-	<br>
-	<br>
-	</center>
+	{% if postrow.CHASTITY_STATUS == 'locked' %}
+		<strong class="chastity-locked">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }} {{ postrow.CHASTITY_SINCE_TEXT }}</strong>
+	{% elseif postrow.CHASTITY_STATUS == 'free' %}
+		<strong class="chastity-free">🔓 {{ lang('CHASTITY_STATUS_FREE') }} {{ lang('CHASTITY_DAYS_SINCE') }} {{ postrow.CHASTITY_SINCE_TEXT }}</strong>
+	{% elseif postrow.CHASTITY_STATUS == 'none' %}
+		<strong class="chastity-free">🔓 {{ lang('CHASTITY_STATUS_FREE') }}</strong>
+	{% endif %}
+	</div>
+	{% if postrow.S_CHASTITY_LOCKTOBER %}
+	<div class="chastity-locktober-mini" title="Locktober {{ postrow.CHASTITY_LOCKTOBER_PCT }}%">
+		<span class="chastity-locktober-mini-bar">
+			<span class="chastity-locktober-mini-fill" style="width:{{ postrow.CHASTITY_LOCKTOBER_PCT }}%;"></span>
+			<span class="chastity-locktober-mini-text">Locktober J{{ postrow.CHASTITY_LOCKTOBER_DAY }}/31</span>
+		</span>
+	</div>
+	{% endif %}
+	{% if postrow.S_CHASTITY_POST_RINGS %}
+	<div class="chastity-post-rings">
+		<div class="chastity-post-ring-block" title="{{ lang('CHASTITY_RING_PERIOD_DAY') }}&#10;🔒 {{ lang('CHASTITY_RING_CAGE') }} : {{ postrow.CHASTITY_PR_DAY_CAGE_VAL }}h / {{ postrow.CHASTITY_PR_DAY_CAGE_GOAL }}h ({{ postrow.CHASTITY_PR_DAY_CAGE }}%)&#10;✍️ {{ lang('CHASTITY_RING_POSTS') }} : {{ postrow.CHASTITY_PR_DAY_POSTS_VAL }} / {{ postrow.CHASTITY_PR_DAY_POSTS_GOAL }} ({{ postrow.CHASTITY_PR_DAY_POSTS }}%)&#10;📅 {{ lang('CHASTITY_RING_LOGINS') }} : {{ postrow.CHASTITY_PR_DAY_LOGINS_VAL }} / {{ postrow.CHASTITY_PR_DAY_LOGINS_GOAL }} ({{ postrow.CHASTITY_PR_DAY_LOGINS }}%)">
+			<svg viewBox="0 0 60 60">
+				<circle cx="30" cy="30" r="26" fill="none" stroke="#ffd2dc" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="20" fill="none" stroke="#e8f5c0" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="14" fill="none" stroke="#cdeeff" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="26" fill="none" stroke="#ff2d55" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (163 * postrow.CHASTITY_PR_DAY_CAGE / 100)|round }} 163" transform="rotate(-90 30 30)" />
+				<circle cx="30" cy="30" r="20" fill="none" stroke="#a8e000" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (126 * postrow.CHASTITY_PR_DAY_POSTS / 100)|round }} 126" transform="rotate(-90 30 30)" />
+				<circle cx="30" cy="30" r="14" fill="none" stroke="#00b0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (88 * postrow.CHASTITY_PR_DAY_LOGINS / 100)|round }} 88" transform="rotate(-90 30 30)" />
+			</svg>
+			<div class="chastity-post-ring-label">{{ lang('CHASTITY_RING_PERIOD_DAY') }}</div>
+		</div>
+		<div class="chastity-post-ring-block" title="{{ lang('CHASTITY_RING_PERIOD_MONTH') }}&#10;🔒 {{ lang('CHASTITY_RING_CAGE') }} : {{ postrow.CHASTITY_PR_MONTH_CAGE_VAL }}h / {{ postrow.CHASTITY_PR_MONTH_CAGE_GOAL }}h ({{ postrow.CHASTITY_PR_MONTH_CAGE }}%)&#10;✍️ {{ lang('CHASTITY_RING_POSTS') }} : {{ postrow.CHASTITY_PR_MONTH_POSTS_VAL }} / {{ postrow.CHASTITY_PR_MONTH_POSTS_GOAL }} ({{ postrow.CHASTITY_PR_MONTH_POSTS }}%)&#10;📅 {{ lang('CHASTITY_RING_LOGINS') }} : {{ postrow.CHASTITY_PR_MONTH_LOGINS_VAL }} / {{ postrow.CHASTITY_PR_MONTH_LOGINS_GOAL }} ({{ postrow.CHASTITY_PR_MONTH_LOGINS }}%)">
+			<svg viewBox="0 0 60 60">
+				<circle cx="30" cy="30" r="26" fill="none" stroke="#ffd2dc" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="20" fill="none" stroke="#e8f5c0" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="14" fill="none" stroke="#cdeeff" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="26" fill="none" stroke="#ff2d55" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (163 * postrow.CHASTITY_PR_MONTH_CAGE / 100)|round }} 163" transform="rotate(-90 30 30)" />
+				<circle cx="30" cy="30" r="20" fill="none" stroke="#a8e000" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (126 * postrow.CHASTITY_PR_MONTH_POSTS / 100)|round }} 126" transform="rotate(-90 30 30)" />
+				<circle cx="30" cy="30" r="14" fill="none" stroke="#00b0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (88 * postrow.CHASTITY_PR_MONTH_LOGINS / 100)|round }} 88" transform="rotate(-90 30 30)" />
+			</svg>
+			<div class="chastity-post-ring-label">{{ lang('CHASTITY_RING_PERIOD_MONTH') }}</div>
+		</div>
+		<div class="chastity-post-ring-block" title="{{ lang('CHASTITY_RING_PERIOD_YEAR') }}&#10;🔒 {{ lang('CHASTITY_RING_CAGE') }} : {{ postrow.CHASTITY_PR_YEAR_CAGE_VAL }}h / {{ postrow.CHASTITY_PR_YEAR_CAGE_GOAL }}h ({{ postrow.CHASTITY_PR_YEAR_CAGE }}%)&#10;✍️ {{ lang('CHASTITY_RING_POSTS') }} : {{ postrow.CHASTITY_PR_YEAR_POSTS_VAL }} / {{ postrow.CHASTITY_PR_YEAR_POSTS_GOAL }} ({{ postrow.CHASTITY_PR_YEAR_POSTS }}%)&#10;📅 {{ lang('CHASTITY_RING_LOGINS') }} : {{ postrow.CHASTITY_PR_YEAR_LOGINS_VAL }} / {{ postrow.CHASTITY_PR_YEAR_LOGINS_GOAL }} ({{ postrow.CHASTITY_PR_YEAR_LOGINS }}%)">
+			<svg viewBox="0 0 60 60">
+				<circle cx="30" cy="30" r="26" fill="none" stroke="#ffd2dc" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="20" fill="none" stroke="#e8f5c0" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="14" fill="none" stroke="#cdeeff" stroke-width="4" opacity="0.45" />
+				<circle cx="30" cy="30" r="26" fill="none" stroke="#ff2d55" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (163 * postrow.CHASTITY_PR_YEAR_CAGE / 100)|round }} 163" transform="rotate(-90 30 30)" />
+				<circle cx="30" cy="30" r="20" fill="none" stroke="#a8e000" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (126 * postrow.CHASTITY_PR_YEAR_POSTS / 100)|round }} 126" transform="rotate(-90 30 30)" />
+				<circle cx="30" cy="30" r="14" fill="none" stroke="#00b0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (88 * postrow.CHASTITY_PR_YEAR_LOGINS / 100)|round }} 88" transform="rotate(-90 30 30)" />
+			</svg>
+			<div class="chastity-post-ring-label">{{ lang('CHASTITY_RING_PERIOD_YEAR') }}</div>
+		</div>
+	</div>
+	{% endif %}
 </dd>
 {% endif %}

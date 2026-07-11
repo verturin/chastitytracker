@@ -1,5 +1,7 @@
 {% include 'overall_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <a id="maincontent"></a>
 
 <h1>{{ lang('ACP_CHASTITY_STATISTICS') }}</h1>
@@ -32,21 +34,43 @@
 
 {% if loops.top_users is defined and loops.top_users|length %}
 <fieldset>
-	<legend>{{ lang('ACP_CHASTITY_TOP_USERS') }}</legend>
+	<legend>{{ lang('ACP_CHASTITY_TOP_USERS') }} (Top 50)</legend>
 	<table class="table1 zebra-table">
 		<thead>
 			<tr>
+				<th style="width:4%;text-align:center;">#</th>
 				<th>{{ lang('USERNAME') }}</th>
-				<th>{{ lang('CHASTITY_TOTAL_DAYS') }}</th>
-				<th>{{ lang('CHASTITY_TOTAL_PERIODS') }}</th>
+				<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_DAYS') }}</th>
+				<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_PERIODS') }}</th>
+				<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_CAGEEXITS') }}</th>
+				<th style="text-align:center;">{{ lang('CHASTITY_TOTAL_ACTIVITIES') }}</th>
+				<th style="text-align:center;">API</th>
+				<th style="text-align:center;">{{ lang('CHASTITY_STATUS') }}</th>
 			</tr>
 		</thead>
 		<tbody>
 		{% for top_users in loops.top_users %}
 			<tr>
+				<td style="text-align:center;">{{ top_users.RANK }}</td>
 				<td>{{ top_users.USERNAME }}</td>
-				<td>{{ top_users.TOTAL_DAYS }}</td>
-				<td>{{ top_users.TOTAL_PERIODS }}</td>
+				<td style="text-align:center;"><strong>{{ top_users.TOTAL_DAYS }}</strong></td>
+				<td style="text-align:center;">{{ top_users.TOTAL_PERIODS }}</td>
+				<td style="text-align:center;">{{ top_users.CAGE_EXITS }}</td>
+				<td style="text-align:center;">{{ top_users.ACTIVITIES }}</td>
+				<td style="text-align:center;">
+					{% if top_users.API_ENABLED %}
+						<span style="color:#228B22;font-weight:bold;" title="API active">✅</span>
+					{% else %}
+						<span style="color:#888;" title="API désactivée">—</span>
+					{% endif %}
+				</td>
+				<td style="text-align:center;">
+					{% if top_users.HAS_ACTIVE %}
+						<span style="color:#BC2A4D;font-weight:bold;">🔒 {{ lang('CHASTITY_STATUS_ACTIVE') }}</span>
+					{% else %}
+						<span style="color:#228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}</span>
+					{% endif %}
+				</td>
 			</tr>
 		{% endfor %}
 		</tbody>

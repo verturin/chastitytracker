@@ -1,4 +1,24 @@
 verturin_chastitytracker_home:
     path: /chastity
     defaults:
-        _controller: verturin.chastitytracker.controller::handle
+        _controller: verturin.chastitytracker.controller:handle
+
+verturin_chastitytracker_api:
+    path: /chastity/api
+    defaults:
+        _controller: verturin.chastitytracker.api_controller:handle
+
+verturin_chastitytracker_badge:
+    path: /chastity/badge.png
+    defaults:
+        _controller: verturin.chastitytracker.badge_controller:handle
+
+verturin_chastitytracker_cages:
+    path: /chastity/cages
+    defaults:
+        _controller: verturin.chastitytracker.cages_controller:handle
+
+verturin_chastitytracker_contract_validate:
+    path: /chastity/contract-validate
+    defaults:
+        _controller: verturin.chastitytracker.contract_validate_controller:handle

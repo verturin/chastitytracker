@@ -30,12 +30,15 @@ class history_updater
         {
             $user_id = (int) $row['user_id'];
 
+            $current_year_val = (int) date('Y');
             $sql_years    = 'SELECT DISTINCT y as year FROM (
                                 SELECT YEAR(FROM_UNIXTIME(start_date)) as y FROM ' . $periods_table . '
                                     WHERE user_id = ' . $user_id . ' AND start_date > 0
                                 UNION
                                 SELECT YEAR(FROM_UNIXTIME(end_date)) as y FROM ' . $periods_table . '
                                     WHERE user_id = ' . $user_id . ' AND end_date > 0
+                                UNION
+                                SELECT ' . $current_year_val . ' as y
                              ) years ORDER BY year';
             $result_years = $this->db->sql_query($sql_years);
 

@@ -12,11 +12,23 @@ services:
             - '%verturin.chastitytracker.tables.chastity_cache%'
             - '%verturin.chastitytracker.tables.chastity_history%'
             - '%verturin.chastitytracker.tables.chastity_user_prefs%'
+            - '%verturin.chastitytracker.tables.chastity_keyholders%'
+            - '@verturin.chastitytracker.period_calculator'
+            - '%verturin.chastitytracker.tables.chastity_active_days%'
+            - '%verturin.chastitytracker.tables.chastity_locktober_rewards%'
+            - '%verturin.chastitytracker.tables.chastity_locktober_milestones%'
+            - '%verturin.chastitytracker.tables.chastity_special_days%'
+            - '%verturin.chastitytracker.tables.chastity_perfect_counts%'
+            - '%verturin.chastitytracker.tables.chastity_earned_badges%'
+            - '%verturin.chastitytracker.tables.chastity_streak_milestones%'
+            - '%verturin.chastitytracker.tables.chastity_total_milestones%'
+            - '%verturin.chastitytracker.tables.chastity_contracts%'
         tags:
             - { name: event.listener }
 
     verturin.chastitytracker.controller:
         class: verturin\chastitytracker\controller\main
+        public: true
         arguments:
             - '@config'
             - '@controller.helper'
@@ -32,17 +44,113 @@ services:
             - '%verturin.chastitytracker.tables.chastity_cache%'
             - '%verturin.chastitytracker.tables.chastity_history%'
 
+    verturin.chastitytracker.api_controller:
+        class: verturin\chastitytracker\controller\api
+        public: true
+        arguments:
+            - '@dbal.conn'
+            - '@config'
+            - '@request'
+            - '%verturin.chastitytracker.tables.chastity_user_prefs%'
+            - '%verturin.chastitytracker.tables.chastity_users%'
+            - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%verturin.chastitytracker.tables.chastity_cache%'
+            - '%verturin.chastitytracker.tables.chastity_keyholders%'
+            - '%verturin.chastitytracker.tables.chastity_contracts%'
+
+    verturin.chastitytracker.badge_controller:
+        class: verturin\chastitytracker\controller\badge
+        public: true
+        arguments:
+            - '@dbal.conn'
+            - '@config'
+            - '@request'
+            - '%verturin.chastitytracker.tables.chastity_user_prefs%'
+            - '%verturin.chastitytracker.tables.chastity_users%'
+            - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%verturin.chastitytracker.tables.chastity_cache%'
+            - '%core.root_path%ext/verturin/chastitytracker/'
+            - '%verturin.chastitytracker.tables.chastity_keyholders%'
+            - '%verturin.chastitytracker.tables.chastity_contracts%'
+
+    verturin.chastitytracker.cages_controller:
+        class: verturin\chastitytracker\controller\cages
+        public: true
+        arguments:
+            - '@controller.helper'
+            - '@template'
+            - '@user'
+            - '@auth'
+            - '@dbal.conn'
+            - '@request'
+            - '@service_container'
+
+    verturin.chastitytracker.contract_validate_controller:
+        class: verturin\chastitytracker\controller\contract_validate_controller
+        public: true
+        arguments:
+            - '@dbal.conn'
+            - '@request'
+            - '%verturin.chastitytracker.tables.chastity_contracts%'
+            - '%verturin.chastitytracker.tables.chastity_contract_links%'
+
     verturin.chastitytracker.cache_updater:
         class: verturin\chastitytracker\service\cache_updater
+        public: true
         arguments:
             - '@dbal.conn'
             - '%core.table_prefix%'
 
     verturin.chastitytracker.history_updater:
         class: verturin\chastitytracker\service\history_updater
+        public: true
         arguments:
             - '@dbal.conn'
             - '%core.table_prefix%'
+
+    verturin.chastitytracker.period_calculator:
+        class: verturin\chastitytracker\service\period_calculator
+        public: true
+        arguments:
+            - '@language'
+
+    verturin.chastitytracker.rewards_calculator:
+        class: verturin\chastitytracker\service\rewards_calculator
+        public: true
+        arguments:
+            - '@dbal.conn'
+            - '@config'
+            - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%verturin.chastitytracker.tables.chastity_active_days%'
+            - '%verturin.chastitytracker.tables.chastity_locktober_rewards%'
+            - '%verturin.chastitytracker.tables.chastity_locktober_milestones%'
+            - '%verturin.chastitytracker.tables.chastity_special_days%'
+            - '%verturin.chastitytracker.tables.chastity_earned_badges%'
+            - '%verturin.chastitytracker.tables.chastity_streak_milestones%'
+            - '%verturin.chastitytracker.tables.chastity_total_milestones%'
+
+    verturin.chastitytracker.record_notifier:
+        class: verturin\chastitytracker\service\record_notifier
+        public: true
+        arguments:
+            - '@dbal.conn'
+            - '@config'
+            - '@user'
+            - '@verturin.chastitytracker.rewards_calculator'
+            - '%verturin.chastitytracker.tables.chastity_user_prefs%'
+            - '%verturin.chastitytracker.tables.chastity_keyholders%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    verturin.chastitytracker.contract_pdf_generator:
+        class: verturin\chastitytracker\service\contract_pdf_generator
+        public: true
+        arguments:
+            - '@dbal.conn'
+            - '%verturin.chastitytracker.tables.chastity_contracts%'
+            - '%verturin.chastitytracker.tables.chastity_contract_links%'
+            - '%verturin.chastitytracker.tables.chastity_contract_categories%'
+            - '%verturin.chastitytracker.tables.chastity_user_prefs%'
 
     verturin.chastitytracker.cron.task.cache:
         class: 'verturin\chastitytracker\cron\task\chastity_cache_task'
@@ -64,9 +172,74 @@ services:
         tags:
             - { name: 'cron.task' }
 
+    verturin.chastitytracker.cron.task.inactivity:
+        class: 'verturin\chastitytracker\cron\task\chastity_inactivity_task'
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '%verturin.chastitytracker.tables.chastity_users%'
+            - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        calls:
+            - ['set_name', ['cron.task.verturin.chastitytracker.inactivity']]
+        tags:
+            - { name: 'cron.task' }
+
+    verturin.chastitytracker.cron.task.locktober:
+        class: 'verturin\chastitytracker\cron\task\chastity_locktober_task'
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '%verturin.chastitytracker.tables.chastity_periods%'
+        calls:
+            - ['set_name', ['cron.task.verturin.chastitytracker.locktober']]
+        tags:
+            - { name: 'cron.task' }
+
+    verturin.chastitytracker.cron.task.rewards:
+        class: 'verturin\chastitytracker\cron\task\chastity_rewards_task'
+        arguments:
+            - '@config'
+            - '@dbal.conn'
+            - '@verturin.chastitytracker.rewards_calculator'
+            - '%verturin.chastitytracker.tables.chastity_periods%'
+            - '%verturin.chastitytracker.tables.chastity_active_days%'
+            - '%verturin.chastitytracker.tables.chastity_perfect_counts%'
+            - '@verturin.chastitytracker.record_notifier'
+        calls:
+            - ['set_name', ['cron.task.verturin.chastitytracker.rewards']]
+        tags:
+            - { name: 'cron.task' }
+
 parameters:
     verturin.chastitytracker.tables.chastity_periods: '%core.table_prefix%chastity_periods'
     verturin.chastitytracker.tables.chastity_users: '%core.table_prefix%chastity_users'
     verturin.chastitytracker.tables.chastity_cache: '%core.table_prefix%chastity_cache'
     verturin.chastitytracker.tables.chastity_history: '%core.table_prefix%chastity_history'
     verturin.chastitytracker.tables.chastity_user_prefs: '%core.table_prefix%chastity_user_prefs'
+    verturin.chastitytracker.tables.chastity_cageexits: '%core.table_prefix%chastity_cageexits'
+    verturin.chastitytracker.tables.chastity_cageexit_reasons: '%core.table_prefix%chastity_cageexit_reasons'
+    verturin.chastitytracker.tables.chastity_activities: '%core.table_prefix%chastity_activities'
+    verturin.chastitytracker.tables.chastity_activity_reasons: '%core.table_prefix%chastity_activity_reasons'
+    verturin.chastitytracker.tables.chastity_cage_manufacturers: '%core.table_prefix%chastity_cage_manufacturers'
+    verturin.chastitytracker.tables.chastity_cage_catalog: '%core.table_prefix%chastity_cage_catalog'
+    verturin.chastitytracker.tables.chastity_cage_photos: '%core.table_prefix%chastity_cage_photos'
+    verturin.chastitytracker.tables.chastity_cages: '%core.table_prefix%chastity_cages'
+    verturin.chastitytracker.tables.chastity_cage_usage: '%core.table_prefix%chastity_cage_usage'
+    verturin.chastitytracker.tables.chastity_cage_materials: '%core.table_prefix%chastity_cage_materials'
+    verturin.chastitytracker.tables.chastity_cage_ratings: '%core.table_prefix%chastity_cage_ratings'
+    verturin.chastitytracker.tables.chastity_keyholders: '%core.table_prefix%chastity_keyholders'
+    verturin.chastitytracker.tables.chastity_active_days: '%core.table_prefix%chastity_active_days'
+    verturin.chastitytracker.tables.chastity_rewards_history: '%core.table_prefix%chastity_rewards_history'
+    verturin.chastitytracker.tables.chastity_locktober_rewards: '%core.table_prefix%chastity_locktober_rewards'
+    verturin.chastitytracker.tables.chastity_locktober_milestones: '%core.table_prefix%chastity_locktober_milestones'
+    verturin.chastitytracker.tables.chastity_special_days: '%core.table_prefix%chastity_special_days'
+    verturin.chastitytracker.tables.chastity_perfect_counts: '%core.table_prefix%chastity_perfect_counts'
+    verturin.chastitytracker.tables.chastity_earned_badges: '%core.table_prefix%chastity_earned_badges'
+    verturin.chastitytracker.tables.chastity_streak_milestones: '%core.table_prefix%chastity_streak_milestones'
+    verturin.chastitytracker.tables.chastity_total_milestones: '%core.table_prefix%chastity_total_milestones'
+    verturin.chastitytracker.tables.chastity_contract_articles: '%core.table_prefix%chastity_contract_articles'
+    verturin.chastitytracker.tables.chastity_contracts: '%core.table_prefix%chastity_contracts'
+    verturin.chastitytracker.tables.chastity_contract_links: '%core.table_prefix%chastity_contract_links'
+    verturin.chastitytracker.tables.chastity_contract_categories: '%core.table_prefix%chastity_contract_categories'

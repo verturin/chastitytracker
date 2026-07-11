@@ -1,5 +1,7 @@
 {% include 'ucp_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <h2>{{ lang('UCP_CHASTITY_ADD_PAST') }}</h2>
 
 <div class="panel">
@@ -35,6 +37,23 @@
 					<dd><textarea id="notes" name="notes" rows="3" cols="40"></textarea></dd>
 				</dl>
 			</fieldset>
+
+			{% if loops.my_cages_select is defined and loops.my_cages_select|length %}
+			<fieldset>
+				<legend>{{ lang('CHASTITY_CAGE_SELECT') }}</legend>
+				<dl>
+					<dt><label for="cage_id">{{ lang('CHASTITY_CAGE_SELECT_OPTIONAL') }}{{ lang('COLON') }}</label></dt>
+					<dd>
+						<select id="cage_id" name="cage_id">
+							<option value="0">{{ lang('CHASTITY_CAGE_NONE') }}</option>
+							{% for c in loops.my_cages_select %}
+							<option value="{{ c.CAGE_ID }}">{{ c.NAME }}{% if c.BRAND %} ({{ c.BRAND }}){% endif %}</option>
+							{% endfor %}
+						</select>
+					</dd>
+				</dl>
+			</fieldset>
+			{% endif %}
 
 			<fieldset>
 				<legend>{{ lang('CHASTITY_RULES') }}</legend>

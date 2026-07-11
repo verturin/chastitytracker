@@ -181,12 +181,28 @@ class install_chastity_tracker extends \phpbb\db\migration\migration
                 'module_basename' => '\verturin\chastitytracker\ucp\main_module',
 				'modes' => ['calendar', 'add_past', 'statistics', 'locktober', 'chastprivacy', 'refresh', 'yearview'],
             ]]],
+            ['module.add', ['ucp', 'UCP_CHASTITY_TRACKER', [
+                'module_basename' => '\verturin\chastitytracker\ucp\main_module',
+                'modes' => ['cageexits'],
+            ]]],
+            ['module.add', ['ucp', 'UCP_CHASTITY_TRACKER', [
+                'module_basename' => '\verturin\chastitytracker\ucp\main_module',
+                'modes' => ['activities'],
+            ]]],
 
             // Module ACP
             ['module.add', ['acp', 'ACP_CAT_DOT_MODS', 'ACP_CHASTITY_TRACKER']],
             ['module.add', ['acp', 'ACP_CHASTITY_TRACKER', [
                 'module_basename' => '\verturin\chastitytracker\acp\main_module',
                 'modes' => ['settings', 'statistics', 'rebuild'],
+            ]]],
+            ['module.add', ['acp', 'ACP_CHASTITY_TRACKER', [
+                'module_basename' => '\verturin\chastitytracker\acp\main_module',
+                'modes' => ['cageexits'],
+            ]]],
+            ['module.add', ['acp', 'ACP_CHASTITY_TRACKER', [
+                'module_basename' => '\verturin\chastitytracker\acp\main_module',
+                'modes' => ['activities'],
             ]]],
 
             // Initialisation des tables
@@ -201,6 +217,8 @@ class install_chastity_tracker extends \phpbb\db\migration\migration
     {
         return [
             // UCP — modes d'abord, parent ensuite
+            ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'activities']],
+            ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'cageexits']],
             ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'refresh']],			
             ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'chastprivacy']],
             ['module.remove', ['ucp', 'UCP_CHASTITY_TRACKER', 'locktober']],
@@ -211,6 +229,8 @@ class install_chastity_tracker extends \phpbb\db\migration\migration
             ['module.remove', ['ucp', 0, 'UCP_CHASTITY_TRACKER']],
 
             // ACP — modes d'abord, parent ensuite
+            ['module.remove', ['acp', 'ACP_CHASTITY_TRACKER', 'activities']],
+            ['module.remove', ['acp', 'ACP_CHASTITY_TRACKER', 'cageexits']],
             ['module.remove', ['acp', 'ACP_CHASTITY_TRACKER', 'rebuild']],
             ['module.remove', ['acp', 'ACP_CHASTITY_TRACKER', 'statistics']],
             ['module.remove', ['acp', 'ACP_CHASTITY_TRACKER', 'settings']],

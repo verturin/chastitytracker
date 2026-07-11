@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Extension de suivi de chasteté avec calendrier visuel et statistiques",
     "homepage": "https://github.com/verturin/chastitytracker",
-    "version": "3.4.0",
-	"time": "2026-04-20",	
+    "version": "3.14.17",
+    "time": "2026-07-10",
     "license": "GPL-2.0-only",
     "authors": [
         {
@@ -17,17 +17,19 @@
         "php": ">=7.1",
         "composer/installers": "~1.0"
     },
+    "suggest": {
+        "tecnickcom/tcpdf": "Permet de générer un vrai fichier PDF pour le Contrat de chasteté (CTR). Sans cette dépendance, une page HTML imprimable est utilisée à la place (Ctrl+P -> Enregistrer en PDF)."
+    },
     "extra": {
         "display-name": "Chastity Tracker",
         "soft-require": {
-            "phpbb/phpbb": ">=3.2.0"
-		},
-		"version-check": {
-			"host": "verturin.github.io",
-			"directory": "/chastitytracker",
-			"filename": "chastitytracker_version.json",
-			"ssl": true
-
+            "phpbb/phpbb": ">=3.3.14"
+        },
+        "version-check": {
+            "host": "verturin.github.io",
+            "directory": "/chastitytracker",
+            "filename": "chastitytracker_version.json",
+            "ssl": true
         }
     }
 }

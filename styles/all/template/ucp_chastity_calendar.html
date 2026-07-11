@@ -1,5 +1,7 @@
 {% include 'ucp_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <h2>{{ lang('UCP_CHASTITY_CALENDAR') }}</h2>
 
 <div class="panel">
@@ -8,44 +10,66 @@
 		{% if HAS_ACTIVE_PERIOD %}
 		<div class="rules">
 			<div class="rule">
-				<strong>{{ lang('CHASTITY_CURRENT_PERIOD') }}{{ lang('COLON') }}</strong> {{ CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}
+				<strong>{{ lang('CHASTITY_CURRENT_PERIOD') }}{{ lang('COLON') }}</strong> {{ CURRENT_SINCE_TEXT }}
+				{% if CURRENT_CAGE_NAME %}
+					<br /><span>🔒 {{ lang('CHASTITY_CAGE_CURRENT') }}{{ lang('COLON') }} <strong>{{ CURRENT_CAGE_NAME }}</strong></span>
+				{% elseif loops.my_cages_select is defined and loops.my_cages_select|length %}
+					<br /><em>{{ lang('CHASTITY_CAGE_NONE_SELECTED') }}</em>
+				{% endif %}
 			</div>
+			{% if loops.my_cages_select is defined and loops.my_cages_select|length %}
+			<div class="rule">
+				<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+					<input type="hidden" name="period_id" value="{{ ACTIVE_PERIOD_ID }}" />
+					<label for="new_cage_id">{% if CURRENT_CAGE_NAME %}{{ lang('CHASTITY_CAGE_CHANGE') }}{% else %}{{ lang('CHASTITY_CAGE_SELECT') }}{% endif %}{{ lang('COLON') }}</label>
+					<select id="new_cage_id" name="new_cage_id">
+						<option value="0">{{ lang('CHASTITY_CAGE_NONE') }}</option>
+						{% for c in loops.my_cages_select %}
+						<option value="{{ c.CAGE_ID }}" {% if c.CAGE_ID == CURRENT_CAGE_ID %}selected="selected"{% endif %}>{{ c.NAME }}{% if c.BRAND %} ({{ c.BRAND }}){% endif %}</option>
+						{% endfor %}
+					</select>
+					<input type="submit" name="change_cage" value="{{ lang('SUBMIT') }}" class="button2" />
+					{{ S_FORM_TOKEN }}
+				</form>
+			</div>
+			{% endif %}
 		</div>
 		{% endif %}
 
 		<h3>{{ lang('CHASTITY_CALENDAR') }}</h3>
 		
 		<!-- CALENDRIER VISUEL AVEC NAVIGATION -->
-		<div style="margin: 20px 0; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+		<div class="chastity-cal-wrapper">
 			
 			<!-- En-tête avec navigation -->
-			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-				<a href="{{ U_ACTION }}&amp;month={{ PREV_MONTH }}&amp;year={{ PREV_YEAR }}" style="padding: 8px 15px; background: #BC2A4D; color: white; text-decoration: none; border-radius: 3px;">◀ Précédent</a>
-				<h4 style="margin: 0; color: #BC2A4D; font-size: 1.3em;">{{ MONTH_NAME }} {{ CALENDAR_YEAR }}</h4>
-				<a href="{{ U_ACTION }}&amp;month={{ NEXT_MONTH }}&amp;year={{ NEXT_YEAR }}" style="padding: 8px 15px; background: #BC2A4D; color: white; text-decoration: none; border-radius: 3px;">Suivant ▶</a>
+			<div class="chastity-cal-nav">
+				<a href="{{ U_ACTION }}&amp;month={{ PREV_MONTH }}&amp;year={{ PREV_YEAR }}" class="chastity-cal-nav-btn">◀ {{ lang('CHASTITY_NAV_PREV') }}</a>
+				<h4 class="chastity-cal-title">{{ MONTH_NAME }} {{ CALENDAR_YEAR }}</h4>
+				<a href="{{ U_ACTION }}&amp;month={{ NEXT_MONTH }}&amp;year={{ NEXT_YEAR }}" class="chastity-cal-nav-btn">{{ lang('CHASTITY_NAV_NEXT') }} ▶</a>
 			</div>
 
 			<!-- Grille du calendrier -->
-			<table style="width: 100%; border-collapse: separate; border-spacing: 2px;">
-				<tr style="background: #333; color: white;">
-					<th style="padding: 10px; text-align: center;">Lun</th>
-					<th style="padding: 10px; text-align: center;">Mar</th>
-					<th style="padding: 10px; text-align: center;">Mer</th>
-					<th style="padding: 10px; text-align: center;">Jeu</th>
-					<th style="padding: 10px; text-align: center;">Ven</th>
-					<th style="padding: 10px; text-align: center;">Sam</th>
-					<th style="padding: 10px; text-align: center;">Dim</th>
+			<table class="chastity-cal-grid">
+				<tr>
+					<th>{{ lang('CHASTITY_DOW_MON') }}</th>
+					<th>{{ lang('CHASTITY_DOW_TUE') }}</th>
+					<th>{{ lang('CHASTITY_DOW_WED') }}</th>
+					<th>{{ lang('CHASTITY_DOW_THU') }}</th>
+					<th>{{ lang('CHASTITY_DOW_FRI') }}</th>
+					<th>{{ lang('CHASTITY_DOW_SAT') }}</th>
+					<th>{{ lang('CHASTITY_DOW_SUN') }}</th>
 				</tr>
 				{% set cell_count = 0 %}
 				{% for day in loops.calendar_days %}
 					{% if cell_count % 7 == 0 %}<tr>{% endif %}
-					<td style="padding: 15px; text-align: center; 
-							   background: {% if day.IS_LOCKED and not day.OTHER_MONTH %}#d4edda{% else %}white{% endif %}; 
-							   {% if day.IS_TODAY %}border: 2px solid #BC2A4D; font-weight: bold;{% else %}border: 1px solid #ddd;{% endif %}
-							   {% if day.OTHER_MONTH %}opacity: 0.4;{% endif %}">
-						<strong style="font-size: 1.2em;">{{ day.DAY }}</strong>
+					<td class="chastity-cal-cell{% if day.OTHER_MONTH %} chastity-cal-cell-other{% elseif day.IS_CAGEEXIT and day.IS_ACTIVITY %} chastity-cal-cell-mixed{% elseif day.IS_CAGEEXIT %} chastity-cal-cell-cageexit{% elseif day.IS_ACTIVITY %} chastity-cal-cell-activity{% elseif day.IS_LOCKED %} chastity-cal-cell-locked{% endif %}{% if day.IS_TODAY %} chastity-cal-cell-today{% endif %}"
+						{% if not day.OTHER_MONTH and (day.IS_CAGEEXIT or day.IS_ACTIVITY) %}
+						style="background:{% if day.IS_CAGEEXIT and day.IS_ACTIVITY %}{{ '#'~COLOR_MIXED }}{% elseif day.IS_CAGEEXIT %}{{ '#'~COLOR_CAGEEXIT }}{% elseif day.IS_ACTIVITY %}{{ '#'~COLOR_ACTIVITY }}{% endif %};cursor:help;"
+						{% endif %}
+						{% if day.TOOLTIP is defined and day.TOOLTIP %}data-tooltip="{{ day.TOOLTIP }}"{% endif %}>
+						<span class="chastity-cal-day">{{ day.DAY }}</span>
 						{% if day.IS_LOCKED and not day.OTHER_MONTH %}
-							<br><span style="color: #28a745; font-size: 1.1em;">🔒</span>
+							<br><span class="chastity-cal-lock-icon">🔒</span>
 						{% endif %}
 					</td>
 					{% set cell_count = cell_count + 1 %}
@@ -54,18 +78,30 @@
 			</table>
 
 			<!-- Légende -->
-			<div style="margin-top: 15px; padding: 10px; background: white; border-radius: 3px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-				<span style="display: flex; align-items: center; gap: 5px;">
-					<span style="display: inline-block; width: 30px; height: 30px; background: #d4edda; border: 1px solid #28a745;"></span>
-					<strong>Verrouillé</strong>
+			<div class="chastity-legend">
+				<span class="chastity-legend-item">
+					<span class="chastity-legend-box" style="background:#d4edda;border-color:#28a745;"></span>
+					{{ lang('CHASTITY_YEARVIEW_LEGEND_LOCKED') }}
 				</span>
-				<span style="display: flex; align-items: center; gap: 5px;">
-					<span style="display: inline-block; width: 30px; height: 30px; background: white; border: 1px solid #ddd;"></span>
-					<strong>Libre</strong>
+				<span class="chastity-legend-item">
+					<span class="chastity-legend-box"></span>
+					{{ lang('CHASTITY_YEARVIEW_LEGEND_FREE') }}
 				</span>
-				<span style="display: flex; align-items: center; gap: 5px;">
-					<span style="display: inline-block; width: 30px; height: 30px; border: 2px solid #BC2A4D;"></span>
-					<strong>Aujourd'hui</strong>
+				<span class="chastity-legend-item">
+					<span class="chastity-legend-today-box"></span>
+					{{ lang('CHASTITY_YEARVIEW_LEGEND_TODAY') }}
+				</span>
+				<span class="chastity-legend-item">
+					<span class="chastity-legend-box" style="background:{{ '#'~COLOR_CAGEEXIT }};border-color:{{ '#'~COLOR_CAGEEXIT }};"></span>
+					{{ lang('CHASTITY_LEGEND_CAGEEXIT') }}
+				</span>
+				<span class="chastity-legend-item">
+					<span class="chastity-legend-box" style="background:{{ '#'~COLOR_ACTIVITY }};border-color:{{ '#'~COLOR_ACTIVITY }};"></span>
+					{{ lang('CHASTITY_LEGEND_ACTIVITY') }}
+				</span>
+				<span class="chastity-legend-item">
+					<span class="chastity-legend-box" style="background:{{ '#'~COLOR_MIXED }};border-color:{{ '#'~COLOR_MIXED }};"></span>
+					{{ lang('CHASTITY_LEGEND_MIXED') }}
 				</span>
 			</div>
 		</div>
@@ -104,6 +140,23 @@
 				</dl>
 			</fieldset>
 
+			{% if loops.my_cages_select is defined and loops.my_cages_select|length %}
+			<fieldset>
+				<legend>{{ lang('CHASTITY_CAGE_SELECT') }}</legend>
+				<dl>
+					<dt><label for="cage_id">{{ lang('CHASTITY_CAGE_SELECT_OPTIONAL') }}{{ lang('COLON') }}</label></dt>
+					<dd>
+						<select id="cage_id" name="cage_id">
+							<option value="0">{{ lang('CHASTITY_CAGE_NONE') }}</option>
+							{% for c in loops.my_cages_select %}
+							<option value="{{ c.CAGE_ID }}">{{ c.NAME }}{% if c.BRAND %} ({{ c.BRAND }}){% endif %}</option>
+							{% endfor %}
+						</select>
+					</dd>
+				</dl>
+			</fieldset>
+			{% endif %}
+
 			<fieldset>
 				<legend>{{ lang('CHASTITY_RULES') }}</legend>
 				<p>{{ lang('CHASTITY_RULES_EXPLAIN') }}</p>
@@ -134,7 +187,7 @@
 		</form>
 		{% endif %}
 
-		<h4 style="margin-top: 30px;">Historique des périodes</h4>
+		<h4 style="margin-top:30px;">{{ lang('CHASTITY_HISTORY_TITLE') }}</h4>
 
 		{% if loops.periods is defined and loops.periods|length %}
 		<table class="table1 zebra-table">
@@ -155,14 +208,14 @@
 					<td>{{ periods.START_DATE }}</td>
 					<td>
 						{% if periods.IS_PERMANENT and periods.IS_ACTIVE %}
-							<strong style="color: #BC2A4D;">♾️ {{ lang('CHASTITY_PERMANENT') }}</strong>
+							<strong class="chastity-locked">♾️ {{ lang('CHASTITY_PERMANENT') }}</strong>
 						{% else %}
 							{{ periods.END_DATE }}
 						{% endif %}
 					</td>
 					<td>
 						{% if periods.IS_ACTIVE %}
-							<strong style="color: #BC2A4D;">{{ periods.STATUS }}</strong>
+							<strong class="chastity-locked">{{ periods.STATUS }}</strong>
 						{% else %}
 							{{ periods.STATUS }}
 						{% endif %}
@@ -177,41 +230,66 @@
 					<td>{{ periods.NOTES }}</td>
 					<td>
 						<a href="#" onclick="document.getElementById('rules_{{ periods.PERIOD_ID }}').style.display = document.getElementById('rules_{{ periods.PERIOD_ID }}').style.display == 'none' ? 'block' : 'none'; return false;" class="button2">{{ lang('CHASTITY_VIEW_RULES') }}</a>
-						<div id="rules_{{ periods.PERIOD_ID }}" style="display: none; margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+						<div id="rules_{{ periods.PERIOD_ID }}" style="display:none;margin-top:10px;padding:10px;background:#f5f5f5;border-radius:5px;">
 							<strong>{{ lang('CHASTITY_RULES') }}{{ lang('COLON') }}</strong><br>
 							{% if S_RULE_MASTURBATION_ENABLED %}
-							✓ {{ lang('CHASTITY_RULE_MASTURBATION') }}{{ lang('COLON') }} {% if periods.RULE_MASTURBATION %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							✓ {{ lang('CHASTITY_RULE_MASTURBATION') }}{{ lang('COLON') }} {% if periods.RULE_MASTURBATION %}<span style="color:green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color:red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
 							{% endif %}
 							{% if S_RULE_EJACULATION_ENABLED %}
-							✓ {{ lang('CHASTITY_RULE_EJACULATION') }}{{ lang('COLON') }} {% if periods.RULE_EJACULATION %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							✓ {{ lang('CHASTITY_RULE_EJACULATION') }}{{ lang('COLON') }} {% if periods.RULE_EJACULATION %}<span style="color:green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color:red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
 							{% endif %}
 							{% if S_RULE_SLEEP_REMOVAL_ENABLED %}
-							✓ {{ lang('CHASTITY_RULE_SLEEP_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_SLEEP_REMOVAL %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							✓ {{ lang('CHASTITY_RULE_SLEEP_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_SLEEP_REMOVAL %}<span style="color:green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color:red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
 							{% endif %}
 							{% if S_RULE_PUBLIC_REMOVAL_ENABLED %}
-							✓ {{ lang('CHASTITY_RULE_PUBLIC_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_PUBLIC_REMOVAL %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
+							✓ {{ lang('CHASTITY_RULE_PUBLIC_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_PUBLIC_REMOVAL %}<span style="color:green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color:red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}<br>
 							{% endif %}
 							{% if S_RULE_MEDICAL_REMOVAL_ENABLED %}
-							✓ {{ lang('CHASTITY_RULE_MEDICAL_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_MEDICAL_REMOVAL %}<span style="color: green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color: red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}
+							✓ {{ lang('CHASTITY_RULE_MEDICAL_REMOVAL') }}{{ lang('COLON') }} {% if periods.RULE_MEDICAL_REMOVAL %}<span style="color:green;">{{ lang('CHASTITY_YES') }}</span>{% else %}<span style="color:red;">{{ lang('CHASTITY_NO') }}</span>{% endif %}
 							{% endif %}
 						</div>
 					</td>
 					<td>
 						{% if periods.IS_ACTIVE %}
-						<form method="post" action="{{ U_ACTION }}" style="display: inline;">
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;">
 							<input type="hidden" name="period_id" value="{{ periods.PERIOD_ID }}" />
-							<div style="margin-bottom: 5px;">
-								<label style="font-size: 0.9em;">{{ lang('CHASTITY_END_DATE_CUSTOM') }}<br>
-								<input type="date" name="end_date_custom" max="{{ TODAY_DATE }}" style="font-size: 0.9em;" />
-								<input type="time" name="end_time_custom" style="font-size: 0.9em; margin-left:6px;" /></label>
-								<span style="font-size: 0.8em; color: #888;">{{ lang('CHASTITY_END_DATE_OPTIONAL') }}</span>
+							<div style="margin-bottom:5px;">
+								<label style="font-size:0.9em;">{{ lang('CHASTITY_END_DATE_CUSTOM') }}<br>
+								<input type="date" name="end_date_custom" max="{{ TODAY_DATE }}" style="font-size:0.9em;" />
+								<input type="time" name="end_time_custom" style="font-size:0.9em;margin-left:6px;" /></label>
+								<span style="font-size:0.8em;color:#888;">{{ lang('CHASTITY_END_DATE_OPTIONAL') }}</span>
 							</div>
 							<input type="submit" name="end_period" value="{{ lang('CHASTITY_END_PERIOD') }}" class="button2" onclick="return confirm('{{ lang('CHASTITY_END_PERIOD_CONFIRM') }}');" />
 							{{ S_FORM_TOKEN }}
 						</form>
 						{% endif %}
-						{% if periods.CAN_DELETE %}
-						<form method="post" action="{{ U_ACTION }}" style="display: inline;">
+						{% if periods.CAN_EDIT %}
+					<input type="button" value="{{ lang('CHASTITY_EDIT_PERIOD') }}" class="button2" onclick="document.getElementById('edit_period_{{ periods.PERIOD_ID }}').style.display = (document.getElementById('edit_period_{{ periods.PERIOD_ID }}').style.display === 'none' ? 'block' : 'none');" />
+					<div id="edit_period_{{ periods.PERIOD_ID }}" style="display:none;margin-top:8px;padding:10px;border:1px solid #ddd;border-radius:6px;background:#fafafa;">
+						<form method="post" action="{{ U_ACTION }}">
+							<input type="hidden" name="period_id" value="{{ periods.PERIOD_ID }}" />
+							<div style="margin-bottom:6px;">
+								<label style="font-size:0.9em;">{{ lang('CHASTITY_START_DATE') }}<br>
+								<input type="date" name="edit_start_date" value="{{ periods.EDIT_START_DATE }}" max="{{ TODAY_DATE }}" style="font-size:0.9em;" required="required" />
+								<input type="time" name="edit_start_time" value="{{ periods.EDIT_START_TIME }}" style="font-size:0.9em;margin-left:6px;" /></label>
+							</div>
+							<div style="margin-bottom:6px;">
+								<label style="font-size:0.9em;">{{ lang('CHASTITY_END_DATE_CUSTOM') }}<br>
+								<input type="date" name="edit_end_date" value="{{ periods.EDIT_END_DATE }}" max="{{ TODAY_DATE }}" style="font-size:0.9em;" />
+								<input type="time" name="edit_end_time" value="{{ periods.EDIT_END_TIME }}" style="font-size:0.9em;margin-left:6px;" /></label>
+								<span style="font-size:0.8em;color:#888;">{{ lang('CHASTITY_END_DATE_OPTIONAL') }}</span>
+							</div>
+							<div style="margin-bottom:6px;">
+								<label style="font-size:0.9em;">{{ lang('CHASTITY_NOTES') }}<br>
+								<textarea name="edit_notes" rows="2" style="font-size:0.9em;width:100%;max-width:280px;">{{ periods.NOTES }}</textarea></label>
+							</div>
+							<input type="submit" name="edit_period" value="{{ lang('SUBMIT') }}" class="button1" />
+							{{ S_FORM_TOKEN }}
+						</form>
+					</div>
+					{% endif %}
+					{% if periods.CAN_DELETE %}
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;">
 							<input type="hidden" name="period_id" value="{{ periods.PERIOD_ID }}" />
 							<input type="submit" name="delete_period" value="{{ lang('DELETE') }}" class="button2" onclick="return confirm('{{ lang('CONFIRM') }}');" />
 							{{ S_FORM_TOKEN }}
@@ -228,5 +306,7 @@
 
 	</div>
 </div>
+
+<script src="{{ BOARD_URL }}ext/verturin/chastitytracker/styles/all/theme/chastity_tooltip.js"></script>
 
 {% include 'ucp_footer.html' %}
