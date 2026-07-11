@@ -1,0 +1,111 @@
+{% include 'ucp_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<h2>{{ lang('UCP_CHASTITY_CAGEEXITS') }}</h2>
+
+{% if not S_HAS_ACTIVE %}
+<p class="error">{{ lang('CHASTITY_CAGEEXIT_NO_ACTIVE') }}</p>
+{% else %}
+
+<form method="post" action="{{ U_ACTION }}">
+
+{% if ERROR_NOT_LOCKED %}
+<div style="background:#f8d7da;border:1px solid #f5c6cb;border-radius:4px;padding:10px 14px;margin-bottom:12px;color:#721c24;">
+    ⚠ {{ lang('CHASTITY_NOT_LOCKED_ON_DATE', ERROR_NOT_LOCKED_DATE) }}
+</div>
+{% endif %}
+
+<fieldset>
+    <legend>{{ lang('CHASTITY_CAGEEXIT_ADD') }}</legend>
+    <dl>
+        <dt><label for="cageexit_date">{{ lang('CHASTITY_DATE') }}</label></dt>
+        <dd><input type="datetime-local" id="cageexit_date" name="cageexit_date" value="{{ PREFILL_CE_DATE ?: CAGEEXIT_DATE_DEFAULT }}" /></dd>
+        <dt><label for="cageexit_reason_id">{{ lang('CHASTITY_CAGEEXIT_REASON') }}</label></dt>
+        <dd>
+            <select id="cageexit_reason_id" name="cageexit_reason_id">
+                {% for r in cageexit_reasons %}
+                    {% if not r.IS_PENDING %}
+                    <option value="{{ r.REASON_ID }}"{% if r.REASON_ID == PREFILL_CE_REASON %} selected="selected"{% endif %}>{{ r.LABEL }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </dd>
+        <dt><label for="cageexit_duration_min">{{ lang('CHASTITY_CAGEEXIT_DURATION_MIN') }}</label></dt>
+        <dd><input type="number" id="cageexit_duration_min" name="cageexit_duration_min" min="1" max="1440" value="{{ PREFILL_CE_DURATION ?: 30 }}" />
+            {% if CAGEEXIT_THRESHOLD_HINT %}<small style="color:#888;margin-left:8px;">{{ CAGEEXIT_THRESHOLD_HINT }}</small>{% endif %}</dd>
+        <dt><label for="cageexit_notes">{{ lang('CHASTITY_CAGEEXIT_NOTES') }}</label></dt>
+        <dd><textarea id="cageexit_notes" name="cageexit_notes" rows="3" cols="40">{{ PREFILL_CE_NOTES }}</textarea></dd>
+    </dl>
+
+    {% if S_CONFIRM_LONG %}
+    <div class="warning-box" style="background:#FFF3CD;border:1px solid #E67E22;padding:12px;margin:10px 0;border-radius:4px;">
+        <p>{{ lang('CHASTITY_CAGEEXIT_WARNING_LONG', CHASTITY_THRESHOLD_H) }}</p>
+        <label><input type="checkbox" name="confirm_long_cageexit" value="1" /> {{ lang('CHASTITY_CAGEEXIT_CONFIRM_CLOSE') }}</label>
+        <input type="hidden" name="cageexit_reason_id" value="{{ PREFILL_REASON_ID }}" />
+        <input type="hidden" name="cageexit_duration_min" value="{{ PREFILL_DURATION }}" />
+        <input type="hidden" name="cageexit_notes" value="{{ PREFILL_NOTES }}" />
+    </div>
+    {% endif %}
+
+    {{ S_FORM_TOKEN }}
+    <input type="submit" name="add_cageexit" value="{{ lang('CHASTITY_CAGEEXIT_SUBMIT') }}" class="button1" />
+</fieldset>
+</form>
+
+{% endif %}
+
+<fieldset>
+    <legend>{{ lang('CHASTITY_CAGEEXIT_ADD_REASON') }}</legend>
+    <form method="post" action="{{ U_ACTION }}">
+        <dl>
+            <dt><label for="new_reason_label">{{ lang('CHASTITY_REASON_LABEL') }}</label></dt>
+            <dd><input type="text" id="new_reason_label" name="new_reason_label" maxlength="100" size="40" /></dd>
+            <dt></dt>
+            <dd><label><input type="checkbox" name="reason_share_global" value="1" /> {{ lang('CHASTITY_REASON_SHARE_GLOBAL') }}</label>
+                <br /><small style="color:#888;">{{ lang('CHASTITY_REASON_SHARE_PERSONAL') }}</small></dd>
+        </dl>
+        {{ S_FORM_TOKEN }}
+        <input type="submit" name="add_personal_reason" value="{{ lang('CHASTITY_REASON_SUBMIT') }}" class="button2" />
+    </form>
+    <p><em>{{ lang('CHASTITY_REASON_HINT') }}</em></p>
+    {% for r in cageexit_reasons %}
+        {% if r.IS_PENDING %}
+        <p style="color:#888;">{{ r.LABEL }} — <em>{{ lang('CHASTITY_PENDING') }}</em></p>
+        {% endif %}
+    {% endfor %}
+</fieldset>
+
+<h3>{{ lang('CHASTITY_CAGEEXIT_HISTORY') }}</h3>
+{% if cageexits_history|length == 0 %}
+<p>{{ lang('CHASTITY_HISTORY_EMPTY') }}</p>
+{% else %}
+<table class="table1" width="100%">
+    <thead><tr>
+        <th>{{ lang('CHASTITY_COL_DATE') }}</th>
+        <th>{{ lang('CHASTITY_COL_DURATION') }}</th>
+        <th>{{ lang('CHASTITY_COL_REASON') }}</th>
+        <th>{{ lang('CHASTITY_COL_NOTES') }}</th>
+        <th>{{ lang('CHASTITY_COL_ACTIONS') }}</th>
+    </tr></thead>
+    <tbody>
+    {% for r in cageexits_history %}
+    <tr>
+        <td>{{ r.DATE }}</td>
+        <td>{{ r.DURATION }}</td>
+        <td>{{ r.REASON }}{% if r.AUTO_CLOSED %} ⚠️{% endif %}</td>
+        <td>{{ r.NOTES }}</td>
+        <td>
+            <form method="post" action="{{ U_ACTION }}" style="display:inline;">
+                <input type="hidden" name="cageexit_id" value="{{ r.CAGEEXIT_ID }}" />
+                {{ S_FORM_TOKEN }}
+                <input type="submit" name="delete_cageexit" value="{{ lang('CHASTITY_DELETE') }}" class="button2" onclick="return confirm({{ lang('CHASTITY_DELETE_CONFIRM')|json_encode }})" />
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% include 'ucp_footer.html' %}

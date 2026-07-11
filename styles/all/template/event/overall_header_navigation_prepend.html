@@ -1,4 +1,7 @@
 {% if S_CHASTITY_NAV_LINK %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <li class="icon-link nav-quick-link">
     <a href="{{ U_CHASTITY_NAV_LINK }}"
        class="headerbar-link"
@@ -9,6 +12,18 @@
                            saturate(800%) hue-rotate(180deg) brightness(95%);"
              alt="{{ lang('CHASTITY_NAV_LINK_LABEL') }}" />
         <span class="chastity-nav-label">{{ lang('CHASTITY_NAV_LINK_LABEL') }}</span>
+    </a>
+</li>
+<li class="icon-link nav-quick-link">
+    <a href="{{ U_CHASTITY_CAGES_LINK }}"
+       class="headerbar-link"
+       title="{{ lang('UCP_CHASTITY_CAGE_CATALOG') }}">
+        <img src="{{ U_CHASTITY_CAGES_SVG }}"
+             style="width:20px; height:20px; vertical-align:middle;
+                    filter:brightness(0) saturate(100%) invert(22%) sepia(25%)
+                           saturate(800%) hue-rotate(180deg) brightness(95%);"
+             alt="{{ lang('UCP_CHASTITY_CAGE_CATALOG') }}" />
+        <span class="chastity-nav-label">{{ lang('UCP_CHASTITY_CAGE_CATALOG') }}</span>
     </a>
 </li>
 {% endif %}

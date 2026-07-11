@@ -1,4 +1,4 @@
-# Guide d'installation — Chastity Tracker v3.0.29
+# Guide d'installation — Chastity Tracker v3.4.2
 
 ---
 
@@ -20,153 +20,110 @@ Décompressez l'archive et copiez le dossier dans votre installation phpBB :
 phpbb/
 └── ext/
     └── verturin/
-        └── chastitytracker/      ← nom exact, sans underscore
+        └── chastitytracker/
             ├── acp/
-            ├── adm/
+            ├── adm/style/
             ├── config/
             ├── controller/
-            ├── cron/
-            │   └── task/
+            ├── cron/task/
             ├── event/
-            ├── language/
-            │   ├── en/
-            │   └── fr/
+            ├── language/ (en/ + fr/)
             ├── migrations/
             ├── service/
-            ├── styles/
-            │   └── all/
-            │       ├── template/
-            │       │   └── event/
-            │       └── theme/
-            │           └── images/
+            ├── styles/all/
+            │   ├── template/ + event/
+            │   └── theme/ + images/
             ├── ucp/
             ├── composer.json
             └── ext.php
 ```
 
-> **Important** : Le dossier parent doit s'appeler `verturin` et le dossier de l'extension `chastitytracker` (pas `chastity_tracker`).
+> **Important** : Le dossier parent doit s'appeler `verturin` et l'extension `chastitytracker`.
 
 ---
 
 ## 2. Activer l'extension
 
-1. Connectez-vous au **Panneau d'administration (ACP)**
-2. Allez dans **Personnalisation** → **Gestion des extensions**
-3. Trouvez **Chastity Tracker** dans la liste
-4. Cliquez sur **Activer**
+1. ACP → **Personnalisation** → **Gestion des extensions**
+2. Trouver **Chastity Tracker** dans la liste
+3. Cliquer sur **Activer**
 
-L'extension va automatiquement :
-- Créer les 5 tables de base de données
-- Ajouter les 20 configurations
-- Enregistrer les 5 permissions ACL
-- Créer les modules UCP (6 onglets) et ACP (3 onglets)
-- Initialiser les données pour les utilisateurs existants
+La migration s'exécute automatiquement (création des tables, permissions, modules).
 
 ---
 
 ## 3. Configurer les permissions
 
-1. Allez dans **ACP** → **Permissions** → **Permissions des groupes**
-2. Sélectionnez le groupe à configurer (ex. Membres enregistrés)
-3. Allez dans l'onglet **Divers** (catégorie **Chastity Tracker**)
-4. Accordez les permissions souhaitées :
+ACP → **Permissions** → **Permissions des groupes d'utilisateurs** :
 
-| Permission | Membres | Modérateurs | Administrateurs |
-|---|---|---|---|
-| `Peut voir le suivi de chasteté` | ✅ | ✅ | ✅ |
-| `Peut gérer ses propres périodes` | ✅ | ✅ | ✅ |
-| `Peut gérer ses préférences` | ✅ | ✅ | ✅ |
-| `Peut forcer l'actualisation` | ✅ | ✅ | ✅ |
-| `Peut modérer les périodes` | ❌ | ✅ | ✅ |
-
-> **Note** : Les 4 premières permissions sont accordées automatiquement au rôle `ROLE_USER_STANDARD` à l'installation. Si vos membres utilisent ce rôle, aucune configuration manuelle n'est nécessaire.
+| Permission | Description | Membres | Modérateurs | Invités |
+|---|---|---|---|---|
+| `u_chastity_view` | Voir les données | Oui | Oui | Non |
+| `u_chastity_manage` | Gérer ses périodes | Oui | Oui | Non |
+| `u_chastity_prefs` | Modifier ses préférences | Oui | Oui | Non |
+| `u_chastity_refresh` | Actualiser son cache | Oui | Oui | Non |
+| `m_chastity_moderate` | Modération | Non | Oui | Non |
 
 ---
 
 ## 4. Configurer les paramètres
 
-1. Allez dans **ACP** → **Extensions** → **Chastity Tracker** → **Paramètres**
-2. Configurez selon vos besoins :
+ACP → **Chastity Tracker** → **Paramètres** :
 
-**Général**
-- Activer le suivi de chasteté : `Oui`
-- Afficher le statut sur les profils et posts : selon votre préférence
-- Jours minimum par période : `0` (aucune limite) ou une valeur positive
-
-**Règles disponibles** — activez uniquement les règles que vous souhaitez proposer aux utilisateurs.
-
-**Locktober**
-- Activer le Locktober : `Oui` si vous organisez le défi
-- Année active : année en cours
-- Afficher les badges : selon votre préférence
-- Activer le classement : selon votre préférence
+- Activer l'extension
+- Activer les sorties de cage et activités en cage
+- Configurer les règles selon les besoins
+- Configurer Locktober (année, options)
+- **Notification MP** : sélectionner l'admin qui recevra un MP quand un membre propose un nouveau motif
 
 ---
 
-## 5. Configurer le cron (optionnel mais recommandé)
+## 5. Configurer les crons
 
-Le cron met à jour automatiquement le cache de performance et l'historique annuel.
+ACP → **Chastity Tracker** → **Reconstruire** :
 
-1. Allez dans **ACP** → **Extensions** → **Chastity Tracker** → **Reconstruire les compteurs**
-2. Dans la section **Intervalles de mise à jour automatique** :
-   - Définissez l'intervalle du cache (défaut : 60 minutes)
-   - Définissez l'intervalle de l'historique (défaut : 1440 minutes = 24h)
-   - Activez chaque cron en cliquant sur **Activer le cron**
-3. Vérifiez que le cron phpBB est actif : **ACP** → **Paramètres du serveur** → **Tâches périodiques** → activé
-
-> Si le cron phpBB n'est pas disponible sur votre hébergement, utilisez les boutons de recalcul manuel dans cette même page ACP.
+- Intervalle du cache : 60 minutes (recommandé)
+- Intervalle de l'historique : 1440 minutes (recommandé)
 
 ---
 
-## 6. Vérification
+## 6. Premier recalcul
 
-Après installation et configuration :
+ACP → **Chastity Tracker** → **Reconstruire** :
 
-1. Connectez-vous en tant qu'utilisateur membre
-2. Allez dans le **Panneau de l'utilisateur (UCP)**
-3. Vérifiez la présence du menu **Suivi de Chasteté** avec ses onglets
-4. Vérifiez le lien **Mon suivi** dans la navigation principale du forum
+1. Cliquer **Lancer la reconstruction**
+2. Cliquer **Recalculer le cache**
+3. Cliquer **Recalculer l'historique**
 
 ---
 
-## Mise à jour depuis une version précédente
+## Mise à jour depuis v3.4.1
 
-### Depuis 3.0.x
+1. Mettre le forum en **mode maintenance**
+2. Copier les nouveaux fichiers sur le FTP (écraser les anciens)
+3. Supprimer `cache/production/container*` via FTP
+4. ACP → **Vider le cache**
+5. ACP → **Paramètres Chastity** → Sélectionner l'admin pour les notifications MP
+6. Désactiver la maintenance
 
-1. **Désactivez** l'extension dans ACP → Personnalisation → Gestion des extensions
-2. **Remplacez** tous les fichiers de l'extension
-3. **Réactivez** l'extension — les migrations s'exécutent automatiquement
+> **Note** : Pas de migration BDD entre v3.4.1 et v3.4.2. Le vidage de cache suffit.
 
-### Depuis 1.x / 2.x
+---
 
-1. Désactivez l'extension
-2. Cliquez sur **Supprimer les données** (attention : supprime toutes les données)
-3. Supprimez les anciens fichiers
-4. Copiez les nouveaux fichiers
-5. Activez l'extension — installation complète depuis zéro
+## Mise à jour depuis v3.4.0 ou antérieure
+
+1. Mettre le forum en **mode maintenance**
+2. Copier les nouveaux fichiers sur le FTP
+3. Supprimer `cache/production/container*` via FTP
+4. ACP → **Vider le cache**
+5. La migration `update_chastity_tracker_v341` s'exécute automatiquement (création des 4 tables sorties/activités)
+6. ACP → **Chastity Tracker** → **Reconstruire** → Tout recalculer
+7. Désactiver la maintenance
 
 ---
 
 ## Désinstallation
 
-### Désactivation simple (données conservées)
-
-1. ACP → Personnalisation → Gestion des extensions
-2. Cliquez sur **Désactiver** à côté de Chastity Tracker
-
-### Suppression complète
-
-> ⚠️ Toutes les données seront définitivement supprimées.
-
-1. Désactivez l'extension
-2. Cliquez sur **Supprimer les données**
-3. Confirmez
-4. Supprimez le dossier `phpbb/ext/verturin/chastitytracker/`
-
----
-
-## Support
-
-Consultez le fichier [README.md](README.md) pour la description complète des fonctionnalités.
-
-Pour les problèmes techniques, référez-vous à la [documentation technique](doc_technique_3029.docx) (analyse complète des fichiers et de l'architecture).
+1. ACP → **Personnalisation** → **Gestion des extensions** → **Désactiver**
+2. Puis **Supprimer les données**
+3. Supprimer le dossier `ext/verturin/chastitytracker/` via FTP

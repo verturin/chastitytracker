@@ -1,0 +1,291 @@
+{% include 'overall_header.html' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_CONTRACT') }}</h1>
+<p>{{ lang('ACP_CONTRACT_EXPLAIN') }}</p>
+
+<form method="post" action="{{ U_ACTION }}" style="margin-bottom:15px;">
+	<input type="submit" name="fix_orphan_replaced" value="{{ lang('ACP_CONTRACT_FIX_ORPHAN') }}" class="button2" />
+	{{ S_FORM_TOKEN }}
+	<span style="font-size:0.85em;color:#777;">{{ lang('ACP_CONTRACT_FIX_ORPHAN_EXPLAIN') }}</span>
+</form>
+
+<fieldset>
+	<legend>🗂️ {{ lang('ACP_CONTRACT_CATEGORIES_TITLE') }}</legend>
+	<p>{{ lang('ACP_CONTRACT_CATEGORIES_EXPLAIN') }}</p>
+	{% if categories is defined and categories|length > 0 %}
+		<table class="table1 zebra-table">
+			<thead>
+				<tr>
+					<th>{{ lang('ACP_CONTRACT_CATEGORY') }}</th>
+					<th>{{ lang('ACTIONS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for cat in categories %}
+				<tr>
+					<td>
+						{% if cat.IS_FIRST %}📌 {% endif %}{{ cat.LABEL }}
+						{% if cat.IS_LOCKED %} <em style="color:#999;font-size:0.85em;">({{ lang('ACP_CONTRACT_CATEGORY_LOCKED') }})</em>{% endif %}
+					</td>
+					<td>
+						{% if not cat.IS_LOCKED and not cat.IS_FIRST %}
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+							<input type="hidden" name="category_id_first" value="{{ cat.ID }}" />
+							<input type="submit" name="set_category_first" value="{{ lang('ACP_CONTRACT_CATEGORY_SET_FIRST') }}" class="button2" />
+							{{ S_FORM_TOKEN }}
+						</form>
+						{% endif %}
+						{% if cat.CAN_MOVE_UP %}
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+							<input type="hidden" name="category_id_move" value="{{ cat.ID }}" />
+							<input type="submit" name="move_category_up" value="▲" class="button2" title="{{ lang('ACP_CONTRACT_CATEGORY_MOVE_UP') }}" />
+							{{ S_FORM_TOKEN }}
+						</form>
+						{% endif %}
+						{% if cat.CAN_MOVE_DOWN %}
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+							<input type="hidden" name="category_id_move" value="{{ cat.ID }}" />
+							<input type="submit" name="move_category_down" value="▼" class="button2" title="{{ lang('ACP_CONTRACT_CATEGORY_MOVE_DOWN') }}" />
+							{{ S_FORM_TOKEN }}
+						</form>
+						{% endif %}
+						{% if not cat.IS_LOCKED %}
+						<input type="button" value="{{ lang('ACP_CHASTITY_EDIT') }}" class="button2" onclick="ctEditCategory({{ cat.ID }}, '{{ cat.LABEL|e('js') }}');" />
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;" onsubmit="return confirm('{{ lang('CONFIRM') }}');">
+							<input type="hidden" name="category_id_del" value="{{ cat.ID }}" />
+							<input type="submit" name="delete_category" value="{{ lang('DELETE') }}" class="button2" />
+							{{ S_FORM_TOKEN }}
+						</form>
+						{% else %}
+							—
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+
+	<fieldset style="margin-top:15px;">
+		<legend>{{ lang('ACP_CONTRACT_CATEGORY_ADD') }}</legend>
+		<form method="post" action="{{ U_ACTION }}">
+			<input type="hidden" id="category_id_edit" name="category_id_edit" value="0" />
+			<dl>
+				<dt><label>{{ lang('ACP_CONTRACT_CATEGORY_LABEL') }}{{ lang('COLON') }}</label></dt>
+				<dd><input type="text" id="category_label" name="category_label" maxlength="255" size="40" /></dd>
+			</dl>
+			<input type="submit" name="submit_category" value="{{ lang('SUBMIT') }}" class="button1" />
+			{{ S_FORM_TOKEN }}
+		</form>
+	</fieldset>
+</fieldset>
+
+<script type="text/javascript">
+function ctEditCategory(id, label) {
+	document.getElementById('category_id_edit').value = id;
+	document.getElementById('category_label').value = label;
+	document.getElementById('category_label').focus();
+}
+</script>
+
+<fieldset>
+	<legend>📚 {{ lang('ACP_CONTRACT_LIBRARY_TITLE') }}</legend>
+	<p>{{ lang('ACP_CONTRACT_LIBRARY_EXPLAIN') }}</p>
+
+	{% if lib_articles is defined and lib_articles|length > 0 %}
+		<table class="table1 zebra-table">
+			<thead>
+				<tr>
+					<th>{{ lang('ACP_CONTRACT_CATEGORY') }}</th>
+					<th>{{ lang('CHASTITY_CONTRACT_ARTICLE_TITLE') }}</th>
+					<th>{{ lang('ACP_CONTRACT_SCOPE') }}</th>
+					<th>{{ lang('ACP_CONTRACT_PROPOSED_BY') }}</th>
+					<th>{{ lang('ACTIONS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for a in lib_articles %}
+				<tr>
+					<td>{{ a.CATEGORY_LABEL }}</td>
+					<td><strong>{{ a.TITLE }}</strong><br><span style="font-size:0.85em;color:#777;">{{ a.BODY|slice(0, 120) }}{% if a.BODY|length > 120 %}…{% endif %}</span></td>
+					<td>{% if a.IS_GLOBAL %}🌐 {{ lang('ACP_CONTRACT_SOURCE_GLOBAL') }}{% else %}👤 {{ lang('ACP_CONTRACT_SOURCE_PERSONAL') }}{% endif %}</td>
+					<td>{% if a.SUBMITTER_USERNAME %}{{ a.SUBMITTER_USERNAME }}{% else %}<span style="color:#999;">—</span>{% endif %}</td>
+					<td>
+						<input type="button" value="{{ lang('ACP_CHASTITY_EDIT') }}" class="button2" onclick="ctEditArticle({{ a.ID }}, '{{ a.TITLE|e('js') }}', '{{ a.BODY|e('js') }}', '{{ a.CATEGORY|e('js') }}');" />
+						<form method="post" action="{{ U_ACTION }}" style="display:inline;" onsubmit="return confirm('{{ lang('CONFIRM') }}');">
+							<input type="hidden" name="article_id_del" value="{{ a.ID }}" />
+							<input type="submit" name="delete_article" value="{{ lang('DELETE') }}" class="button2" />
+							{{ S_FORM_TOKEN }}
+						</form>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p>{{ lang('ACP_CONTRACT_LIBRARY_EMPTY') }}</p>
+	{% endif %}
+
+	<fieldset style="margin-top:15px;">
+		<legend>{{ lang('ACP_CONTRACT_ARTICLE_ADD') }}</legend>
+		<form method="post" action="{{ U_ACTION }}">
+			<input type="hidden" id="article_id_edit" name="article_id_edit" value="0" />
+			<dl>
+				<dt><label>{{ lang('ACP_CONTRACT_CATEGORY') }}{{ lang('COLON') }}</label></dt>
+				<dd>
+					<select id="article_category" name="article_category">
+						{% for cat in categories %}
+						<option value="{{ cat.KEY }}">{{ cat.LABEL }}</option>
+						{% endfor %}
+					</select>
+				</dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('ACP_CONTRACT_SCOPE') }}{{ lang('COLON') }}</label></dt>
+				<dd>
+					<label><input type="radio" name="article_scope" value="global" checked="checked" /> 🌐 {{ lang('ACP_CONTRACT_SOURCE_GLOBAL') }}</label>
+					<label><input type="radio" name="article_scope" value="personal" /> 👤 {{ lang('ACP_CONTRACT_SOURCE_PERSONAL') }}</label>
+				</dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('CHASTITY_CONTRACT_ARTICLE_TITLE') }}{{ lang('COLON') }}</label></dt>
+				<dd><input type="text" id="article_title" name="article_title" maxlength="255" size="50" /></dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('CHASTITY_CONTRACT_ARTICLE_BODY') }}{{ lang('COLON') }}</label></dt>
+				<dd><textarea id="article_body" name="article_body" rows="4" cols="60"></textarea></dd>
+			</dl>
+			<input type="submit" name="submit_article" value="{{ lang('SUBMIT') }}" class="button1" />
+			{{ S_FORM_TOKEN }}
+		</form>
+	</fieldset>
+</fieldset>
+
+<script type="text/javascript">
+function ctEditArticle(id, title, body, category) {
+	document.getElementById('article_id_edit').value = id;
+	document.getElementById('article_title').value = title;
+	document.getElementById('article_body').value = body;
+	document.getElementById('article_category').value = category;
+	document.getElementById('article_title').focus();
+}
+</script>
+
+<form method="post" action="{{ U_ACTION }}" style="margin-bottom:15px;">
+	<fieldset>
+		<legend>🔍 {{ lang('ACP_CONTRACT_FILTER') }}</legend>
+		<label>
+			{{ lang('STATUS') }}{{ lang('COLON') }}
+			<select name="status">
+				<option value="all" {% if FILTER_STATUS == 'all' %}selected{% endif %}>{{ lang('ACP_KH_STATUS_ALL') }}</option>
+				<option value="draft" {% if FILTER_STATUS == 'draft' %}selected{% endif %}>📝 {{ lang('CHASTITY_CONTRACT_STATUS_DRAFT') }} ({{ COUNT_DRAFT }})</option>
+				<option value="pending_validation" {% if FILTER_STATUS == 'pending_validation' %}selected{% endif %}>⏳ {{ lang('CHASTITY_CONTRACT_STATUS_PENDING_VALIDATION') }} ({{ COUNT_PENDING_VAL }})</option>
+				<option value="active" {% if FILTER_STATUS == 'active' %}selected{% endif %}>✅ {{ lang('CHASTITY_CONTRACT_STATUS_ACTIVE') }} ({{ COUNT_ACTIVE_C }})</option>
+				<option value="suspended" {% if FILTER_STATUS == 'suspended' %}selected{% endif %}>⏸️ {{ lang('CHASTITY_CONTRACT_STATUS_SUSPENDED') }} ({{ COUNT_SUSPENDED }})</option>
+				<option value="ended" {% if FILTER_STATUS == 'ended' %}selected{% endif %}>🔚 {{ lang('CHASTITY_CONTRACT_STATUS_ENDED') }} ({{ COUNT_ENDED_C }})</option>
+				<option value="replaced" {% if FILTER_STATUS == 'replaced' %}selected{% endif %}>🔁 {{ lang('CHASTITY_CONTRACT_STATUS_REPLACED') }} ({{ COUNT_REPLACED }})</option>
+			</select>
+		</label>
+		<input type="submit" name="apply_filter" value="{{ lang('SUBMIT') }}" class="button1" />
+		{% if FILTER_STATUS != 'all' %}
+			<input type="submit" name="clear_filter" value="{{ lang('ACP_KH_FILTER_CLEAR') }}" class="button2" />
+		{% endif %}
+	</fieldset>
+</form>
+
+<fieldset>
+	<legend>⏳ {{ lang('ACP_CONTRACT_PENDING_TITLE') }}</legend>
+	<p>{{ lang('ACP_CONTRACT_PENDING_EXPLAIN') }}</p>
+	{% if pending_articles is defined and pending_articles|length > 0 %}
+		{% for p in pending_articles %}
+		<div style="padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:6px;background:#fafafa;">
+			<p style="margin:0 0 4px;"><strong>{{ p.TITLE }}</strong> <span style="font-size:0.85em;color:#777;">— {{ lang('CHASTITY_CONTRACT_ENCAGE') }}: {{ p.ENCAGE_USERNAME }} · {{ lang('ACP_CONTRACT_PROPOSED_BY') }}: {{ p.PROPOSER_USERNAME }} · {{ p.CREATED }}</span></p>
+			<p style="font-size:0.9em;color:#555;">{{ p.BODY }}</p>
+			<form method="post" action="{{ U_ACTION }}">
+				<input type="hidden" name="submitted_link_id" value="{{ p.LINK_ID }}" />
+				<label>{{ lang('ACP_CONTRACT_CATEGORY') }}{{ lang('COLON') }}
+					<select name="submitted_category">
+						{% for cat in categories %}
+						<option value="{{ cat.KEY }}" {% if cat.KEY == p.SUGGESTED_CATEGORY %}selected{% endif %}>{{ cat.LABEL }}</option>
+						{% endfor %}
+					</select>
+				</label>
+				&nbsp;
+				<label><input type="radio" name="submitted_scope" value="global" checked="checked" /> 🌐 {{ lang('ACP_CONTRACT_SOURCE_GLOBAL') }}</label>
+				<label><input type="radio" name="submitted_scope" value="personal" /> 👤 {{ lang('ACP_CONTRACT_SOURCE_PERSONAL') }}</label>
+				<br><br>
+				<input type="submit" name="approve_submitted_article" value="{{ lang('ACP_CONTRACT_ARTICLE_APPROVE_ADD') }}" class="button1" />
+				<input type="submit" name="reject_submitted_article" value="{{ lang('ACP_CONTRACT_ARTICLE_REJECT_ADD') }}" class="button2" />
+				{{ S_FORM_TOKEN }}
+			</form>
+		</div>
+		{% endfor %}
+	{% else %}
+		<p>{{ lang('ACP_CONTRACT_PENDING_EMPTY') }}</p>
+	{% endif %}
+</fieldset>
+
+<fieldset>
+	<legend>{{ lang('ACP_CONTRACT_LIST') }}</legend>
+	{% if contracts is defined and contracts|length > 0 %}
+		<table class="table1" style="width:100%;">
+			<thead>
+				<tr>
+					<th>{{ lang('CHASTITY_CONTRACT_ENCAGE') }}</th>
+					<th>{{ lang('CHASTITY_CONTRACT_KH') }}</th>
+					<th>{{ lang('STATUS') }}</th>
+					<th>{{ lang('CHASTITY_CONTRACT_NB_ARTICLES') }}</th>
+					<th>{{ lang('CHASTITY_CONTRACT_CREATED_ON') }}</th>
+					<th>{{ lang('ACP_CONTRACT_VALIDATED') }}</th>
+					<th>{{ lang('CHASTITY_CONTRACT_ENDED_ON') }}</th>
+					<th>{{ lang('ACTIONS') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for c in contracts %}
+					<tr>
+						<td>
+							<a href="{{ U_ACTION }}&amp;u={{ c.ENCAGE_USER_ID }}" style="color:#{{ c.ENCAGE_COLOUR }};font-weight:bold;">{{ c.ENCAGE_USERNAME }}</a>
+						</td>
+						<td>
+							{% if c.KH_USER_ID %}
+								<a href="{{ U_ACTION }}&amp;u={{ c.KH_USER_ID }}" style="color:#{{ c.KH_COLOUR }};font-weight:bold;">{{ c.KH_NAME }}</a>
+							{% else %}
+								{{ c.KH_NAME }}
+							{% endif %}
+						</td>
+						<td>
+							{% if c.IS_DRAFT %}<span style="color:#6b5300;">📝 {{ c.STATUS_LABEL }}</span>
+							{% elseif c.IS_PENDING %}<span style="color:#0d3d5c;">⏳ {{ c.STATUS_LABEL }}</span>
+							{% elseif c.IS_ACTIVE %}<span style="color:#28A745;font-weight:bold;">✅ {{ c.STATUS_LABEL }}</span>
+							{% elseif c.IS_SUSPENDED %}<span style="color:#a12727;">⏸️ {{ c.STATUS_LABEL }}</span>
+							{% elseif c.IS_ENDED %}<span style="color:#888;">🔚 {{ c.STATUS_LABEL }}</span>
+							{% elseif c.IS_REPLACED %}<span style="color:#5a3d8c;">🔁 {{ c.STATUS_LABEL }}</span>
+							{% endif %}
+						</td>
+						<td style="text-align:center;">{{ c.NB_ARTICLES }}</td>
+						<td>{{ c.CREATED }}</td>
+						<td>{{ c.VALIDATED }}</td>
+						<td>{{ c.ENDED }}</td>
+						<td>
+							<a href="{{ U_ACTION }}&amp;acp_preview_contract={{ c.CONTRACT_ID }}" class="button2" target="_blank">👁️ {{ lang('ACP_CONTRACT_PREVIEW') }}</a>
+							{% if c.CAN_FORCE_END %}
+								<form method="post" action="{{ U_ACTION }}" style="display:inline;" onsubmit="return confirm('{{ lang('ACP_CONTRACT_CONFIRM_END') }}');">
+									<input type="hidden" name="contract_id" value="{{ c.CONTRACT_ID }}" />
+									<input type="hidden" name="hash" value="{{ HASH }}" />
+									<input type="submit" name="force_end_contract" value="{{ lang('ACP_CONTRACT_FORCE_END') }}" class="button2" />
+								</form>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p>{{ lang('ACP_CONTRACT_EMPTY') }}</p>
+	{% endif %}
+</fieldset>
+
+{% include 'overall_footer.html' %}

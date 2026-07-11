@@ -1,5 +1,7 @@
 {% include 'overall_header.html' %}
 
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <a id="maincontent"></a>
 
 <h1>{{ lang('ACP_CHASTITY_SETTINGS') }}</h1>
@@ -7,6 +9,7 @@
 <p>{{ lang('ACP_CHASTITY_SETTINGS_EXPLAIN') }}</p>
 
 <form id="acp_chastity_settings" method="post" action="{{ U_ACTION }}">
+{{ S_FORM_TOKEN }}
 
 <fieldset>
 	<legend>{{ lang('ACP_CHASTITY_SETTINGS') }}</legend>
@@ -18,10 +21,34 @@
 		</dd>
 	</dl>
 	<dl>
+		<dt><label for="chastity_record_pm_enabled">{{ lang('ACP_CHASTITY_RECORD_PM_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_RECORD_PM_ENABLED_EXPLAIN') }}</span></dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_record_pm_enabled" value="1" {{ CHASTITY_RECORD_PM_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('YES') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_record_pm_enabled" value="0" {{ not CHASTITY_RECORD_PM_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('NO') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_pdf_method">{{ lang('ACP_CHASTITY_PDF_METHOD') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_PDF_METHOD_EXPLAIN') }}</span></dt>
+		<dd>
+			<label><input type="radio" class="radio" name="chastity_pdf_method" value="tcpdf" {{ CHASTITY_PDF_METHOD == 'tcpdf' ? 'checked="checked"' : '' }} /> {{ lang('ACP_CHASTITY_PDF_METHOD_TCPDF') }}</label><br>
+			<label><input type="radio" class="radio" name="chastity_pdf_method" value="html" {{ CHASTITY_PDF_METHOD == 'html' ? 'checked="checked"' : '' }} /> {{ lang('ACP_CHASTITY_PDF_METHOD_HTML') }}</label>
+		</dd>
+	</dl>
+	<dl>
 		<dt><label for="chastity_profile_display">{{ lang('ACP_CHASTITY_PROFILE_DISPLAY') }}{{ lang('COLON') }}</label></dt>
 		<dd>
 			<input type="radio" class="radio" name="chastity_profile_display" value="1" {{ CHASTITY_PROFILE_DISPLAY ? 'checked="checked"' : '' }} /> {{ lang('YES') }}&nbsp;
 			<input type="radio" class="radio" name="chastity_profile_display" value="0" {{ not CHASTITY_PROFILE_DISPLAY ? 'checked="checked"' : '' }} /> {{ lang('NO') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_badge_enabled">{{ lang('ACP_CHASTITY_BADGE_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_BADGE_ENABLED_EXPLAIN') }}</span></dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_badge_enabled" value="1" {{ CHASTITY_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('YES') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_badge_enabled" value="0" {{ not CHASTITY_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('NO') }}
 		</dd>
 	</dl>
 	<dl>
@@ -59,52 +86,116 @@
 </fieldset>
 
 <fieldset>
-	<legend>{{ lang('ACP_CHASTITY_LOCKTOBER_SETTINGS') }}</legend>
-	<p>{{ lang('ACP_CHASTITY_LOCKTOBER_SETTINGS_EXPLAIN') }}</p>
+	<legend>{{ lang('ACP_CHASTITY_INACTIVITY_SETTINGS') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_INACTIVITY_SETTINGS_EXPLAIN') }}</p>
+	<dl>
+		<dt><label for="chastity_inactivity_enabled">{{ lang('ACP_CHASTITY_INACTIVITY_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_INACTIVITY_ENABLED_EXPLAIN') }}</span></dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_inactivity_enabled" value="1" {{ CHASTITY_INACTIVITY_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('YES') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_inactivity_enabled" value="0" {{ not CHASTITY_INACTIVITY_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('NO') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_inactivity_warn_days">{{ lang('ACP_CHASTITY_INACTIVITY_WARN_DAYS') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_INACTIVITY_WARN_DAYS_EXPLAIN') }}</span></dt>
+		<dd><input type="number" id="chastity_inactivity_warn_days" name="chastity_inactivity_warn_days" value="{{ CHASTITY_INACTIVITY_WARN_DAYS }}" min="1" max="365" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_inactivity_cancel_days">{{ lang('ACP_CHASTITY_INACTIVITY_CANCEL_DAYS') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_INACTIVITY_CANCEL_DAYS_EXPLAIN') }}</span></dt>
+		<dd><input type="number" id="chastity_inactivity_cancel_days" name="chastity_inactivity_cancel_days" value="{{ CHASTITY_INACTIVITY_CANCEL_DAYS }}" min="2" max="365" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_inactivity_warn_message">{{ lang('ACP_CHASTITY_INACTIVITY_WARN_MSG') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_INACTIVITY_WARN_MSG_EXPLAIN') }}</span></dt>
+		<dd><textarea id="chastity_inactivity_warn_message" name="chastity_inactivity_warn_message" rows="4" cols="60">{{ CHASTITY_INACTIVITY_WARN_MESSAGE }}</textarea></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_inactivity_cancel_message">{{ lang('ACP_CHASTITY_INACTIVITY_CANCEL_MSG') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_INACTIVITY_CANCEL_MSG_EXPLAIN') }}</span></dt>
+		<dd><textarea id="chastity_inactivity_cancel_message" name="chastity_inactivity_cancel_message" rows="4" cols="60">{{ CHASTITY_INACTIVITY_CANCEL_MESSAGE }}</textarea></dd>
+	</dl>
+</fieldset>
 
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_NOTIFY_SETTINGS') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_NOTIFY_SETTINGS_EXPLAIN') }}</p>
 	<dl>
 		<dt>
-			<label for="chastity_locktober_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_ENABLED') }}{{ lang('COLON') }}</label><br>
-			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_ENABLED_EXPLAIN') }}</span>
+			<label for="chastity_notify_admin_id">{{ lang('ACP_CHASTITY_NOTIFY_ADMIN') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_NOTIFY_ADMIN_EXPLAIN') }}</span>
 		</dt>
 		<dd>
-			<input type="radio" class="radio" name="chastity_locktober_enabled" value="1" {{ CHASTITY_LOCKTOBER_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
-			<input type="radio" class="radio" name="chastity_locktober_enabled" value="0" {{ not CHASTITY_LOCKTOBER_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
-		</dd>
-	</dl>
-	<dl>
-		<dt>
-			<label for="chastity_locktober_year">{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR') }}{{ lang('COLON') }}</label><br>
-			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR_EXPLAIN') }}</span>
-		</dt>
-		<dd><input type="number" id="chastity_locktober_year" name="chastity_locktober_year" value="{{ CHASTITY_LOCKTOBER_YEAR }}" min="2020" max="2050" /></dd>
-	</dl>
-	<dl>
-		<dt>
-			<label for="chastity_locktober_badge_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_BADGE_ENABLED') }}{{ lang('COLON') }}</label><br>
-			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_BADGE_EXPLAIN') }}</span>
-		</dt>
-		<dd>
-			<input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="1" {{ CHASTITY_LOCKTOBER_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
-			<input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="0" {{ not CHASTITY_LOCKTOBER_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
-		</dd>
-	</dl>
-	<dl>
-		<dt>
-			<label for="chastity_locktober_leaderboard_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED') }}{{ lang('COLON') }}</label><br>
-			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_LEADERBOARD_EXPLAIN') }}</span>
-		</dt>
-		<dd>
-			<input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="1" {{ CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
-			<input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="0" {{ not CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+			<select id="chastity_notify_admin_id" name="chastity_notify_admin_id">
+				<option value="0"{% if not CHASTITY_NOTIFY_ADMIN_ID %} selected="selected"{% endif %}>{{ lang('ACP_CHASTITY_NOTIFY_NONE') }}</option>
+				{% for admin in loops.admin_list %}
+				<option value="{{ admin.USER_ID }}"{% if CHASTITY_NOTIFY_ADMIN_ID == admin.USER_ID %} selected="selected"{% endif %}>{{ admin.USERNAME }}</option>
+				{% endfor %}
+			</select>
 		</dd>
 	</dl>
 </fieldset>
-<fieldset class="submit-buttons">
 	<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
 	<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
 </fieldset>
+</form>
+
+<!-- Section couleurs des événements -->
+<form method="post" action="{{ U_ACTION }}">
 {{ S_FORM_TOKEN }}
+
+<fieldset>
+    <legend>{{ lang('ACP_COLORS_TITLE') }}</legend>
+    <table class="table1" width="100%">
+    <thead><tr>
+        <th></th>
+        <th>{{ lang('ACP_COLOR_CURRENT') }}</th>
+        <th>{{ lang('ACP_COLOR_DEFAULT_LABEL') }}</th>
+    </tr></thead>
+    <tbody>
+    <tr>
+        <td><strong>{{ lang('ACP_COLOR_CAGEEXIT') }}</strong></td>
+        <td>
+            <input type="color" name="color_cageexit" value="#{{ COLOR_CAGEEXIT|lower }}" />
+            &nbsp;<span style="display:inline-block;width:28px;height:22px;background:#{{ COLOR_CAGEEXIT }};border:1px solid #999;vertical-align:middle;border-radius:3px;"></span>
+        </td>
+        <td>
+            <span style="display:inline-block;width:28px;height:22px;background:#FFF3CD;border:1px solid #999;vertical-align:middle;border-radius:3px;"></span>
+            &nbsp;<code>#FFF3CD</code>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>{{ lang('ACP_COLOR_ACTIVITY') }}</strong></td>
+        <td>
+            <input type="color" name="color_activity" value="#{{ COLOR_ACTIVITY|lower }}" />
+            &nbsp;<span style="display:inline-block;width:28px;height:22px;background:#{{ COLOR_ACTIVITY }};border:1px solid #999;vertical-align:middle;border-radius:3px;"></span>
+        </td>
+        <td>
+            <span style="display:inline-block;width:28px;height:22px;background:#EDE0F7;border:1px solid #999;vertical-align:middle;border-radius:3px;"></span>
+            &nbsp;<code>#EDE0F7</code>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>{{ lang('ACP_COLOR_MIXED') }}</strong></td>
+        <td>
+            <input type="color" name="color_mixed" value="#{{ COLOR_MIXED|lower }}" />
+            &nbsp;<span style="display:inline-block;width:28px;height:22px;background:#{{ COLOR_MIXED }};border:1px solid #999;vertical-align:middle;border-radius:3px;"></span>
+        </td>
+        <td>
+            <span style="display:inline-block;width:28px;height:22px;background:#F5E6D3;border:1px solid #999;vertical-align:middle;border-radius:3px;"></span>
+            &nbsp;<code>#F5E6D3</code>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+</fieldset>
+
+<fieldset class="submit-buttons">
+    <input class="button1" type="submit" name="save_colors" value="{{ lang('ACP_SAVE_COLORS') }}" />
+    <input class="button3" type="submit" name="reset_colors" value="{{ lang('ACP_RESET_COLORS') }}" onclick="return confirm({{ lang('ACP_RESET_COLORS_CONFIRM')|json_encode }})" />
+</fieldset>
+
 </form>
 
 {% include 'overall_footer.html' %}

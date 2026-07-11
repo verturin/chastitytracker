@@ -1,0 +1,10 @@
+Subject: {SUBJECT}
+
+Bonjour {KH_NAME},
+
+{USERNAME} vient d'invoquer le mot de sécurité sur votre contrat de chasteté.
+
+Le contrat est désormais suspendu, avec effet immédiat.
+
+---
+Ce message est envoyé automatiquement par le forum {SITENAME}.

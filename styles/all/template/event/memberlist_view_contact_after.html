@@ -1,18 +1,38 @@
 {% if S_DISPLAY_CHASTITY and S_SHOW_IN_CONTACT %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
 <div class="panel bg2">
     <div class="inner">
         <div class="column1">
             <h3>{{ lang('CHASTITY_STATUS') }}{{ lang('COLON') }}</h3>
             {% if S_SHOW_STATUS %}
+            {% if S_HAS_ACTIVE_CONTRACT %}
+            <dl><dd style="text-align:center;"><strong class="chastity-contract-status chastity-contract-status-active">📜 {{ lang('CHASTITY_PROFILE_UNDER_CONTRACT') }}</strong></dd></dl>
+            {% endif %}
             <dl><dd>
                 {% if S_CHASTITY_LOCKED %}
-                    <strong style="color: #BC2A4D;">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }}
-                    {% if S_SHOW_DAYS %} {{ CHASTITY_CURRENT_DAYS }} {{ lang('CHASTITY_DAYS') }}{% endif %}</strong>
+                    <strong class="chastity-locked">🔒 {{ lang('CHASTITY_PROFILE_LOCKED_SINCE') }}
+                    {% if S_SHOW_DAYS %} {{ CHASTITY_SINCE_TEXT }}{% endif %}</strong>
                 {% else %}
-                    <strong style="color: #228B22;">🔓 {{ lang('CHASTITY_STATUS_FREE') }}
-                    {% if S_SHOW_DAYS %} {{ lang('CHASTITY_DAYS_SINCE') }} {{ CHASTITY_DAYS_SINCE_END }} {{ lang('CHASTITY_DAYS') }}{% endif %}</strong>
+                    <strong class="chastity-free">🔓 {{ lang('CHASTITY_STATUS_FREE') }}
+                    {% if S_SHOW_DAYS %} {{ lang('CHASTITY_DAYS_SINCE') }} {{ CHASTITY_FREE_SINCE_TEXT }}{% endif %}</strong>
                 {% endif %}
             </dd></dl>
+            {% if S_CHASTITY_LOCKED %}
+            <dl><dd>{{ lang('CHASTITY_CURRENT_PERIOD_EXITS') }}{{ lang('COLON') }} <strong>{{ CHASTITY_CURRENT_PERIOD_EXITS }}</strong></dd></dl>
+            <dl><dd>{{ lang('CHASTITY_CURRENT_PERIOD_ACTIVITIES') }}{{ lang('COLON') }} <strong>{{ CHASTITY_CURRENT_PERIOD_ACTIVITIES }}</strong></dd></dl>
+            {% endif %}
+            {% if S_PROFILE_HAS_KH %}
+            <dl><dd>🔒 {{ lang('CHASTITY_PROFILE_KH') }}{{ lang('COLON') }} <strong><a href="memberlist.php?mode=viewprofile&amp;u={{ PROFILE_KH_USER_ID }}" style="color:#{{ PROFILE_KH_COLOUR }};">{{ PROFILE_KH_USERNAME }}</a></strong></dd></dl>
+            {% endif %}
+            {% if S_PROFILE_IS_KH %}
+            <dl><dd>🔑 {{ PROFILE_KH_LABEL }} ({{ PROFILE_SUB_COUNT }}){{ lang('COLON') }}
+                {% for s in profile_subs %}
+                    <a href="memberlist.php?mode=viewprofile&amp;u={{ s.USER_ID }}" style="color:#{{ s.USER_COLOUR }};">{{ s.USERNAME }}</a>{% if s.IS_LOCKED %} 🔒{% endif %}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            </dd></dl>
+            {% endif %}
             {% endif %}
         </div>
         <div class="column2">
@@ -26,6 +46,142 @@
             {% if S_SHOW_TOTAL_DAYS and CHASTITY_TOTAL_DAYS > 0 %}
             <dl><dd>{{ lang('CHASTITY_PROFILE_TOTAL_DAYS') }}{{ lang('COLON') }} {{ CHASTITY_TOTAL_DAYS }} {{ lang('CHASTITY_DAYS') }}</dd></dl>
             {% endif %}
+            {% if S_CHASTITY_LOCKTOBER_PROGRESS %}
+            <dl><dd>
+                <strong>🎃 {{ lang('CHASTITY_LOCKTOBER') }} {{ CHASTITY_LOCKTOBER_PROGRESS_YEAR }}{{ lang('COLON') }}</strong>
+                {{ lang('CHASTITY_LOCKTOBER_DAY', CHASTITY_LOCKTOBER_PROGRESS_DAY) }} / 31
+                <div class="chastity-locktober-bar">
+                    <div class="chastity-locktober-bar-fill" style="width:{{ CHASTITY_LOCKTOBER_PROGRESS_PCT }}%;"></div>
+                    <span class="chastity-locktober-bar-text">Locktober J{{ CHASTITY_LOCKTOBER_PROGRESS_DAY }}/31 — {{ CHASTITY_LOCKTOBER_PROGRESS_PCT }}%</span>
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_MILESTONE %}
+            <dl><dd>
+                <div class="chastity-milestone-banner">
+                    {% if CHASTITY_PROFILE_MILESTONE_IMAGE %}<img src="{{ CHASTITY_PROFILE_MILESTONE_IMAGE }}" alt="" class="chastity-milestone-img" />{% else %}<span class="chastity-milestone-icon">🏅</span>{% endif %}
+                    <div class="chastity-milestone-text">
+                        <strong>{{ CHASTITY_PROFILE_MILESTONE_LABEL }}</strong><br>
+                        <span>{{ lang('CHASTITY_MILESTONE_COUNT_TXT', CHASTITY_PROFILE_MILESTONE_COUNT) }}</span>
+                    </div>
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_SDAYS %}
+            <dl><dd>
+                <strong>🗓️ {{ lang('CHASTITY_SDAY_BADGES') }}</strong>
+                <div class="chastity-special-badges chastity-profile-badges">
+                    {% for s in loops.chastity_profile_sday %}
+                    <div class="chastity-badge chastity-badge-sday" title="{{ s.LABEL }} — {{ s.DATE }}/{{ s.YEAR }}">
+                        {% if s.IMAGE %}<img src="{{ s.IMAGE }}" alt="" class="chastity-badge-reward-img" />{% else %}<span class="chastity-badge-icon">🗓️</span>{% endif %}
+                        <span class="chastity-badge-year">{{ s.DATE }}/{{ s.YEAR }}</span>
+                        {% if s.LABEL %}<span class="chastity-badge-reward-label">{{ s.LABEL }}</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_BIRTHDAY %}
+            <dl><dd>
+                <strong>🎂 {{ lang('CHASTITY_BIRTHDAY_BADGES') }}</strong>
+                <div class="chastity-special-badges chastity-profile-badges">
+                    {% for b in loops.chastity_profile_birthday %}
+                    <div class="chastity-badge chastity-badge-birthday" title="{{ b.LABEL }} — {{ b.DATE }}/{{ b.YEAR }}">
+                        {% if b.IMAGE %}<img src="{{ b.IMAGE }}" alt="" class="chastity-badge-reward-img" />{% else %}<span class="chastity-badge-icon">🎂</span>{% endif %}
+                        <span class="chastity-badge-year">{{ b.DATE }}/{{ b.YEAR }}</span>
+                        {% if b.LABEL %}<span class="chastity-badge-reward-label">{{ b.LABEL }}</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_STREAK %}
+            <dl><dd>
+                <strong>🔥 {{ lang('CHASTITY_STREAK_BADGES') }}</strong>
+                <div class="chastity-special-badges chastity-profile-badges">
+                    {% for b in loops.chastity_profile_streak %}
+                    <div class="chastity-badge chastity-badge-streak{% if not b.EARNED %} chastity-badge-locked{% endif %}" title="{{ b.LABEL }} — {{ b.THRESHOLD }} {{ lang('CHASTITY_DAYS') }}">
+                        {% if b.IMAGE %}<img src="{{ b.IMAGE }}" alt="" class="chastity-badge-reward-img" />{% else %}<span class="chastity-badge-icon">🔥</span>{% endif %}
+                        <span class="chastity-badge-year">{{ b.THRESHOLD }} {{ lang('CHASTITY_DAYS') }}</span>
+                        {% if b.EARNED %}{% if b.LABEL %}<span class="chastity-badge-reward-label">{{ b.LABEL }}</span>{% endif %}{% else %}<span class="chastity-badge-level">🔒 {{ lang('CHASTITY_MS_LOCKED') }}</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_TOTAL %}
+            <dl><dd>
+                <strong>📅 {{ lang('CHASTITY_TOTAL_BADGES') }}</strong>
+                <div class="chastity-special-badges chastity-profile-badges">
+                    {% for b in loops.chastity_profile_total %}
+                    <div class="chastity-badge chastity-badge-total{% if not b.EARNED %} chastity-badge-locked{% endif %}" title="{{ b.LABEL }} — {{ b.THRESHOLD }} {{ lang('CHASTITY_DAYS') }}">
+                        {% if b.IMAGE %}<img src="{{ b.IMAGE }}" alt="" class="chastity-badge-reward-img" />{% else %}<span class="chastity-badge-icon">📅</span>{% endif %}
+                        <span class="chastity-badge-year">{{ b.THRESHOLD }} {{ lang('CHASTITY_DAYS') }}</span>
+                        {% if b.EARNED %}{% if b.LABEL %}<span class="chastity-badge-reward-label">{{ b.LABEL }}</span>{% endif %}{% else %}<span class="chastity-badge-level">🔒 {{ lang('CHASTITY_MS_LOCKED') }}</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_BADGES %}
+            <dl><dd>
+                <strong>🎖️ {{ lang('CHASTITY_SPECIAL_BADGES') }}</strong>
+                <div class="chastity-special-badges chastity-profile-badges">
+                    {% for b in loops.chastity_profile_badge %}
+                    <div class="chastity-badge {{ b.SUCCESS ? 'chastity-badge-success' : 'chastity-badge-part' }}"
+                        title="{{ b.SUCCESS ? lang('CHASTITY_BADGE_LOCKTOBER_SUCCESS') : lang('CHASTITY_BADGE_LOCKTOBER_PART') }} {{ b.YEAR }}">
+                        {% if b.REWARD_IMAGE %}<img src="{{ b.REWARD_IMAGE }}" alt="" class="chastity-badge-reward-img" />{% else %}<span class="chastity-badge-icon">🎃</span>{% endif %}
+                        <span class="chastity-badge-year">{{ b.YEAR }}</span>
+                        <span class="chastity-badge-level">{{ b.SUCCESS ? '🏆 ' ~ lang('CHASTITY_BADGE_SUCCESS') : '✔️ ' ~ lang('CHASTITY_BADGE_PART') }}</span>
+                        {% if b.REWARD_LABEL %}<span class="chastity-badge-reward-label">{{ b.REWARD_LABEL }}</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_PERFECT %}
+            <dl><dd>
+                <strong>⭐ {{ lang('CHASTITY_PERFECT_TITLE') }}</strong>
+                <div class="chastity-perfect-counts chastity-profile-badges">
+                    {% for pr in loops.chastity_profile_perfect %}
+                    <div class="chastity-perfect-item">
+                        <div class="chastity-perfect-ring">
+                            <svg viewBox="0 0 60 60">
+                                <circle cx="30" cy="30" r="26" fill="none" stroke="#ffd2dc" stroke-width="4" opacity="0.45" />
+                                <circle cx="30" cy="30" r="20" fill="none" stroke="#e8f5c0" stroke-width="4" opacity="0.45" />
+                                <circle cx="30" cy="30" r="14" fill="none" stroke="#cdeeff" stroke-width="4" opacity="0.45" />
+                                <circle cx="30" cy="30" r="26" fill="none" stroke="#ff2d55" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (163 * pr.CAGE_PCT / 100)|round }} 163" transform="rotate(-90 30 30)" />
+                                <circle cx="30" cy="30" r="20" fill="none" stroke="#a8e000" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (126 * pr.POSTS_PCT / 100)|round }} 126" transform="rotate(-90 30 30)" />
+                                <circle cx="30" cy="30" r="14" fill="none" stroke="#00b0ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ (88 * pr.LOGINS_PCT / 100)|round }} 88" transform="rotate(-90 30 30)" />
+                            </svg>
+                        </div>
+                        <span class="chastity-perfect-num">{{ pr.COUNT }}</span>
+                        <span class="chastity-perfect-lbl">{{ pr.LABEL }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
+            {% if S_CHASTITY_PROFILE_RINGS %}
+            <dl><dd>
+                <strong>🏅 {{ lang('UCP_CHASTITY_REWARDS') }}</strong>
+                <div class="chastity-profile-rings">
+                    {% for r in loops.chastity_profile_ring %}
+                    <div class="chastity-profile-ring-block" title="{{ r.PERIOD_NAME }}&#10;🔒 {{ lang('CHASTITY_RING_CAGE') }} : {{ r.CAGE_VAL }}h / {{ r.CAGE_GOAL }}h ({{ r.CAGE_PCT }}%)&#10;✍️ {{ lang('CHASTITY_RING_POSTS') }} : {{ r.POSTS_VAL }} / {{ r.POSTS_GOAL }} ({{ r.POSTS_PCT }}%)&#10;📅 {{ lang('CHASTITY_RING_LOGINS') }} : {{ r.LOGINS_VAL }} / {{ r.LOGINS_GOAL }} ({{ r.LOGINS_PCT }}%)">
+                        <svg viewBox="0 0 70 70">
+                            <circle cx="35" cy="35" r="30" fill="none" stroke="#ffd2dc" stroke-width="5" opacity="0.45" />
+                            <circle cx="35" cy="35" r="23" fill="none" stroke="#e8f5c0" stroke-width="5" opacity="0.45" />
+                            <circle cx="35" cy="35" r="16" fill="none" stroke="#cdeeff" stroke-width="5" opacity="0.45" />
+                            <circle cx="35" cy="35" r="30" fill="none" stroke="{{ r.CAGE_COLOR }}" stroke-width="5" stroke-linecap="round" stroke-dasharray="{{ (188 * r.CAGE_PCT / 100)|round }} 188" transform="rotate(-90 35 35)" />
+                            <circle cx="35" cy="35" r="23" fill="none" stroke="{{ r.POSTS_COLOR }}" stroke-width="5" stroke-linecap="round" stroke-dasharray="{{ (144 * r.POSTS_PCT / 100)|round }} 144" transform="rotate(-90 35 35)" />
+                            <circle cx="35" cy="35" r="16" fill="none" stroke="{{ r.LOGINS_COLOR }}" stroke-width="5" stroke-linecap="round" stroke-dasharray="{{ (100 * r.LOGINS_PCT / 100)|round }} 100" transform="rotate(-90 35 35)" />
+                        </svg>
+                        <div class="chastity-profile-ring-label">{{ r.PERIOD_NAME }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </dd></dl>
+            {% endif %}
         </div>
     </div>
     <div class="inner">
@@ -35,30 +191,28 @@
 <dl>
     <dt></dt>
     <dd>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div class="chastity-profile-months">
         {% for month in profile_months %}
-        <div style="flex:1;min-width:120px;">
-            <div style="font-size:0.75em;font-weight:bold;color:#BC2A4D;
-                        text-align:center;margin-bottom:3px;">
-                {{ month.MONTH_NAME }}
-            </div>
-            <table style="border-collapse:separate;border-spacing:1px;width:100%;">
-                <tr style="font-size:0.65em;color:#888;">
-                    <th style="text-align:center;">L</th>
-                    <th style="text-align:center;">M</th>
-                    <th style="text-align:center;">M</th>
-                    <th style="text-align:center;">J</th>
-                    <th style="text-align:center;">V</th>
-                    <th style="text-align:center;">S</th>
-                    <th style="text-align:center;">D</th>
+        <div class="chastity-profile-month">
+            <div class="chastity-profile-month-name">{{ month.MONTH_NAME }}</div>
+            <table class="chastity-profile-cal">
+                <tr>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_MON_SHORT') }}</th>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_TUE_SHORT') }}</th>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_WED_SHORT') }}</th>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_THU_SHORT') }}</th>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_FRI_SHORT') }}</th>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_SAT_SHORT') }}</th>
+                    <th class="chastity-profile-cal-dow">{{ lang('CHASTITY_DOW_SUN_SHORT') }}</th>
                 </tr>
                 {% set col = 0 %}
                 {% for cell in profile_cal if cell.MONTH == month.MONTH_NUM %}
                     {% if col % 7 == 0 %}<tr>{% endif %}
-                    <td style="
-                        width:18px;height:18px;text-align:center;font-size:0.7em;
-                        border-radius:2px;
+                    <td {% if cell.TOOLTIP is defined and cell.TOOLTIP %}data-tooltip="{{ cell.TOOLTIP }}"{% endif %} style="{% if cell.TOOLTIP is defined and cell.TOOLTIP %}cursor:help;{% endif %}
                         background:{% if cell.EMPTY %}transparent
+                                   {% elseif cell.CAGEEXIT and cell.ACTIVITY %}#{{ COLOR_MIXED }}
+                                   {% elseif cell.CAGEEXIT %}#{{ COLOR_CAGEEXIT }}
+                                   {% elseif cell.ACTIVITY %}#{{ COLOR_ACTIVITY }}
                                    {% elseif cell.LOCKED %}#d4edda
                                    {% else %}#f8f8f8{% endif %};
                         border:{% if cell.TODAY %}2px solid #BC2A4D
@@ -66,7 +220,10 @@
                                {% else %}1px solid #e0e0e0{% endif %};">
                         {% if not cell.EMPTY %}
                             <span style="
-                                color:{% if cell.LOCKED %}#28a745
+                                color:{% if cell.CAGEEXIT and cell.ACTIVITY %}#8B4513
+                                      {% elseif cell.CAGEEXIT %}#E67E22
+                                      {% elseif cell.ACTIVITY %}#5B2C8D
+                                      {% elseif cell.LOCKED %}#28a745
                                       {% elseif cell.TODAY %}#BC2A4D
                                       {% else %}#999{% endif %};
                                 font-weight:{% if cell.TODAY %}bold{% else %}normal{% endif %};">
@@ -81,9 +238,18 @@
         </div>
         {% endfor %}
         </div>
+        <div class="chastity-legend-compact-bordered">
+            <span><span class="chastity-legend-box-small" style="background:#d4edda;"></span> {{ lang('CHASTITY_YEARVIEW_LEGEND_LOCKED') }}</span>
+            <span><span class="chastity-legend-box-small" style="background:#f8f8f8;border:1px solid #ddd;"></span> {{ lang('CHASTITY_YEARVIEW_LEGEND_FREE') }}</span>
+            <span><span class="chastity-legend-box-small" style="outline:2px solid #BC2A4D;"></span> {{ lang('CHASTITY_YEARVIEW_LEGEND_TODAY') }}</span>
+            <span><span class="chastity-legend-box-small" style="background:#{{ COLOR_CAGEEXIT }};border:1px solid #{{ COLOR_CAGEEXIT }};"></span> {{ lang('CHASTITY_LEGEND_CAGEEXIT') }}</span>
+            <span><span class="chastity-legend-box-small" style="background:#{{ COLOR_ACTIVITY }};border:1px solid #{{ COLOR_ACTIVITY }};"></span> {{ lang('CHASTITY_LEGEND_ACTIVITY') }}</span>
+            <span><span class="chastity-legend-box-small" style="background:#{{ COLOR_MIXED }};border:1px solid #{{ COLOR_MIXED }};"></span> {{ lang('CHASTITY_LEGEND_MIXED') }}</span>
+        </div>
     </dd>
 </dl>
 {% endif %}
 	</div>
 </div>
+<script src="{{ BOARD_URL }}ext/verturin/chastitytracker/styles/all/theme/chastity_tooltip.js"></script>
 {% endif %}

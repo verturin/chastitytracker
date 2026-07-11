@@ -1,0 +1,174 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_ACP_CHASTITY_CAGE_CATALOG}</h1>
+
+
+<form id="acp_chastity_cage_catalog_edit" method="post" action="{U_ACTION}" enctype="multipart/form-data">
+
+	<fieldset>
+		<legend><!-- IF EDIT_CAGE_ID -->{L_EDIT} #{EDIT_CAGE_ID}<!-- ELSE -->{L_ADD} — {L_ACP_CHASTITY_CAGE_CATALOG}<!-- ENDIF --></legend>
+
+		<input type="hidden" name="catalog_id" value="{EDIT_CAGE_ID}" />
+
+		<dl>
+			<dt><label for="cage_name">{L_CHASTITY_CAGE_NAME}{L_COLON}</label></dt>
+			<dd><input type="text" id="cage_name" name="cage_name" value="{EDIT_CAGE_NAME}" maxlength="200" class="inputbox" required="required" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="cage_brand">{L_CHASTITY_CAGE_BRAND}{L_COLON}</label></dt>
+			<dd><input type="text" id="cage_brand" name="cage_brand" value="{EDIT_CAGE_BRAND}" maxlength="200" class="inputbox" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="cage_material">{L_CHASTITY_CAGE_MATERIAL}{L_COLON}</label></dt>
+			<dd>
+				<select id="cage_material" name="cage_material">
+					<option value="">--</option>
+					<!-- BEGIN material_select -->
+					<option value="{material_select.KEY}" <!-- IF EDIT_CAGE_MATERIAL eq material_select.KEY -->selected="selected"<!-- ENDIF -->>{material_select.NAME}</option>
+					<!-- END material_select -->
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="cage_type">{L_CHASTITY_CAGE_TYPE}{L_COLON}</label></dt>
+			<dd><input type="text" id="cage_type" name="cage_type" value="{EDIT_CAGE_TYPE}" maxlength="100" class="inputbox" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="manufacturer_id_select">{L_CHASTITY_MANUFACTURER_NAME}{L_COLON}</label></dt>
+			<dd>
+				<select name="manufacturer_id_select" id="manufacturer_id_select">
+					<option value="0">{L_CHASTITY_MANUFACTURER_NONE}</option>
+					<!-- BEGIN mfr_select -->
+					<option value="{mfr_select.ID}" <!-- IF EDIT_CAGE_MFR == mfr_select.ID -->selected="selected"<!-- ENDIF -->>{mfr_select.NAME}</option>
+					<!-- END mfr_select -->
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="cage_description">{L_CHASTITY_CAGE_DESCRIPTION}{L_COLON}</label></dt>
+			<dd><textarea id="cage_description" name="cage_description" rows="4" cols="50">{EDIT_CAGE_DESC}</textarea></dd>
+		</dl>
+
+		<!-- IF EDIT_CAGE_ID -->
+		<dl>
+			<dt><label>{L_CHASTITY_CAGE_PHOTOS}{L_COLON}</label></dt>
+			<dd>
+				<!-- IF .edit_photos -->
+				<div style="margin-bottom:10px;">
+				<!-- BEGIN edit_photos -->
+					<div style="display:inline-block;margin:5px;text-align:center;border:1px solid #ccc;padding:5px;vertical-align:top;">
+						<img src="{BOARD_URL}ext/verturin/chastitytracker/images/cages/{edit_photos.FILENAME}" style="max-width:120px;max-height:120px;" /><br />
+						<!-- IF edit_photos.IS_MAIN --><strong style="color:green;">⭐ {L_CHASTITY_CAGE_MAIN_PHOTO}</strong><!-- ENDIF -->
+					</div>
+				<!-- END edit_photos -->
+				</div>
+				<!-- ELSE -->
+				<p><em>{L_CHASTITY_CAGE_NO_PHOTO}</em></p>
+				<!-- ENDIF -->
+
+				<label for="cage_photo">{L_CHASTITY_CAGE_ADD_PHOTO}{L_COLON}</label>
+				<input type="hidden" name="photo_catalog_id" value="{EDIT_CAGE_ID}" />
+				<input type="file" id="cage_photo" name="cage_photo" accept="image/jpeg,image/png" />
+				<button type="submit" name="upload_cage_photo" value="1" class="button2">{L_SUBMIT}</button>
+				<br /><small>JPG/PNG, max 512 Ko</small>
+			</dd>
+		</dl>
+		<!-- ENDIF -->
+
+		<p class="submit-buttons">
+			<input type="submit" name="save_catalog_cage" value="{L_SUBMIT}" class="button1" />
+			<!-- IF EDIT_CAGE_ID --><a href="{U_ACTION}" class="button2">{L_CANCEL}</a><!-- ENDIF -->
+		</p>
+	</fieldset>
+
+	{S_FORM_TOKEN}
+</form>
+
+<!-- Photos actions (formulaires individuels pour éviter conflits) -->
+<!-- IF EDIT_CAGE_ID and .edit_photos -->
+<fieldset>
+	<legend>{L_CHASTITY_CAGE_PHOTOS}</legend>
+	<!-- BEGIN edit_photos -->
+	<form method="post" action="{U_ACTION_EDIT}" style="display:inline-block;margin:5px;text-align:center;">
+		<input type="hidden" name="photo_id" value="{edit_photos.PHOTO_ID}" />
+		<img src="{BOARD_URL}ext/verturin/chastitytracker/images/cages/{edit_photos.FILENAME}" style="max-width:80px;max-height:80px;border:1px solid #ccc;padding:3px;" /><br />
+		<!-- IF not edit_photos.IS_MAIN --><button type="submit" name="set_main_photo" value="1" class="button2" title="{L_CHASTITY_CAGE_MAIN_PHOTO}">⭐</button><!-- ENDIF -->
+		<button type="submit" name="delete_cage_photo" value="1" class="button2" onclick="return confirm('{L_CONFIRM_OPERATION}');">🗑️</button>
+		{S_FORM_TOKEN}
+	</form>
+	<!-- END edit_photos -->
+</fieldset>
+<!-- ENDIF -->
+
+<form method="get" action="{U_ACTION}">
+	<fieldset>
+		<legend>{L_FILTER}</legend>
+		<input type="hidden" name="i" value="{ADM_I}" />
+		<input type="hidden" name="mode" value="cage_catalog" />
+		<select name="filter_status" onchange="this.form.submit();">
+			<option value="all" <!-- IF FILTER_STATUS eq 'all' -->selected="selected"<!-- ENDIF -->>{L_CHASTITY_CAGE_ALL} ({TOTAL_CATALOG})</option>
+			<option value="pending" <!-- IF FILTER_STATUS eq 'pending' -->selected="selected"<!-- ENDIF -->>{L_CHASTITY_CAGE_PENDING} ({PENDING_CATALOG})</option>
+			<option value="validated" <!-- IF FILTER_STATUS eq 'validated' -->selected="selected"<!-- ENDIF -->>{L_CHASTITY_CAGE_VALIDATED}</option>
+		</select>
+	</fieldset>
+</form>
+
+<table class="table1 zebra-table">
+	<thead>
+		<tr>
+			<th></th>
+			<th>{L_CHASTITY_CAGE_NAME}</th>
+			<th>{L_CHASTITY_CAGE_BRAND}</th>
+			<th>{L_CHASTITY_CAGE_MATERIAL}</th>
+			<th>{L_CHASTITY_MANUFACTURER_NAME}</th>
+			<th>{L_CHASTITY_CAGE_USERS_COUNT}</th>
+			<th>{L_STATUS}</th>
+			<th>{L_ACTION}</th>
+		</tr>
+	</thead>
+	<tbody>
+	<!-- BEGIN catalog -->
+		<tr>
+			<td><!-- IF catalog.MAIN_PHOTO --><img src="{BOARD_URL}ext/verturin/chastitytracker/images/cages/{catalog.MAIN_PHOTO}" style="max-width:50px;max-height:50px;" /><!-- ELSE -->-<!-- ENDIF --></td>
+			<td><strong>{catalog.NAME}</strong><!-- IF catalog.TYPE --><br /><small>{catalog.TYPE}</small><!-- ENDIF --></td>
+			<td>{catalog.BRAND}</td>
+			<td>{catalog.MATERIAL}</td>
+			<td>{catalog.MANUFACTURER}</td>
+			<td>{catalog.USER_COUNT}</td>
+			<td>
+				<!-- IF catalog.IS_VALIDATED -->
+					<span style="color:green;">✅ {L_CHASTITY_CAGE_VALIDATED}</span>
+				<!-- ELSE -->
+					<span style="color:orange;">⏳ {L_CHASTITY_CAGE_PENDING}</span>
+				<!-- ENDIF -->
+			</td>
+			<td style="white-space:nowrap;">
+				<form method="post" action="{U_ACTION}" style="display:inline;">
+					<input type="hidden" name="catalog_id" value="{catalog.ID}" />
+					<button type="submit" name="edit_cage_btn" value="{catalog.ID}" class="button2">{L_EDIT}</button>
+					{S_FORM_TOKEN}
+				</form>
+				<!-- IF not catalog.IS_VALIDATED -->
+				<form method="post" action="{U_ACTION}" style="display:inline;">
+					<input type="hidden" name="catalog_id" value="{catalog.ID}" />
+					<button type="submit" name="validate_cage" value="1" class="button1" title="{L_CHASTITY_CAGE_VALIDATE}">✅</button>
+					<button type="submit" name="reject_cage" value="1" class="button2" title="{L_CHASTITY_CAGE_REJECT}" onclick="return confirm('{L_CONFIRM_OPERATION}');">❌</button>
+					{S_FORM_TOKEN}
+				</form>
+				<!-- ENDIF -->
+				<form method="post" action="{U_ACTION}" style="display:inline;">
+					<input type="hidden" name="catalog_id" value="{catalog.ID}" />
+					<button type="submit" name="delete_catalog_cage" value="1" class="button2" title="{L_DELETE}" onclick="return confirm('{L_CHASTITY_CAGE_DELETE_CONFIRM}');">🗑️</button>
+					{S_FORM_TOKEN}
+				</form>
+			</td>
+		</tr>
+	<!-- BEGINELSE -->
+		<tr><td colspan="8" style="text-align:center;"><em>{L_NO_ENTRIES}</em></td></tr>
+	<!-- END catalog -->
+	</tbody>
+</table>
+
+<!-- INCLUDE overall_footer.html -->

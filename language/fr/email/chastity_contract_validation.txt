@@ -1,0 +1,13 @@
+Subject: {SUBJECT}
+
+Bonjour {KH_NAME},
+
+{USERNAME} vous a soumis un contrat de chasteté pour relecture et validation.
+
+Vous pouvez le consulter ici :
+{U_CONTRACT_PREVIEW}
+
+{VALIDATION_INSTRUCTIONS}
+
+---
+Ce message est envoyé automatiquement par le forum {SITENAME}.

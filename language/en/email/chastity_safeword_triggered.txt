@@ -1,0 +1,10 @@
+Subject: {SUBJECT}
+
+Hello {KH_NAME},
+
+{USERNAME} just triggered the safeword on your chastity contract.
+
+The contract is now suspended, with immediate effect.
+
+---
+This message was sent automatically by the {SITENAME} forum.

@@ -1,0 +1,80 @@
+{% include 'overall_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_DELPERIOD') }}</h1>
+<p>{{ lang('ACP_CHASTITY_DELPERIOD_EXPLAIN') }}</p>
+
+{% if DELPERIOD_DONE %}
+    <div class="successbox">
+        <h3>{{ lang('INFORMATION') }}</h3>
+        <p>{{ DELPERIOD_DONE }}</p>
+    </div>
+{% endif %}
+
+<form method="post" action="{{ U_ACTION }}">
+    <fieldset>
+        <legend>{{ lang('ACP_CHASTITY_DELPERIOD_SELECT') }}</legend>
+        <dl>
+            <dt><label for="sel_user">{{ lang('ACP_CHASTITY_DELPERIOD_MEMBER') }}{{ lang('COLON') }}</label></dt>
+            <dd>
+                <select id="sel_user" name="sel_user" onchange="this.form.submit();">
+                    <option value="0">— {{ lang('ACP_CHASTITY_DELPERIOD_CHOOSE') }} —</option>
+                    {% for m in memberlist %}
+                        <option value="{{ m.USER_ID }}"{% if m.SELECTED %} selected{% endif %}>{{ m.USERNAME }}</option>
+                    {% endfor %}
+                </select>
+            </dd>
+        </dl>
+    </fieldset>
+</form>
+
+{% if S_USER_SELECTED %}
+<form method="post" action="{{ U_ACTION }}">
+    <fieldset>
+        <legend>{{ lang('ACP_CHASTITY_DELPERIOD_PERIODS_OF') }} {{ SEL_USERNAME }}</legend>
+
+        {% if periods %}
+        <table class="table1">
+            <thead>
+                <tr>
+                    <th>{{ lang('ACP_CHASTITY_DELPERIOD_START') }}</th>
+                    <th>{{ lang('ACP_CHASTITY_DELPERIOD_END') }}</th>
+                    <th>{{ lang('ACP_CHASTITY_DELPERIOD_STATUS') }}</th>
+                    <th>{{ lang('ACP_CHASTITY_DELPERIOD_DAYS') }}</th>
+                    <th>{{ lang('ACP_CHASTITY_DELPERIOD_ACTION') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in periods %}
+                <tr>
+                    <td>{{ p.START }}</td>
+                    <td>{{ p.END }}</td>
+                    <td>{{ p.STATUS }}</td>
+                    <td>{{ p.DAYS }}</td>
+                    <td>
+                        <button type="submit" name="delete_period" value="1" class="button2"
+                                onclick="return confirm('{{ lang('ACP_CHASTITY_DELPERIOD_CONFIRM') }}');">
+                            {{ lang('ACP_CHASTITY_DELPERIOD_DELETE') }}
+                        </button>
+                        <input type="hidden" name="period_id" value="{{ p.PERIOD_ID }}" />
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p><em>{{ lang('ACP_CHASTITY_DELPERIOD_RECALC_NOTE') }}</em></p>
+        {% else %}
+        <p>{{ lang('ACP_CHASTITY_DELPERIOD_NONE') }}</p>
+        {% endif %}
+
+        <input type="hidden" name="sel_user" value="{{ SEL_USER_ID }}" />
+        <input type="hidden" name="del_user" value="{{ SEL_USER_ID }}" />
+        {{ S_FORM_TOKEN }}
+    </fieldset>
+</form>
+{% endif %}
+
+{% include 'overall_footer.html' %}

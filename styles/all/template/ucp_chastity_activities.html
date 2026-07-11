@@ -1,0 +1,92 @@
+{% include 'ucp_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<h2>{{ lang('UCP_CHASTITY_ACTIVITIES') }}</h2>
+
+<form method="post" action="{{ U_ACTION }}">
+
+{% if ERROR_NOT_LOCKED %}
+<div style="background:#f8d7da;border:1px solid #f5c6cb;border-radius:4px;padding:10px 14px;margin-bottom:12px;color:#721c24;">
+    ⚠ {{ lang('CHASTITY_NOT_LOCKED_ON_DATE', ERROR_NOT_LOCKED_DATE) }}
+</div>
+{% endif %}
+
+<fieldset>
+    <legend>{{ lang('CHASTITY_ACTIVITY_ADD') }}</legend>
+    <dl>
+        <dt><label for="activity_date">{{ lang('CHASTITY_DATE') }}</label></dt>
+        <dd><input type="datetime-local" id="activity_date" name="activity_date" value="{{ PREFILL_ACT_DATE ?: ACTIVITY_DATE_DEFAULT }}" /></dd>
+        <dt><label for="activity_reason_id">{{ lang('CHASTITY_ACTIVITY_REASON') }}</label></dt>
+        <dd>
+            <select id="activity_reason_id" name="activity_reason_id">
+                {% for r in activity_reasons %}
+                    {% if not r.IS_PENDING %}
+                    <option value="{{ r.REASON_ID }}"{% if r.REASON_ID == PREFILL_ACT_REASON %} selected="selected"{% endif %}>{{ r.LABEL }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </dd>
+        <dt><label>{{ lang('CHASTITY_ACTIVITY_INTENSITY') }}</label></dt>
+        <dd>
+            <label><input type="radio" name="activity_intensity" value="light"{% if PREFILL_ACT_INTENSITY == "light" %} checked="checked"{% endif %} /> {{ lang('CHASTITY_INTENSITY_LIGHT') }}</label>
+            <label><input type="radio" name="activity_intensity" value="medium"{% if PREFILL_ACT_INTENSITY == "medium" or not PREFILL_ACT_INTENSITY %} checked="checked"{% endif %} /> {{ lang('CHASTITY_INTENSITY_MEDIUM') }}</label>
+            <label><input type="radio" name="activity_intensity" value="strong"{% if PREFILL_ACT_INTENSITY == "strong" %} checked="checked"{% endif %} /> {{ lang('CHASTITY_INTENSITY_STRONG') }}</label>
+        </dd>
+        <dt><label for="activity_notes">{{ lang('CHASTITY_ACTIVITY_NOTES') }}</label></dt>
+        <dd><textarea id="activity_notes" name="activity_notes" rows="3" cols="40">{{ PREFILL_ACT_NOTES }}</textarea></dd>
+    </dl>
+    {{ S_FORM_TOKEN }}
+    <input type="submit" name="add_activity" value="{{ lang('CHASTITY_ACTIVITY_SUBMIT') }}" class="button1" />
+</fieldset>
+</form>
+
+<fieldset>
+    <legend>{{ lang('CHASTITY_ACTIVITY_ADD_REASON') }}</legend>
+    <form method="post" action="{{ U_ACTION }}">
+        <dl>
+            <dt><label for="new_activity_reason_label">{{ lang('CHASTITY_REASON_LABEL') }}</label></dt>
+            <dd><input type="text" id="new_activity_reason_label" name="new_activity_reason_label" maxlength="100" size="40" /></dd>
+            <dt></dt>
+            <dd><label><input type="checkbox" name="reason_share_global" value="1" /> {{ lang('CHASTITY_REASON_SHARE_GLOBAL') }}</label>
+                <br /><small style="color:#888;">{{ lang('CHASTITY_REASON_SHARE_PERSONAL') }}</small></dd>
+        </dl>
+        {{ S_FORM_TOKEN }}
+        <input type="submit" name="add_personal_activity_reason" value="{{ lang('CHASTITY_REASON_SUBMIT') }}" class="button2" />
+    </form>
+    <p><em>{{ lang('CHASTITY_REASON_HINT') }}</em></p>
+</fieldset>
+
+<h3>{{ lang('CHASTITY_ACTIVITY_HISTORY') }}</h3>
+{% if activities_history|length == 0 %}
+<p>{{ lang('CHASTITY_HISTORY_EMPTY') }}</p>
+{% else %}
+<table class="table1" width="100%">
+    <thead><tr>
+        <th>{{ lang('CHASTITY_COL_DATE') }}</th>
+        <th>{{ lang('CHASTITY_ACTIVITY_INTENSITY') }}</th>
+        <th>{{ lang('CHASTITY_COL_REASON') }}</th>
+        <th>{{ lang('CHASTITY_COL_NOTES') }}</th>
+        <th>{{ lang('CHASTITY_COL_ACTIONS') }}</th>
+    </tr></thead>
+    <tbody>
+    {% for a in activities_history %}
+    <tr>
+        <td>{{ a.DATE }}</td>
+        <td>{{ a.INTENSITY }}</td>
+        <td>{{ a.REASON }}</td>
+        <td>{{ a.NOTES }}</td>
+        <td>
+            <form method="post" action="{{ U_ACTION }}" style="display:inline;">
+                <input type="hidden" name="activity_id" value="{{ a.ACTIVITY_ID }}" />
+                {{ S_FORM_TOKEN }}
+                <input type="submit" name="delete_activity" value="{{ lang('CHASTITY_DELETE') }}" class="button2" onclick="return confirm({{ lang('CHASTITY_DELETE_CONFIRM')|json_encode }})" />
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% include 'ucp_footer.html' %}

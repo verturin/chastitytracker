@@ -1,0 +1,316 @@
+{% include 'overall_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_REWARDS') }} 🏅</h1>
+
+<p>{{ lang('ACP_CHASTITY_REWARDS_EXPLAIN') }}</p>
+
+<form id="acp_chastity_recalc" method="post" action="{{ U_ACTION }}">
+{{ S_FORM_TOKEN }}
+<fieldset>
+	<legend>🔄 {{ lang('ACP_CHASTITY_REWARDS_RECALC') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_REWARDS_RECALC_EXPLAIN') }}</p>
+	<input class="button1" type="submit" name="recalc_rewards" value="{{ lang('ACP_CHASTITY_REWARDS_RECALC_BTN') }}" />
+</fieldset>
+</form>
+
+<form id="acp_chastity_rewards" method="post" action="{{ U_ACTION }}">
+{{ S_FORM_TOKEN }}
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_REWARDS_GENERAL') }}</legend>
+	<dl>
+		<dt>
+			<label for="chastity_rewards_enabled">{{ lang('ACP_CHASTITY_REWARDS_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_REWARDS_ENABLED_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_rewards_enabled" value="1" {{ CHASTITY_REWARDS_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_rewards_enabled" value="0" {{ not CHASTITY_REWARDS_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+</fieldset>
+
+<fieldset>
+	<legend>🔒 {{ lang('ACP_CHASTITY_GOAL_CAGE') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_GOAL_CAGE_EXPLAIN') }}</p>
+	<dl>
+		<dt><label for="chastity_goal_cage_day">{{ lang('ACP_CHASTITY_GOAL_DAY') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_cage_day" name="chastity_goal_cage_day" value="{{ GOAL_CAGE_DAY }}" min="1" /> {{ lang('CHASTITY_HOURS_UNIT') }}</dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_goal_cage_month">{{ lang('ACP_CHASTITY_GOAL_MONTH') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_cage_month" name="chastity_goal_cage_month" value="{{ GOAL_CAGE_MONTH }}" min="1" /> {{ lang('CHASTITY_HOURS_UNIT') }}</dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_goal_cage_year">{{ lang('ACP_CHASTITY_GOAL_YEAR') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_cage_year" name="chastity_goal_cage_year" value="{{ GOAL_CAGE_YEAR }}" min="1" /> {{ lang('CHASTITY_HOURS_UNIT') }}</dd>
+	</dl>
+</fieldset>
+
+<fieldset>
+	<legend>✍️ {{ lang('ACP_CHASTITY_GOAL_POSTS') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_GOAL_POSTS_EXPLAIN') }}</p>
+	<dl>
+		<dt><label for="chastity_goal_posts_day">{{ lang('ACP_CHASTITY_GOAL_DAY') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_posts_day" name="chastity_goal_posts_day" value="{{ GOAL_POSTS_DAY }}" min="1" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_goal_posts_month">{{ lang('ACP_CHASTITY_GOAL_MONTH') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_posts_month" name="chastity_goal_posts_month" value="{{ GOAL_POSTS_MONTH }}" min="1" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_goal_posts_year">{{ lang('ACP_CHASTITY_GOAL_YEAR') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_posts_year" name="chastity_goal_posts_year" value="{{ GOAL_POSTS_YEAR }}" min="1" /></dd>
+	</dl>
+</fieldset>
+
+<fieldset>
+	<legend>📅 {{ lang('ACP_CHASTITY_GOAL_LOGINS') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_GOAL_LOGINS_EXPLAIN') }}</p>
+	<dl>
+		<dt><label for="chastity_goal_logins_day">{{ lang('ACP_CHASTITY_GOAL_DAY') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_logins_day" name="chastity_goal_logins_day" value="{{ GOAL_LOGINS_DAY }}" min="1" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_goal_logins_month">{{ lang('ACP_CHASTITY_GOAL_MONTH') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_logins_month" name="chastity_goal_logins_month" value="{{ GOAL_LOGINS_MONTH }}" min="1" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="chastity_goal_logins_year">{{ lang('ACP_CHASTITY_GOAL_YEAR') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="chastity_goal_logins_year" name="chastity_goal_logins_year" value="{{ GOAL_LOGINS_YEAR }}" min="1" /></dd>
+	</dl>
+</fieldset>
+
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+	<input class="button2" type="reset" value="{{ lang('RESET') }}" />
+</fieldset>
+
+</form>
+
+<h2>{{ lang('ACP_CHASTITY_SDAYS') }}</h2>
+<p>{{ lang('ACP_CHASTITY_SDAYS_EXPLAIN') }}</p>
+
+<form id="acp_chastity_sdays" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+{{ S_FORM_TOKEN }}
+
+{% if special_day.0 is defined %}
+<table class="table1 zebra-table">
+	<thead>
+		<tr>
+			<th>{{ lang('ACP_CHASTITY_SDAY_DATE') }}</th>
+			<th>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD') }}</th>
+			<th>{{ lang('ACP_CHASTITY_MILESTONE_ACTION') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for s in special_day %}
+		<tr>
+			<td><strong>{{ s.DATE }}</strong></td>
+			<td>
+				{% if s.IMAGE %}<img src="{{ s.IMAGE }}" alt="" style="max-height:32px;vertical-align:middle;margin-right:6px;" />{% endif %}
+				{{ s.LABEL }}
+			</td>
+			<td>
+				<input type="button" value="{{ lang('ACP_CHASTITY_EDIT') }}" class="button2" onclick="ctEditSday({{ s.ID }}, {{ s.DAY }}, {{ s.MONTH }}, '{{ s.LABEL|e('js') }}');" />
+				<input type="submit" name="delete_sday" value="{{ lang('DELETE') }}" class="button2" onclick="document.getElementById('sday_id_del').value='{{ s.ID }}';" />
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<input type="hidden" id="sday_id_del" name="sday_id" value="0" />
+{% else %}
+<p>{{ lang('ACP_CHASTITY_SDAYS_EMPTY') }}</p>
+{% endif %}
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_SDAY_ADD') }}</legend>
+	<input type="hidden" id="sday_id_edit" name="sday_id_edit" value="0" />
+	<dl>
+		<dt><label>{{ lang('ACP_CHASTITY_SDAY_DATE') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_SDAY_DATE_EXPLAIN') }}</span></dt>
+		<dd>
+			{{ lang('ACP_CHASTITY_SDAY_DAY') }} <input type="number" id="sday_day" name="sday_day" value="14" min="1" max="31" style="width:60px;" />
+			&nbsp;{{ lang('ACP_CHASTITY_SDAY_MONTH') }} <input type="number" id="sday_month" name="sday_month" value="2" min="1" max="12" style="width:60px;" />
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="sday_label">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="sday_label" name="sday_label" maxlength="255" size="50" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="sday_image_file">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd><input type="file" id="sday_image_file" name="sday_image_file" accept="image/*" /></dd>
+	</dl>
+</fieldset>
+
+<script type="text/javascript">
+function ctEditSday(id, day, month, label) {
+	document.getElementById('sday_id_edit').value = id;
+	document.getElementById('sday_day').value = day;
+	document.getElementById('sday_month').value = month;
+	document.getElementById('sday_label').value = label;
+	document.getElementById('sday_label').focus();
+}
+</script>
+
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" name="submit_sday" value="{{ lang('ACP_CHASTITY_SDAY_SAVE') }}" />
+</fieldset>
+
+</form>
+
+<h2>🎂 {{ lang('ACP_CHASTITY_BIRTHDAY_TITLE') }}</h2>
+<p>{{ lang('ACP_CHASTITY_BIRTHDAY_EXPLAIN') }}</p>
+
+<form id="acp_chastity_birthday" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+{{ S_FORM_TOKEN }}
+<fieldset>
+	<dl>
+		<dt><label for="birthday_enabled">{{ lang('ACP_CHASTITY_BIRTHDAY_ENABLED') }}{{ lang('COLON') }}</label></dt>
+		<dd>
+			<label><input type="radio" name="birthday_enabled" value="1"{% if CHASTITY_BIRTHDAY_ENABLED %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" name="birthday_enabled" value="0"{% if not CHASTITY_BIRTHDAY_ENABLED %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="birthday_self_label">{{ lang('ACP_CHASTITY_BIRTHDAY_SELF_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="birthday_self_label" name="birthday_self_label" value="{{ CHASTITY_BIRTHDAY_SELF_LABEL }}" maxlength="255" size="40" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="birthday_self_image_file">{{ lang('ACP_CHASTITY_BIRTHDAY_SELF_IMAGE') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd>
+			{% if CHASTITY_BIRTHDAY_SELF_IMAGE %}<img src="{{ CHASTITY_BIRTHDAY_SELF_IMAGE }}" alt="" style="max-height:48px;vertical-align:middle;margin-right:8px;" />{% endif %}
+			<input type="file" id="birthday_self_image_file" name="birthday_self_image_file" accept="image/*" />
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="birthday_kh_label">{{ lang('ACP_CHASTITY_BIRTHDAY_KH_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="birthday_kh_label" name="birthday_kh_label" value="{{ CHASTITY_BIRTHDAY_KH_LABEL }}" maxlength="255" size="40" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="birthday_kh_image_file">{{ lang('ACP_CHASTITY_BIRTHDAY_KH_IMAGE') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd>
+			{% if CHASTITY_BIRTHDAY_KH_IMAGE %}<img src="{{ CHASTITY_BIRTHDAY_KH_IMAGE }}" alt="" style="max-height:48px;vertical-align:middle;margin-right:8px;" />{% endif %}
+			<input type="file" id="birthday_kh_image_file" name="birthday_kh_image_file" accept="image/*" />
+		</dd>
+	</dl>
+</fieldset>
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" name="submit_birthday" value="{{ lang('SUBMIT') }}" />
+</fieldset>
+</form>
+
+<h2>⚙️ {{ lang('ACP_CHASTITY_MS_OPTIONS_TITLE') }}</h2>
+<p>{{ lang('ACP_CHASTITY_MS_OPTIONS_EXPLAIN') }}</p>
+<form id="acp_chastity_ms_options" method="post" action="{{ U_ACTION }}">
+{{ S_FORM_TOKEN }}
+<fieldset>
+	<dl>
+		<dt><label>{{ lang('ACP_CHASTITY_MS_SHOW_NEXT') }}{{ lang('COLON') }}</label><br><span>{{ lang('ACP_CHASTITY_MS_SHOW_NEXT_EXPLAIN') }}</span></dt>
+		<dd>
+			<label><input type="radio" name="ms_show_next" value="1"{% if CHASTITY_MS_SHOW_NEXT %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" name="ms_show_next" value="0"{% if not CHASTITY_MS_SHOW_NEXT %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+		</dd>
+	</dl>
+	<dl>
+		<dt><label>{{ lang('ACP_CHASTITY_MS_COMPACT') }}{{ lang('COLON') }}</label><br><span>{{ lang('ACP_CHASTITY_MS_COMPACT_EXPLAIN') }}</span></dt>
+		<dd>
+			<label><input type="radio" name="ms_compact" value="1"{% if CHASTITY_MS_COMPACT %} checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" name="ms_compact" value="0"{% if not CHASTITY_MS_COMPACT %} checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+		</dd>
+	</dl>
+</fieldset>
+<fieldset class="submit-buttons"><input class="button1" type="submit" name="submit_ms_options" value="{{ lang('SUBMIT') }}" /></fieldset>
+</form>
+
+<h2>🔥 {{ lang('ACP_CHASTITY_MS_STREAK_TITLE') }}</h2>
+<p>{{ lang('ACP_CHASTITY_MS_STREAK_EXPLAIN') }}</p>
+<form id="acp_chastity_ms_streak" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+{{ S_FORM_TOKEN }}
+{% if ms_streak.0 is defined %}
+<table class="table1 zebra-table">
+	<thead><tr><th>{{ lang('ACP_CHASTITY_MS_THRESHOLD') }}</th><th>{{ lang('ACP_CHASTITY_MS_IMAGE') }}</th><th>{{ lang('ACP_CHASTITY_MS_LABEL') }}</th><th>{{ lang('ACP_CHASTITY_MILESTONE_ACTION') }}</th></tr></thead>
+	<tbody>
+		{% for m in ms_streak %}
+		<tr>
+			<td><strong>{{ m.THRESHOLD }}</strong> {{ lang('CHASTITY_DAYS') }}</td>
+			<td>{% if m.IMAGE %}<img src="{{ m.IMAGE }}" alt="" style="max-height:32px;" />{% endif %}</td>
+			<td>{{ m.LABEL }}</td>
+			<td>
+				<input type="button" value="{{ lang('ACP_CHASTITY_EDIT') }}" class="button2" onclick="ctEditMs('streak', {{ m.ID }}, {{ m.THRESHOLD }}, '{{ m.LABEL|e('js') }}');" />
+				<input type="submit" name="delete_ms_streak" value="{{ lang('DELETE') }}" class="button2" onclick="document.getElementById('ms_id_del_streak').value='{{ m.ID }}';" />
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<input type="hidden" id="ms_id_del_streak" name="ms_id_del_streak" value="0" />
+{% else %}<p>{{ lang('ACP_CHASTITY_MS_EMPTY') }}</p>{% endif %}
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_MS_ADD') }}</legend>
+	<input type="hidden" id="ms_id_edit_streak" name="ms_id_edit_streak" value="0" />
+	<dl><dt><label>{{ lang('ACP_CHASTITY_MS_THRESHOLD') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="ms_threshold_streak" name="ms_threshold_streak" value="5" min="1" style="width:90px;" /></dd></dl>
+	<dl><dt><label>{{ lang('ACP_CHASTITY_MS_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="ms_label_streak" name="ms_label_streak" maxlength="255" size="40" /></dd></dl>
+	<dl><dt><label>{{ lang('ACP_CHASTITY_MS_IMAGE') }}{{ lang('COLON') }}</label><br><span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd><input type="file" name="ms_image_file_streak" accept="image/*" /></dd></dl>
+</fieldset>
+<fieldset class="submit-buttons"><input class="button1" type="submit" name="submit_ms_streak" value="{{ lang('SUBMIT') }}" /></fieldset>
+</form>
+
+<h2>📅 {{ lang('ACP_CHASTITY_MS_TOTAL_TITLE') }}</h2>
+<p>{{ lang('ACP_CHASTITY_MS_TOTAL_EXPLAIN') }}</p>
+<form id="acp_chastity_ms_total" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+{{ S_FORM_TOKEN }}
+{% if ms_total.0 is defined %}
+<table class="table1 zebra-table">
+	<thead><tr><th>{{ lang('ACP_CHASTITY_MS_THRESHOLD') }}</th><th>{{ lang('ACP_CHASTITY_MS_IMAGE') }}</th><th>{{ lang('ACP_CHASTITY_MS_LABEL') }}</th><th>{{ lang('ACP_CHASTITY_MILESTONE_ACTION') }}</th></tr></thead>
+	<tbody>
+		{% for m in ms_total %}
+		<tr>
+			<td><strong>{{ m.THRESHOLD }}</strong> {{ lang('CHASTITY_DAYS') }}</td>
+			<td>{% if m.IMAGE %}<img src="{{ m.IMAGE }}" alt="" style="max-height:32px;" />{% endif %}</td>
+			<td>{{ m.LABEL }}</td>
+			<td>
+				<input type="button" value="{{ lang('ACP_CHASTITY_EDIT') }}" class="button2" onclick="ctEditMs('total', {{ m.ID }}, {{ m.THRESHOLD }}, '{{ m.LABEL|e('js') }}');" />
+				<input type="submit" name="delete_ms_total" value="{{ lang('DELETE') }}" class="button2" onclick="document.getElementById('ms_id_del_total').value='{{ m.ID }}';" />
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<input type="hidden" id="ms_id_del_total" name="ms_id_del_total" value="0" />
+{% else %}<p>{{ lang('ACP_CHASTITY_MS_EMPTY') }}</p>{% endif %}
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_MS_ADD') }}</legend>
+	<input type="hidden" id="ms_id_edit_total" name="ms_id_edit_total" value="0" />
+	<dl><dt><label>{{ lang('ACP_CHASTITY_MS_THRESHOLD') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="ms_threshold_total" name="ms_threshold_total" value="30" min="1" style="width:90px;" /></dd></dl>
+	<dl><dt><label>{{ lang('ACP_CHASTITY_MS_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="ms_label_total" name="ms_label_total" maxlength="255" size="40" /></dd></dl>
+	<dl><dt><label>{{ lang('ACP_CHASTITY_MS_IMAGE') }}{{ lang('COLON') }}</label><br><span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd><input type="file" name="ms_image_file_total" accept="image/*" /></dd></dl>
+</fieldset>
+<fieldset class="submit-buttons"><input class="button1" type="submit" name="submit_ms_total" value="{{ lang('SUBMIT') }}" /></fieldset>
+</form>
+
+<script type="text/javascript">
+function ctEditMs(kind, id, threshold, label) {
+	document.getElementById('ms_id_edit_' + kind).value = id;
+	document.getElementById('ms_threshold_' + kind).value = threshold;
+	document.getElementById('ms_label_' + kind).value = label;
+	document.getElementById('ms_label_' + kind).focus();
+}
+</script>
+
+{% include 'overall_footer.html' %}

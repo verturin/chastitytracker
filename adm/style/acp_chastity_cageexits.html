@@ -1,0 +1,98 @@
+<!-- INCLUDE overall_header.html -->
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+{% if S_CONFIRM_DELETE_REASON %}
+<div class="warning-box" style="background:#FFF3CD;border:1px solid #E67E22;padding:12px;margin:10px 0;border-radius:4px;">
+    <strong style="color:#E67E22;">⚠ {{ lang('ACP_REASON_IN_USE', CONFIRM_DELETE_NB_USE) }}</strong>
+    <p>{{ lang('ACP_REASON_DELETE_IN_USE_CONFIRM') }}</p>
+    <form method="post" action="{{ U_ACTION }}" style="display:inline;">
+        <input type="hidden" name="reason_id" value="{{ CONFIRM_DELETE_REASON_ID }}" />
+        <input type="hidden" name="confirm_delete_reason" value="1" />
+        {{ S_FORM_TOKEN }}
+        <input type="submit" name="delete_reason" value="{{ lang('ACP_CONFIRM_DELETE') }}" class="button2" style="background:#E67E22;color:#fff;" />
+        &nbsp;<a href="{{ U_ACTION }}">{{ lang('CANCEL') }}</a>
+    </form>
+</div>
+{% endif %}
+
+<h1>{{ lang('ACP_CHASTITY_CAGEEXITS') }}</h1>
+<div class="panel">
+    <div class="inner">
+
+        <fieldset>
+            <legend>{{ lang('ACP_CAGEEXIT_THRESHOLD_TITLE') }}</legend>
+            <form method="post" action="{{ U_ACTION }}">
+                <dl>
+                    <dt><label for="cageexit_threshold">{{ lang('ACP_CAGEEXIT_THRESHOLD') }}</label></dt>
+                    <dd>
+                        <input type="number" id="cageexit_threshold" name="cageexit_threshold" value="{{ CAGEEXIT_THRESHOLD }}" min="30" max="14400" />
+                        {{ lang('ACP_CAGEEXIT_THRESHOLD_HINT', CAGEEXIT_THRESHOLD_H) }}
+                    </dd>
+                </dl>
+                {{ S_FORM_TOKEN }}
+                <input type="submit" name="save_threshold" value="{{ lang('SUBMIT') }}" class="button1" />
+            </form>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{ lang('ACP_REASONS_ADD') }}</legend>
+            <form method="post" action="{{ U_ACTION }}">
+                <dl>
+                    <dt><label for="new_reason_label">{{ lang('ACP_REASON_LABEL') }}</label></dt>
+                    <dd><input type="text" id="new_reason_label" name="new_reason_label" maxlength="100" size="40" /></dd>
+                </dl>
+                {{ S_FORM_TOKEN }}
+                <input type="submit" name="add_global_reason" value="{{ lang('ACP_REASON_ADD_BTN') }}" class="button1" />
+            </form>
+        </fieldset>
+<h2>{{ lang('ACP_ALL_REASONS') }}</h2>
+        <table class="table1" width="100%">
+            <thead><tr>
+                <th>{{ lang('ACP_REASON_LABEL') }}</th>
+                <th>{{ lang('ACP_REASON_TYPE') }}</th>
+                <th>{{ lang('ACP_REASON_AUTHOR') }}</th>
+                <th>{{ lang('ACP_REASON_STATUS') }}</th>
+                <th>{{ lang('ACP_REASON_ACTIONS') }}</th>
+            </tr></thead>
+            <tbody>
+            {% for r in cageexit_reasons %}
+            <tr>
+                <td>{{ r.LABEL }}</td>
+                <td>{{ r.IS_GLOBAL ? lang('ACP_REASON_GLOBAL') : lang('ACP_REASON_PERSONAL') }}</td>
+                <td>{{ r.USERNAME }}</td>
+                <td>{{ r.IS_APPROVED ? '✔' : lang('ACP_REASON_PENDING') }}</td>
+                <td>
+                    {% if not r.IS_APPROVED %}
+                    <form method="post" action="{{ U_ACTION }}" style="display:inline;">
+                        <input type="hidden" name="reason_id" value="{{ r.REASON_ID }}" />
+                        {{ S_FORM_TOKEN }}
+                        <input type="submit" name="approve_reason" value="{{ lang('ACP_APPROVE') }}" class="button2" />
+                    </form>
+                    {% endif %}
+                    <form method="post" action="{{ U_ACTION }}" style="display:inline;">
+                        <input type="hidden" name="reason_id" value="{{ r.REASON_ID }}" />
+                        {{ S_FORM_TOKEN }}
+                        <input type="submit" name="toggle_global" value="{{ r.IS_GLOBAL ? lang('ACP_MAKE_PERSONAL') : lang('ACP_MAKE_GLOBAL') }}" class="button2" />
+                    </form>
+                    <form method="post" action="{{ U_ACTION }}" style="display:inline;margin-right:4px;">
+                        <input type="hidden" name="reason_id" value="{{ r.REASON_ID }}" />
+                        <input type="text" name="new_label" value="{{ r.LABEL }}" maxlength="100" size="20" />
+                        {{ S_FORM_TOKEN }}
+                        <input type="submit" name="rename_reason" value="{{ lang('ACP_RENAME') }}" class="button2" />
+                    </form>
+                    <form method="post" action="{{ U_ACTION }}" style="display:inline;">
+                        <input type="hidden" name="reason_id" value="{{ r.REASON_ID }}" />
+                        {{ S_FORM_TOKEN }}
+                        <input type="submit" name="delete_reason" value="{{ lang('ACP_DELETE') }}" class="button2" onclick="return confirm({{ lang('ACP_REASON_DELETE_CONFIRM')|json_encode }})" />
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- INCLUDE overall_footer.html -->

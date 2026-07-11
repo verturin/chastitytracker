@@ -1,0 +1,218 @@
+{% include 'overall_header.html' %}
+
+{% INCLUDECSS '@verturin_chastitytracker/chastity.css' %}
+
+<a id="maincontent"></a>
+
+<h1>{{ lang('ACP_CHASTITY_LOCKTOBER') }} 🎃</h1>
+
+<p>{{ lang('ACP_CHASTITY_LOCKTOBER_SETTINGS_EXPLAIN') }}</p>
+
+<form id="acp_chastity_locktober" method="post" action="{{ U_ACTION }}">
+{{ S_FORM_TOKEN }}
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_LOCKTOBER_SETTINGS') }}</legend>
+
+	<dl>
+		<dt>
+			<label for="chastity_locktober_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_ENABLED_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_enabled" value="1" {{ CHASTITY_LOCKTOBER_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_enabled" value="0" {{ not CHASTITY_LOCKTOBER_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_test_mode">{{ lang('ACP_CHASTITY_LOCKTOBER_TEST_MODE') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_TEST_MODE_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_test_mode" value="1" {{ CHASTITY_LOCKTOBER_TEST_MODE ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_test_mode" value="0" {{ not CHASTITY_LOCKTOBER_TEST_MODE ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_year">{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR_EXPLAIN') }}</span>
+		</dt>
+		<dd><input type="number" id="chastity_locktober_year" name="chastity_locktober_year" value="{{ CHASTITY_LOCKTOBER_YEAR }}" min="2020" max="2050" /></dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_badge_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_BADGE_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_BADGE_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="1" {{ CHASTITY_LOCKTOBER_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_badge_enabled" value="0" {{ not CHASTITY_LOCKTOBER_BADGE_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+	<dl>
+		<dt>
+			<label for="chastity_locktober_leaderboard_enabled">{{ lang('ACP_CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_LEADERBOARD_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			<input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="1" {{ CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('ENABLED') }}&nbsp;
+			<input type="radio" class="radio" name="chastity_locktober_leaderboard_enabled" value="0" {{ not CHASTITY_LOCKTOBER_LEADERBOARD_ENABLED ? 'checked="checked"' : '' }} /> {{ lang('DISABLED') }}
+		</dd>
+	</dl>
+</fieldset>
+
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+	<input class="button2" type="reset" value="{{ lang('RESET') }}" />
+</fieldset>
+
+</form>
+
+<h2>{{ lang('ACP_CHASTITY_LOCKTOBER_EDITIONS') }}</h2>
+<p>{{ lang('ACP_CHASTITY_LOCKTOBER_EDITIONS_EXPLAIN') }}</p>
+
+<form id="acp_chastity_locktober_recalc" method="post" action="{{ U_ACTION }}">
+{{ S_FORM_TOKEN }}
+<fieldset>
+	<legend>🔄 {{ lang('ACP_CHASTITY_LOCKTOBER_RECALC') }}</legend>
+	<p>{{ lang('ACP_CHASTITY_LOCKTOBER_RECALC_EXPLAIN') }}</p>
+	<input class="button1" type="submit" name="recalc_locktober" value="{{ lang('ACP_CHASTITY_LOCKTOBER_RECALC_BTN') }}" />
+</fieldset>
+</form>
+
+<form id="acp_chastity_locktober_rewards" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+{{ S_FORM_TOKEN }}
+
+{% if lk_edition.0 is defined %}
+<table class="table1 zebra-table">
+	<thead>
+		<tr>
+			<th>{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR') }}</th>
+			<th>{{ lang('ACP_CHASTITY_LOCKTOBER_PARTICIPANTS') }}</th>
+			<th>{{ lang('ACP_CHASTITY_LOCKTOBER_SUCCESS') }}</th>
+			<th>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD') }}</th>
+			<th>{{ lang('ACP_CHASTITY_MILESTONE_ACTION') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for e in lk_edition %}
+		<tr>
+			<td><strong>{{ e.YEAR }}</strong></td>
+			<td>{{ e.PARTICIPANTS }}</td>
+			<td>{{ e.SUCCESS }} 🏆</td>
+			<td>
+				{% if e.REWARD_IMAGE %}<span title="{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMG_SUCCESS') }}">🏆 <img src="{{ e.REWARD_IMAGE }}" alt="" style="max-height:28px;vertical-align:middle;" /></span>{% endif %}
+				{% if e.REWARD_IMAGE_PART %}<span title="{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMG_PART') }}" style="margin-left:8px;">✔️ <img src="{{ e.REWARD_IMAGE_PART }}" alt="" style="max-height:28px;vertical-align:middle;" /></span>{% endif %}
+				<br>{{ e.REWARD_LABEL }}
+			</td>
+			<td>
+				{% if e.HAS_REWARD %}
+				<input type="button" value="{{ lang('ACP_CHASTITY_EDIT') }}" class="button2" onclick="ctEditReward({{ e.YEAR }}, '{{ e.REWARD_LABEL|e('js') }}');" />
+				<input type="submit" name="delete_reward" value="{{ lang('DELETE') }}" class="button2" onclick="document.getElementById('reward_year_del').value='{{ e.YEAR }}';" />
+				{% else %}—{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<input type="hidden" id="reward_year_del" name="reward_year_del" value="0" />
+{% else %}
+<p>{{ lang('ACP_CHASTITY_LOCKTOBER_EDITIONS_EMPTY') }}</p>
+{% endif %}
+
+<script type="text/javascript">
+function ctEditReward(year, label) {
+	document.getElementById('reward_year').value = year;
+	document.getElementById('reward_label').value = label;
+	document.getElementById('reward_year').focus();
+}
+</script>
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_ADD') }}</legend>
+	<dl>
+		<dt><label for="reward_year">{{ lang('ACP_CHASTITY_LOCKTOBER_YEAR') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="number" id="reward_year" name="reward_year" value="{{ CHASTITY_LOCKTOBER_YEAR }}" min="2000" max="2100" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="reward_label">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="reward_label" name="reward_label" maxlength="255" size="50" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="reward_image_file">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMG_SUCCESS') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd><input type="file" id="reward_image_file" name="reward_image_file" accept="image/*" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="reward_image_part_file">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMG_PART') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd><input type="file" id="reward_image_part_file" name="reward_image_part_file" accept="image/*" /></dd>
+	</dl>
+</fieldset>
+
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" name="submit_reward" value="{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_SAVE') }}" />
+</fieldset>
+
+</form>
+
+<h2>{{ lang('ACP_CHASTITY_MILESTONES') }}</h2>
+<p>{{ lang('ACP_CHASTITY_MILESTONES_EXPLAIN') }}</p>
+
+<form id="acp_chastity_milestones" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
+{{ S_FORM_TOKEN }}
+
+{% if lk_milestone.0 is defined %}
+<table class="table1 zebra-table">
+	<thead>
+		<tr>
+			<th>{{ lang('ACP_CHASTITY_MILESTONE_THRESHOLD') }}</th>
+			<th>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD') }}</th>
+			<th>{{ lang('ACP_CHASTITY_MILESTONE_ACTION') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for m in lk_milestone %}
+		<tr>
+			<td><strong>{{ m.THRESHOLD }}</strong> {{ lang('ACP_CHASTITY_MILESTONE_LOCKTOBERS') }}</td>
+			<td>
+				{% if m.IMAGE %}<img src="{{ m.IMAGE }}" alt="" style="max-height:32px;vertical-align:middle;margin-right:6px;" />{% endif %}
+				{{ m.LABEL }}
+			</td>
+			<td><input type="submit" name="delete_milestone" value="{{ lang('DELETE') }}" class="button2" onclick="document.getElementById('milestone_id_del').value='{{ m.ID }}';" /></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+<input type="hidden" id="milestone_id_del" name="milestone_id" value="0" />
+{% else %}
+<p>{{ lang('ACP_CHASTITY_MILESTONES_EMPTY') }}</p>
+{% endif %}
+
+<fieldset>
+	<legend>{{ lang('ACP_CHASTITY_MILESTONE_ADD') }}</legend>
+	<dl>
+		<dt><label for="milestone_threshold">{{ lang('ACP_CHASTITY_MILESTONE_THRESHOLD') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_MILESTONE_THRESHOLD_EXPLAIN') }}</span></dt>
+		<dd><input type="number" id="milestone_threshold" name="milestone_threshold" value="5" min="1" max="999" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="milestone_label">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_LABEL') }}{{ lang('COLON') }}</label></dt>
+		<dd><input type="text" id="milestone_label" name="milestone_label" maxlength="255" size="50" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="milestone_image_file">{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE') }}{{ lang('COLON') }}</label><br>
+			<span>{{ lang('ACP_CHASTITY_LOCKTOBER_REWARD_IMAGE_EXPLAIN') }}</span></dt>
+		<dd><input type="file" id="milestone_image_file" name="milestone_image_file" accept="image/*" /></dd>
+	</dl>
+</fieldset>
+
+<fieldset class="submit-buttons">
+	<input class="button1" type="submit" name="submit_milestone" value="{{ lang('ACP_CHASTITY_MILESTONE_SAVE') }}" />
+</fieldset>
+
+</form>
+
+{% include 'overall_footer.html' %}

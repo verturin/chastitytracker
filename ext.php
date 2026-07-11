@@ -31,9 +31,9 @@ class ext extends \phpbb\extension\base
 
         // Vérifier la version phpBB
         $config = $this->container->get('config');
-        if (version_compare($config['version'], '3.2.0', '<'))
+        if (version_compare($config['version'], '3.3.14', '<'))
         {
-            trigger_error('phpBB 3.2.0 ou supérieur est requis pour cette extension.', E_USER_WARNING);
+            trigger_error('phpBB 3.3.14 ou supérieur est requis pour cette extension.', E_USER_WARNING);
             return false;
         }
 
