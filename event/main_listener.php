@@ -171,6 +171,7 @@ class main_listener implements EventSubscriberInterface
         $current_days = 0;
         $days_since_end = 0;
         $current_secs = 0;
+        $secs_since_end = 0;
 
         if ($locked && $row['start_date'])
         {
@@ -188,7 +189,8 @@ class main_listener implements EventSubscriberInterface
             $this->db->sql_freeresult($result_last);
             if ($last)
             {
-                $days_since_end = (int) floor((time() - (int) $last['end_date']) / 86400);
+                $secs_since_end = max(0, time() - (int) $last['end_date']);
+                $days_since_end = (int) floor($secs_since_end / 86400);
             }
         }
 
@@ -471,9 +473,13 @@ class main_listener implements EventSubscriberInterface
                     : ($current_days . ' ' . ((int) $current_days === 1 ? (isset($this->user->lang['CHASTITY_DAY']) ? $this->user->lang['CHASTITY_DAY'] : 'jour') : (isset($this->user->lang['CHASTITY_DAYS']) ? $this->user->lang['CHASTITY_DAYS'] : 'jours')))),
             'CHASTITY_TOTAL_DAYS'      => $live_total,
             'CHASTITY_DAYS_SINCE_END'  => $days_since_end,
-            'CHASTITY_FREE_SINCE_TEXT' => $days_since_end . ' ' . ((int) $days_since_end === 1
-                ? (isset($this->user->lang['CHASTITY_DAY']) ? $this->user->lang['CHASTITY_DAY'] : 'jour')
-                : (isset($this->user->lang['CHASTITY_DAYS']) ? $this->user->lang['CHASTITY_DAYS'] : 'jours')),
+            'CHASTITY_FREE_SINCE_TEXT' => ($this->period_calculator !== null)
+                ? $this->period_calculator->format_duration($secs_since_end > 0 ? $secs_since_end : $days_since_end * 86400)
+                : (($secs_since_end > 0 && $secs_since_end < 86400)
+                    ? ((int) floor($secs_since_end / 3600)) . 'h' . sprintf('%02d', (int) floor(($secs_since_end % 3600) / 60))
+                    : ($days_since_end . ' ' . ((int) $days_since_end === 1
+                        ? (isset($this->user->lang['CHASTITY_DAY']) ? $this->user->lang['CHASTITY_DAY'] : 'jour')
+                        : (isset($this->user->lang['CHASTITY_DAYS']) ? $this->user->lang['CHASTITY_DAYS'] : 'jours')))),
             'S_CHASTITY_LOCKED'        => $locked,
             'S_DISPLAY_CHASTITY'       => true,
             'S_HAS_ACTIVE_CONTRACT'    => $has_active_contract,
@@ -834,20 +840,26 @@ class main_listener implements EventSubscriberInterface
                 $post_row['CHASTITY_SINCE_TEXT'] = $this->format_since_post($user_id, $days_current);
                 $this->set_locktober_post_progress($post_row, $user_id);
             }
-            else if ($days_since > 0)
-            {
-                // Libre depuis X jour(s)
-                $post_row['CHASTITY_STATUS'] = 'free';
-                $post_row['CHASTITY_DAYS'] = $days_since;
-                $jw = ((int) $days_since === 1)
-                    ? (isset($this->user->lang['CHASTITY_DAY']) ? $this->user->lang['CHASTITY_DAY'] : 'jour')
-                    : (isset($this->user->lang['CHASTITY_DAYS']) ? $this->user->lang['CHASTITY_DAYS'] : 'jours');
-                $post_row['CHASTITY_SINCE_TEXT'] = $days_since . ' ' . $jw;
-            }
             else
             {
-                // Pas de période
-                $post_row['CHASTITY_STATUS'] = 'none';
+                // Libre : requête live pour la précision "depuis Xh" en
+                // dessous de 24h (le cache ne stocke que des jours arrondis)
+                // et pour distinguer "libéré il y a moins de 24h" (days_since
+                // = 0 dans le cache) de "n'a jamais eu de période" — les deux
+                // cas donnaient le même 0 avant, masquant à tort le statut
+                // "Libre" d'un membre tout juste libéré.
+                $free_since = $this->format_free_since_post($user_id, $days_since);
+                if ($free_since !== null)
+                {
+                    $post_row['CHASTITY_STATUS'] = 'free';
+                    $post_row['CHASTITY_DAYS'] = $days_since;
+                    $post_row['CHASTITY_SINCE_TEXT'] = $free_since;
+                }
+                else
+                {
+                    // Pas de période
+                    $post_row['CHASTITY_STATUS'] = 'none';
+                }
             }
 
             // Anneaux de récompense : visibles quel que soit le statut (libre ou non)
@@ -971,6 +983,37 @@ class main_listener implements EventSubscriberInterface
             ? (isset($this->user->lang['CHASTITY_DAY']) ? $this->user->lang['CHASTITY_DAY'] : 'jour')
             : (isset($this->user->lang['CHASTITY_DAYS']) ? $this->user->lang['CHASTITY_DAYS'] : 'jours');
         return $days_current . ' ' . $jw;
+    }
+
+    /**
+     * Équivalent de format_since_post() mais pour le statut LIBRE (depuis la
+     * fin de la dernière période, pas depuis le début d'une période active).
+     * Retourne null si le membre n'a jamais eu de période terminée (pour
+     * distinguer ce cas de "libéré il y a moins de 24h", qui affichaient
+     * tous les deux 0 jour dans le cache avant cette correction).
+     */
+    private function format_free_since_post($user_id, $days_since)
+    {
+        $sql = 'SELECT end_date FROM ' . $this->periods_table
+             . " WHERE user_id = " . (int) $user_id . " AND status = 'completed' AND end_date > 0 ORDER BY end_date DESC LIMIT 1";
+        $res = $this->db->sql_query($sql);
+        $p   = $this->db->sql_fetchrow($res);
+        $this->db->sql_freeresult($res);
+
+        if (!$p) { return null; }
+
+        $secs = max(0, time() - (int) $p['end_date']);
+
+        if ($this->period_calculator !== null) {
+            return ($secs > 0) ? $this->period_calculator->format_duration($secs) : $this->period_calculator->format_duration($days_since * 86400);
+        }
+        if ($secs > 0 && $secs < 86400) {
+            return ((int) floor($secs / 3600)) . 'h' . sprintf('%02d', (int) floor(($secs % 3600) / 60));
+        }
+        $jw = ((int) $days_since === 1)
+            ? (isset($this->user->lang['CHASTITY_DAY']) ? $this->user->lang['CHASTITY_DAY'] : 'jour')
+            : (isset($this->user->lang['CHASTITY_DAYS']) ? $this->user->lang['CHASTITY_DAYS'] : 'jours');
+        return $days_since . ' ' . $jw;
     }
 
     public function display_nav_link($event)

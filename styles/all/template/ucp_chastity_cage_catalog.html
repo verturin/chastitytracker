@@ -1,202 +1,202 @@
 <!-- INCLUDE ucp_header.html -->
 
-<h2>{L_UCP_CHASTITY_CAGE_CATALOG}</h2>
+<h2>{{ lang('UCP_CHASTITY_CAGE_CATALOG') }}</h2>
 
-<form method="get" action="{U_ACTION}">
+<form method="get" action="{{ U_ACTION }}">
 	<fieldset>
-		<legend>{L_FILTER}</legend>
+		<legend>{{ lang('FILTER') }}</legend>
 		<input type="hidden" name="i" value="-verturin-chastitytracker-ucp-main_module" />
 		<input type="hidden" name="mode" value="cage_catalog" />
-		<label>{L_CHASTITY_CAGE_FILTER_BRAND}{L_COLON}
+		<label>{{ lang('CHASTITY_CAGE_FILTER_BRAND') }}{{ lang('COLON') }}
 			<select name="filter_brand" onchange="this.form.submit();">
-				<option value="">{L_CHASTITY_CAGE_ALL}</option>
-				<!-- BEGIN brands -->
-				<option value="{brands.NAME}" <!-- IF FILTER_BRAND eq brands.NAME -->selected="selected"<!-- ENDIF -->>{brands.NAME}</option>
-				<!-- END brands -->
+				<option value="">{{ lang('CHASTITY_CAGE_ALL') }}</option>
+				{% for brands in loops.brands %}
+				<option value="{{ brands.NAME }}" {% if FILTER_BRAND == brands.NAME %}selected="selected"{% endif %}>{{ brands.NAME }}</option>
+				{% endfor %}
 			</select>
 		</label>
 		&nbsp;
-		<label>{L_CHASTITY_CAGE_FILTER_MATERIAL}{L_COLON}
+		<label>{{ lang('CHASTITY_CAGE_FILTER_MATERIAL') }}{{ lang('COLON') }}
 			<select name="filter_material" onchange="this.form.submit();">
-				<option value="">{L_CHASTITY_CAGE_ALL}</option>
-				<!-- BEGIN materials -->
-				<option value="{materials.NAME}" <!-- IF FILTER_MATERIAL eq materials.NAME -->selected="selected"<!-- ENDIF -->>{materials.NAME}</option>
-				<!-- END materials -->
+				<option value="">{{ lang('CHASTITY_CAGE_ALL') }}</option>
+				{% for materials in loops.materials %}
+				<option value="{{ materials.NAME }}" {% if FILTER_MATERIAL == materials.NAME %}selected="selected"{% endif %}>{{ materials.NAME }}</option>
+				{% endfor %}
 			</select>
 		</label>
 	</fieldset>
 </form>
 
-<!-- IF .catalog -->
+{% if loops.catalog is defined and loops.catalog|length %}
 <div class="chastity-cage-grid">
-	<!-- BEGIN catalog -->
+	{% for catalog in loops.catalog %}
 	<div class="chastity-cage-card">
-		<div class="chastity-cage-card-photo"<!-- IF catalog.PHOTO_COUNT --> data-photos='[<!-- BEGIN photos -->"{BOARD_URL}ext/verturin/chastitytracker/images/cages/{catalog.photos.FILENAME}"<!-- IF not catalog.photos.S_LAST_ROW -->,<!-- ENDIF --><!-- END photos -->]'<!-- ENDIF -->>
-			<!-- IF catalog.MAIN_PHOTO -->
-			<img src="{BOARD_URL}ext/verturin/chastitytracker/images/cages/{catalog.MAIN_PHOTO}" alt="{catalog.NAME}" />
-			<!-- ELSE -->
+		<div class="chastity-cage-card-photo"{% if catalog.PHOTO_COUNT %} data-photos='[{% for photo in catalog.photos %}"{{ BOARD_URL }}ext/verturin/chastitytracker/images/cages/{{ photo.FILENAME }}"{% if not photo.S_LAST_ROW %},{% endif %}{% endfor %}]'{% endif %}>
+			{% if catalog.MAIN_PHOTO %}
+			<img src="{{ BOARD_URL }}ext/verturin/chastitytracker/images/cages/{{ catalog.MAIN_PHOTO }}" alt="{{ catalog.NAME }}" />
+			{% else %}
 			<div class="chastity-cage-no-photo">📷</div>
-			<!-- ENDIF -->
-			<!-- IF catalog.PHOTO_COUNT gt 1 --><div class="chastity-cage-photo-count">📷 {catalog.PHOTO_COUNT}</div><!-- ENDIF -->
+			{% endif %}
+			{% if catalog.PHOTO_COUNT > 1 %}<div class="chastity-cage-photo-count">📷 {{ catalog.PHOTO_COUNT }}</div>{% endif %}
 		</div>
 		<div class="chastity-cage-card-info">
-			<h3>{catalog.NAME}</h3>
-			<!-- IF catalog.BRAND --><p class="brand">{catalog.BRAND}</p><!-- ENDIF -->
-			<!-- IF catalog.MATERIAL --><span class="material">{catalog.MATERIAL}</span><!-- ENDIF -->
-			<!-- IF catalog.MANUFACTURER --><p><small>{catalog.MANUFACTURER}</small></p><!-- ENDIF -->
-			<!-- IF catalog.DESCRIPTION --><p class="desc">{catalog.DESCRIPTION}</p><!-- ENDIF -->
+			<h3>{{ catalog.NAME }}</h3>
+			{% if catalog.BRAND %}<p class="brand">{{ catalog.BRAND }}</p>{% endif %}
+			{% if catalog.MATERIAL %}<span class="material">{{ catalog.MATERIAL }}</span>{% endif %}
+			{% if catalog.MANUFACTURER %}<p><small>{{ catalog.MANUFACTURER }}</small></p>{% endif %}
+			{% if catalog.DESCRIPTION %}<p class="desc">{{ catalog.DESCRIPTION }}</p>{% endif %}
 
-			<!-- IF catalog.RATING_COUNT -->
+			{% if catalog.RATING_COUNT %}
 			<p class="chastity-cage-rating-display">
 				<span class="stars">
-					<!-- IF catalog.AVG_RATING gte 1 -->★<!-- ELSE -->☆<!-- ENDIF -->
-					<!-- IF catalog.AVG_RATING gte 2 -->★<!-- ELSE -->☆<!-- ENDIF -->
-					<!-- IF catalog.AVG_RATING gte 3 -->★<!-- ELSE -->☆<!-- ENDIF -->
-					<!-- IF catalog.AVG_RATING gte 4 -->★<!-- ELSE -->☆<!-- ENDIF -->
-					<!-- IF catalog.AVG_RATING gte 5 -->★<!-- ELSE -->☆<!-- ENDIF -->
+					{% if catalog.AVG_RATING >= 1 %}★{% else %}☆{% endif %}
+					{% if catalog.AVG_RATING >= 2 %}★{% else %}☆{% endif %}
+					{% if catalog.AVG_RATING >= 3 %}★{% else %}☆{% endif %}
+					{% if catalog.AVG_RATING >= 4 %}★{% else %}☆{% endif %}
+					{% if catalog.AVG_RATING >= 5 %}★{% else %}☆{% endif %}
 				</span>
-				<small>{catalog.AVG_RATING}/5 ({catalog.RATING_COUNT})</small>
+				<small>{{ catalog.AVG_RATING }}/5 ({{ catalog.RATING_COUNT }})</small>
 			</p>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<p><small>{catalog.USAGE_COUNT} {L_CHASTITY_CAGE_USERS_COUNT}</small></p>
+			<p><small>{{ catalog.USAGE_COUNT }} {{ lang('CHASTITY_CAGE_USERS_COUNT') }}</small></p>
 		</div>
 		<div class="chastity-cage-card-actions">
-			<!-- IF catalog.IN_COLLECTION -->
-			<span style="color:green;">✅ {L_CHASTITY_CAGE_IN_COLLECTION}</span>
-			<!-- ELSE -->
-			<form method="post" action="{U_ACTION}" style="display:inline;">
-				<input type="hidden" name="catalog_id" value="{catalog.ID}" />
-				<button type="submit" name="add_to_collection" value="1" class="button1">{L_CHASTITY_CAGE_ADD_TO_COLLECTION}</button>
-				{S_FORM_TOKEN}
+			{% if catalog.IN_COLLECTION %}
+			<span style="color:green;">✅ {{ lang('CHASTITY_CAGE_IN_COLLECTION') }}</span>
+			{% else %}
+			<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+				<input type="hidden" name="catalog_id" value="{{ catalog.ID }}" />
+				<button type="submit" name="add_to_collection" value="1" class="button1">{{ lang('CHASTITY_CAGE_ADD_TO_COLLECTION') }}</button>
+				{{ S_FORM_TOKEN }}
 			</form>
-			<!-- ENDIF -->
+			{% endif %}
 
 			<details class="chastity-cage-rate-form">
-				<summary>{L_CHASTITY_CAGE_RATE} <!-- IF catalog.MY_RATING -->({catalog.MY_RATING}★)<!-- ENDIF --></summary>
-				<form method="post" action="{U_ACTION}">
-					<input type="hidden" name="catalog_id" value="{catalog.ID}" />
-					<div class="chastity-cage-stars-input" data-rating="{catalog.MY_RATING}">
-						<input type="radio" name="rating" value="5" id="r_{catalog.ID}_5" <!-- IF catalog.MY_RATING == 5 -->checked="checked"<!-- ENDIF --> /><label for="r_{catalog.ID}_5" title="5">★</label>
-						<input type="radio" name="rating" value="4" id="r_{catalog.ID}_4" <!-- IF catalog.MY_RATING == 4 -->checked="checked"<!-- ENDIF --> /><label for="r_{catalog.ID}_4" title="4">★</label>
-						<input type="radio" name="rating" value="3" id="r_{catalog.ID}_3" <!-- IF catalog.MY_RATING == 3 -->checked="checked"<!-- ENDIF --> /><label for="r_{catalog.ID}_3" title="3">★</label>
-						<input type="radio" name="rating" value="2" id="r_{catalog.ID}_2" <!-- IF catalog.MY_RATING == 2 -->checked="checked"<!-- ENDIF --> /><label for="r_{catalog.ID}_2" title="2">★</label>
-						<input type="radio" name="rating" value="1" id="r_{catalog.ID}_1" <!-- IF catalog.MY_RATING == 1 -->checked="checked"<!-- ENDIF --> /><label for="r_{catalog.ID}_1" title="1">★</label>
+				<summary>{{ lang('CHASTITY_CAGE_RATE') }} {% if catalog.MY_RATING %}({{ catalog.MY_RATING }}★){% endif %}</summary>
+				<form method="post" action="{{ U_ACTION }}">
+					<input type="hidden" name="catalog_id" value="{{ catalog.ID }}" />
+					<div class="chastity-cage-stars-input" data-rating="{{ catalog.MY_RATING }}">
+						<input type="radio" name="rating" value="5" id="r_{{ catalog.ID }}_5" {% if catalog.MY_RATING == 5 %}checked="checked"{% endif %} /><label for="r_{{ catalog.ID }}_5" title="5">★</label>
+						<input type="radio" name="rating" value="4" id="r_{{ catalog.ID }}_4" {% if catalog.MY_RATING == 4 %}checked="checked"{% endif %} /><label for="r_{{ catalog.ID }}_4" title="4">★</label>
+						<input type="radio" name="rating" value="3" id="r_{{ catalog.ID }}_3" {% if catalog.MY_RATING == 3 %}checked="checked"{% endif %} /><label for="r_{{ catalog.ID }}_3" title="3">★</label>
+						<input type="radio" name="rating" value="2" id="r_{{ catalog.ID }}_2" {% if catalog.MY_RATING == 2 %}checked="checked"{% endif %} /><label for="r_{{ catalog.ID }}_2" title="2">★</label>
+						<input type="radio" name="rating" value="1" id="r_{{ catalog.ID }}_1" {% if catalog.MY_RATING == 1 %}checked="checked"{% endif %} /><label for="r_{{ catalog.ID }}_1" title="1">★</label>
 					</div>
 					<div style="margin-top:8px;">
-						<label for="c_{catalog.ID}" style="font-size:0.9em;">{L_CHASTITY_CAGE_COMMENT_LABEL}{L_COLON}</label><br>
-						<textarea id="c_{catalog.ID}" name="rating_comment" maxlength="500" rows="3" style="width:100%;box-sizing:border-box;font-size:0.9em;" placeholder="{L_CHASTITY_CAGE_COMMENT_PLACEHOLDER}"></textarea>
-						<small style="color:#888;">{L_CHASTITY_CAGE_COMMENT_MODERATED}</small>
+						<label for="c_{{ catalog.ID }}" style="font-size:0.9em;">{{ lang('CHASTITY_CAGE_COMMENT_LABEL') }}{{ lang('COLON') }}</label><br>
+						<textarea id="c_{{ catalog.ID }}" name="rating_comment" maxlength="500" rows="3" style="width:100%;box-sizing:border-box;font-size:0.9em;" placeholder="{{ lang('CHASTITY_CAGE_COMMENT_PLACEHOLDER') }}"></textarea>
+						<small style="color:#888;">{{ lang('CHASTITY_CAGE_COMMENT_MODERATED') }}</small>
 					</div>
-					<button type="submit" name="rate_cage" value="1" class="button2" style="margin-top:6px;">{L_SUBMIT}</button>
-					{S_FORM_TOKEN}
+					<button type="submit" name="rate_cage" value="1" class="button2" style="margin-top:6px;">{{ lang('SUBMIT') }}</button>
+					{{ S_FORM_TOKEN }}
 				</form>
 			</details>
 
-			<!-- IF catalog.ADDED_BY -->
-			<p style="margin-top:6px;font-size:0.8em;color:#888;">{L_CHASTITY_CAGE_ADDED_BY}{L_COLON} {catalog.ADDED_BY}</p>
-			<!-- ENDIF -->
+			{% if catalog.ADDED_BY %}
+			<p style="margin-top:6px;font-size:0.8em;color:#888;">{{ lang('CHASTITY_CAGE_ADDED_BY') }}{{ lang('COLON') }} {{ catalog.ADDED_BY }}</p>
+			{% endif %}
 
-			<!-- IF catalog.COMMENT_COUNT -->
+			{% if catalog.COMMENT_COUNT %}
 			<details class="chastity-cage-comments" style="margin-top:8px;">
-				<summary style="cursor:pointer;font-size:0.85em;">💬 {catalog.COMMENT_COUNT} <!-- IF catalog.COMMENT_COUNT eq 1 -->{L_CHASTITY_CAGE_COMMENT_SINGULAR}<!-- ELSE -->{L_CHASTITY_CAGE_COMMENTS}<!-- ENDIF --></summary>
+				<summary style="cursor:pointer;font-size:0.85em;">💬 {{ catalog.COMMENT_COUNT }} {% if catalog.COMMENT_COUNT == 1 %}{{ lang('CHASTITY_CAGE_COMMENT_SINGULAR') }}{% else %}{{ lang('CHASTITY_CAGE_COMMENTS') }}{% endif %}</summary>
 				<div style="margin-top:8px;">
-					<!-- BEGIN catalog.comments -->
+					{% for comment in catalog.comments %}
 					<div style="border-left:3px solid #2E4057;padding:6px 10px;margin:6px 0;background:#F9F9F9;border-radius:0 4px 4px 0;">
 						<div style="font-size:0.85em;">
-							{catalog.comments.AUTHOR}
-							<span style="color:#888;">— {catalog.comments.DATE}</span>
+							{{ comment.AUTHOR }}
+							<span style="color:#888;">— {{ comment.DATE }}</span>
 							<span style="color:#FFB400;float:right;">
-								<!-- IF catalog.comments.RATING gte 1 -->★<!-- ENDIF -->
-								<!-- IF catalog.comments.RATING gte 2 -->★<!-- ENDIF -->
-								<!-- IF catalog.comments.RATING gte 3 -->★<!-- ENDIF -->
-								<!-- IF catalog.comments.RATING gte 4 -->★<!-- ENDIF -->
-								<!-- IF catalog.comments.RATING gte 5 -->★<!-- ENDIF -->
+								{% if comment.RATING >= 1 %}★{% endif %}
+								{% if comment.RATING >= 2 %}★{% endif %}
+								{% if comment.RATING >= 3 %}★{% endif %}
+								{% if comment.RATING >= 4 %}★{% endif %}
+								{% if comment.RATING >= 5 %}★{% endif %}
 							</span>
 						</div>
-						<div style="margin-top:4px;font-size:0.9em;">{catalog.comments.COMMENT}</div>
+						<div style="margin-top:4px;font-size:0.9em;">{{ comment.COMMENT }}</div>
 					</div>
-					<!-- END catalog.comments -->
+					{% endfor %}
 				</div>
 			</details>
-			<!-- ENDIF -->
+			{% endif %}
 		</div>
 	</div>
-	<!-- END catalog -->
+	{% endfor %}
 </div>
-<!-- ELSE -->
-<div class="panel"><div class="inner"><p>{L_CHASTITY_CAGE_EMPTY_CATALOG}</p></div></div>
-<!-- ENDIF -->
+{% else %}
+<div class="panel"><div class="inner"><p>{{ lang('CHASTITY_CAGE_EMPTY_CATALOG') }}</p></div></div>
+{% endif %}
 
 <hr />
 
-<form method="post" action="{U_ACTION}" enctype="multipart/form-data">
+<form method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
 <fieldset>
-	<legend>{L_CHASTITY_CAGE_PROPOSE}</legend>
-	<p>{L_CHASTITY_CAGE_PROPOSE_EXPLAIN}</p>
+	<legend>{{ lang('CHASTITY_CAGE_PROPOSE') }}</legend>
+	<p>{{ lang('CHASTITY_CAGE_PROPOSE_EXPLAIN') }}</p>
 	<dl>
-		<dt><label for="propose_name">{L_CHASTITY_CAGE_NAME}{L_COLON}</label></dt>
+		<dt><label for="propose_name">{{ lang('CHASTITY_CAGE_NAME') }}{{ lang('COLON') }}</label></dt>
 		<dd><input type="text" id="propose_name" name="propose_name" maxlength="200" class="inputbox" required="required" /></dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_brand">{L_CHASTITY_CAGE_BRAND}{L_COLON}</label></dt>
+		<dt><label for="propose_brand">{{ lang('CHASTITY_CAGE_BRAND') }}{{ lang('COLON') }}</label></dt>
 		<dd><input type="text" id="propose_brand" name="propose_brand" maxlength="200" class="inputbox" /></dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_material">{L_CHASTITY_CAGE_MATERIAL}{L_COLON}</label></dt>
+		<dt><label for="propose_material">{{ lang('CHASTITY_CAGE_MATERIAL') }}{{ lang('COLON') }}</label></dt>
 		<dd>
 			<select id="propose_material" name="propose_material">
 				<option value="">--</option>
-				<!-- BEGIN propose_materials -->
-				<option value="{propose_materials.KEY}">{propose_materials.NAME}</option>
-				<!-- END propose_materials -->
+				{% for propose_materials in loops.propose_materials %}
+				<option value="{{ propose_materials.KEY }}">{{ propose_materials.NAME }}</option>
+				{% endfor %}
 			</select>
 		</dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_new_material">Ou nouveau matériau{L_COLON}</label><br><span>{L_OPTIONAL}</span></dt>
+		<dt><label for="propose_new_material">Ou nouveau matériau{{ lang('COLON') }}</label><br><span>{{ lang('OPTIONAL') }}</span></dt>
 		<dd><input type="text" id="propose_new_material" name="propose_new_material" maxlength="100" class="inputbox" placeholder="Nom du nouveau matériau" /></dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_type">{L_CHASTITY_CAGE_TYPE}{L_COLON}</label></dt>
+		<dt><label for="propose_type">{{ lang('CHASTITY_CAGE_TYPE') }}{{ lang('COLON') }}</label></dt>
 		<dd><input type="text" id="propose_type" name="propose_type" maxlength="100" class="inputbox" /></dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_mfr_id">{L_CHASTITY_MANUFACTURER_NAME}{L_COLON}</label></dt>
+		<dt><label for="propose_mfr_id">{{ lang('CHASTITY_MANUFACTURER_NAME') }}{{ lang('COLON') }}</label></dt>
 		<dd>
 			<select id="propose_mfr_id" name="propose_mfr_id">
-				<option value="0">{L_CHASTITY_MANUFACTURER_NONE}</option>
-				<!-- BEGIN propose_mfrs -->
-				<option value="{propose_mfrs.ID}">{propose_mfrs.NAME}</option>
-				<!-- END propose_mfrs -->
+				<option value="0">{{ lang('CHASTITY_MANUFACTURER_NONE') }}</option>
+				{% for propose_mfrs in loops.propose_mfrs %}
+				<option value="{{ propose_mfrs.ID }}">{{ propose_mfrs.NAME }}</option>
+				{% endfor %}
 			</select>
 		</dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_new_mfr_name">{L_CHASTITY_MANUFACTURER_NEW}{L_COLON}</label><br><span>{L_OPTIONAL}</span></dt>
+		<dt><label for="propose_new_mfr_name">{{ lang('CHASTITY_MANUFACTURER_NEW') }}{{ lang('COLON') }}</label><br><span>{{ lang('OPTIONAL') }}</span></dt>
 		<dd>
-			<input type="text" id="propose_new_mfr_name" name="propose_new_mfr_name" maxlength="200" class="inputbox" placeholder="{L_CHASTITY_MANUFACTURER_NAME}" />
+			<input type="text" id="propose_new_mfr_name" name="propose_new_mfr_name" maxlength="200" class="inputbox" placeholder="{{ lang('CHASTITY_MANUFACTURER_NAME') }}" />
 			<br /><input type="text" id="propose_new_mfr_website" name="propose_new_mfr_website" maxlength="255" class="inputbox" placeholder="https://" />
 		</dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_description">{L_CHASTITY_CAGE_DESCRIPTION}{L_COLON}</label></dt>
+		<dt><label for="propose_description">{{ lang('CHASTITY_CAGE_DESCRIPTION') }}{{ lang('COLON') }}</label></dt>
 		<dd><textarea id="propose_description" name="propose_description" rows="3" cols="40"></textarea></dd>
 	</dl>
 	<dl>
-		<dt><label for="propose_photo">{L_CHASTITY_CAGE_ADD_PHOTO}{L_COLON}</label><br><span>{L_OPTIONAL}</span></dt>
+		<dt><label for="propose_photo">{{ lang('CHASTITY_CAGE_ADD_PHOTO') }}{{ lang('COLON') }}</label><br><span>{{ lang('OPTIONAL') }}</span></dt>
 		<dd>
 			<input type="file" id="propose_photo" name="propose_photo" accept="image/jpeg,image/png" />
 			<br /><small>JPG/PNG, max 1 Mo. La photo sera validée par un administrateur.</small>
 		</dd>
 	</dl>
 	<p class="submit-buttons">
-		<input type="submit" name="propose_cage" value="{L_CHASTITY_CAGE_PROPOSE}" class="button1" />
+		<input type="submit" name="propose_cage" value="{{ lang('CHASTITY_CAGE_PROPOSE') }}" class="button1" />
 	</p>
 </fieldset>
-{S_FORM_TOKEN}
+{{ S_FORM_TOKEN }}
 </form>
 
-<script src="{BOARD_URL}ext/verturin/chastitytracker/styles/all/theme/chastity_lightbox.js"></script>
+<script src="{{ BOARD_URL }}ext/verturin/chastitytracker/styles/all/theme/chastity_lightbox.js"></script>
 
 <!-- INCLUDE ucp_footer.html -->

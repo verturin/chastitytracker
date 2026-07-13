@@ -2,83 +2,83 @@
 
 <a id="maincontent"></a>
 
-<h1>{L_ACP_CHASTITY_CAGE_MATERIALS}</h1>
+<h1>{{ lang('ACP_CHASTITY_CAGE_MATERIALS') }}</h1>
 
-<form id="acp_chastity_cage_materials" method="post" action="{U_ACTION}">
+<form id="acp_chastity_cage_materials" method="post" action="{{ U_ACTION }}">
 
 	<fieldset>
-		<legend><!-- IF EDIT_MATERIAL_ID -->{L_EDIT}<!-- ELSE -->{L_ADD}<!-- ENDIF --></legend>
+		<legend>{% if EDIT_MATERIAL_ID %}{{ lang('EDIT') }}{% else %}{{ lang('ADD') }}{% endif %}</legend>
 
-		<input type="hidden" name="material_id" value="{EDIT_MATERIAL_ID}" />
+		<input type="hidden" name="material_id" value="{{ EDIT_MATERIAL_ID }}" />
 
 		<dl>
-			<dt><label for="material_name">{L_CHASTITY_CAGE_MATERIAL}{L_COLON}</label></dt>
-			<dd><input type="text" id="material_name" name="material_name" value="{EDIT_MATERIAL_NAME}" maxlength="100" class="inputbox" required="required" /></dd>
+			<dt><label for="material_name">{{ lang('CHASTITY_CAGE_MATERIAL') }}{{ lang('COLON') }}</label></dt>
+			<dd><input type="text" id="material_name" name="material_name" value="{{ EDIT_MATERIAL_NAME }}" maxlength="100" class="inputbox" required="required" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="material_key">Clé technique{L_COLON}</label><br><span>Optionnel (générée auto sinon)</span></dt>
-			<dd><input type="text" id="material_key" name="material_key" value="{EDIT_MATERIAL_KEY}" maxlength="50" class="inputbox" placeholder="ex: silicone" /></dd>
+			<dt><label for="material_key">Clé technique{{ lang('COLON') }}</label><br><span>Optionnel (générée auto sinon)</span></dt>
+			<dd><input type="text" id="material_key" name="material_key" value="{{ EDIT_MATERIAL_KEY }}" maxlength="50" class="inputbox" placeholder="ex: silicone" /></dd>
 		</dl>
 
 		<p class="submit-buttons">
-			<input type="submit" name="save_material" value="{L_SUBMIT}" class="button1" />
-			<!-- IF EDIT_MATERIAL_ID --><a href="{U_ACTION}" class="button2">{L_CANCEL}</a><!-- ENDIF -->
+			<input type="submit" name="save_material" value="{{ lang('SUBMIT') }}" class="button1" />
+			{% if EDIT_MATERIAL_ID %}<a href="{{ U_ACTION }}" class="button2">{{ lang('CANCEL') }}</a>{% endif %}
 		</p>
 	</fieldset>
 
-	{S_FORM_TOKEN}
+	{{ S_FORM_TOKEN }}
 </form>
 
-<!-- IF .materials -->
+{% if loops.materials is defined and loops.materials|length %}
 <fieldset>
-	<legend>{L_ACP_CHASTITY_CAGE_MATERIALS}</legend>
+	<legend>{{ lang('ACP_CHASTITY_CAGE_MATERIALS') }}</legend>
 	<table class="table1 zebra-table">
 		<thead>
 			<tr>
-				<th>{L_CHASTITY_CAGE_MATERIAL}</th>
+				<th>{{ lang('CHASTITY_CAGE_MATERIAL') }}</th>
 				<th>Clé technique</th>
-				<th>{L_STATUS}</th>
-				<th>{L_ACTION}</th>
+				<th>{{ lang('STATUS') }}</th>
+				<th>{{ lang('ACTION') }}</th>
 			</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN materials -->
+		{% for materials in loops.materials %}
 			<tr>
-				<td><strong>{materials.NAME}</strong></td>
-				<td><code>{materials.KEY}</code></td>
+				<td><strong>{{ materials.NAME }}</strong></td>
+				<td><code>{{ materials.KEY }}</code></td>
 				<td>
-					<!-- IF materials.IS_VALIDATED -->
-						<span style="color:green;">✅ {L_CHASTITY_CAGE_VALIDATED}</span>
-					<!-- ELSE -->
-						<span style="color:orange;">⏳ {L_CHASTITY_CAGE_PENDING}</span>
-					<!-- ENDIF -->
+					{% if materials.IS_VALIDATED %}
+						<span style="color:green;">✅ {{ lang('CHASTITY_CAGE_VALIDATED') }}</span>
+					{% else %}
+						<span style="color:orange;">⏳ {{ lang('CHASTITY_CAGE_PENDING') }}</span>
+					{% endif %}
 				</td>
 				<td style="white-space:nowrap;">
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="material_id" value="{materials.ID}" />
-						<button type="submit" name="edit_material_btn" value="{materials.ID}" class="button2">{L_EDIT}</button>
-						{S_FORM_TOKEN}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="material_id" value="{{ materials.ID }}" />
+						<button type="submit" name="edit_material_btn" value="{{ materials.ID }}" class="button2">{{ lang('EDIT') }}</button>
+						{{ S_FORM_TOKEN }}
 					</form>
-					<!-- IF not materials.IS_VALIDATED -->
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="material_id" value="{materials.ID}" />
-						<button type="submit" name="validate_material" value="1" class="button1" title="{L_CHASTITY_CAGE_VALIDATE}">✅</button>
-						{S_FORM_TOKEN}
+					{% if not materials.IS_VALIDATED %}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="material_id" value="{{ materials.ID }}" />
+						<button type="submit" name="validate_material" value="1" class="button1" title="{{ lang('CHASTITY_CAGE_VALIDATE') }}">✅</button>
+						{{ S_FORM_TOKEN }}
 					</form>
-					<!-- ENDIF -->
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="material_id" value="{materials.ID}" />
-						<button type="submit" name="delete_material" value="1" class="button2" title="{L_DELETE}" onclick="return confirm('{L_CONFIRM_OPERATION}');">🗑️</button>
-						{S_FORM_TOKEN}
+					{% endif %}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="material_id" value="{{ materials.ID }}" />
+						<button type="submit" name="delete_material" value="1" class="button2" title="{{ lang('DELETE') }}" onclick="return confirm('{{ lang('CONFIRM_OPERATION') }}');">🗑️</button>
+						{{ S_FORM_TOKEN }}
 					</form>
 				</td>
 			</tr>
-		<!-- END materials -->
+		{% endfor %}
 		</tbody>
 	</table>
 </fieldset>
-<!-- ELSE -->
+{% else %}
 <div class="successbox"><p>Aucun matériau enregistré.</p></div>
-<!-- ENDIF -->
+{% endif %}
 
 <!-- INCLUDE overall_footer.html -->

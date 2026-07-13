@@ -182,6 +182,7 @@ class badge
 
         $days_current = 0;
         $secs_current = 0;
+        $secs_since_last = 0;
         if ($locked)
         {
             $sql_p = 'SELECT start_date FROM ' . $this->periods_table
@@ -192,6 +193,23 @@ class badge
             if ($p) {
                 $secs_current = max(0, time() - (int) $p['start_date']);
                 $days_current = (int) floor($secs_current / 86400);
+            }
+        }
+        else
+        {
+            // Requête live pour disposer des SECONDES exactes depuis la fin
+            // de la dernière période (le cache ne stocke que des jours déjà
+            // arrondis par floor(), perdant la précision nécessaire à
+            // l'affichage "depuis Xh" en dessous de 24h — même limitation
+            // que celle déjà corrigée côté verrouillé).
+            $sql_le = 'SELECT end_date FROM ' . $this->periods_table . "
+                       WHERE user_id = $user_id AND status = 'completed' AND end_date > 0
+                       ORDER BY end_date DESC LIMIT 1";
+            $res_le = $this->db->sql_query($sql_le);
+            $le     = $this->db->sql_fetchrow($res_le);
+            $this->db->sql_freeresult($res_le);
+            if ($le) {
+                $secs_since_last = max(0, time() - (int) $le['end_date']);
             }
         }
 
@@ -262,6 +280,7 @@ class badge
             'days_current'     => $locked ? $days_current : 0,
             'secs_current'     => $locked ? $secs_current : 0,
             'days_since_last'  => $locked ? 0 : (int) $cu['days_since_last_end'],
+            'secs_since_last'  => $locked ? 0 : $secs_since_last,
             'total_days'       => (function() use ($user_id) {
                 $sql_tt = 'SELECT SUM(end_date - start_date) AS total_seconds FROM ' . $this->periods_table . "
                            WHERE user_id = " . $user_id . " AND status = 'completed' AND end_date > start_date";
@@ -396,7 +415,7 @@ class badge
         $status_color = $locked ? $red : $green;
         $status_text  = $locked ? 'EN CAGE' : 'LIBRE';
         $days         = $locked ? $data['days_current'] : $data['days_since_last'];
-        $since_text   = $this->format_since($locked, (int) ($data['secs_current'] ?? 0), $days);
+        $since_text   = $this->format_since($locked, $locked ? (int) ($data['secs_current'] ?? 0) : (int) ($data['secs_since_last'] ?? 0), $days);
 
         // Barre de statut en haut
         imagefilledrectangle($img, 0, 0, $w - 1, 4, $status_color);
@@ -527,7 +546,7 @@ class badge
         }
 
         // "depuis X jours" ou "depuis XhYY" si < 24h — aligné à droite
-        $since_text = 'depuis ' . $this->format_since($locked, (int) ($data['secs_current'] ?? 0), $days);
+        $since_text = 'depuis ' . $this->format_since($locked, $locked ? (int) ($data['secs_current'] ?? 0) : (int) ($data['secs_since_last'] ?? 0), $days);
         $total_w = strlen($since_text) * 10;
         $start_x = $w - 12 - $total_w;
         $this->draw_text($img, $start_x, 42, $since_text, $text, 5, false, $has_ttf ? $ttf_file : null);
@@ -611,7 +630,7 @@ class badge
 
         $sc     = $locked ? $red : $green;
         $days   = $locked ? $data['days_current'] : $data['days_since_last'];
-        $since_text = $this->format_since($locked, (int) ($data['secs_current'] ?? 0), $days);
+        $since_text = $this->format_since($locked, $locked ? (int) ($data['secs_current'] ?? 0) : (int) ($data['secs_since_last'] ?? 0), $days);
 
         // Pastille de couleur
         imagefilledrectangle($img, 0, 0, 3, $h - 1, $sc);
@@ -639,16 +658,17 @@ class badge
      * Dessine du texte (avec ou sans TTF)
      */
     /**
-     * Formate la durée écoulée d'une période active.
-     * < 24h → "1h05", "5h30" ; >= 24h → "X jour(s)".
+     * Formate la durée écoulée d'une période active OU depuis la fin de la
+     * dernière période (libre). < 24h → "1h05", "5h30" ; >= 24h → "X jour(s)".
+     * S'applique aux DEUX statuts (verrouillé et libre).
      * @param bool $locked  période active ?
-     * @param int  $secs    secondes écoulées (si verrouillé)
-     * @param int  $days    jours (fallback / libre)
+     * @param int  $secs    secondes écoulées (verrouillé : depuis le début ; libre : depuis la fin)
+     * @param int  $days    jours (fallback)
      * @return string  texte prêt à afficher (après "depuis ")
      */
     private function format_since($locked, $secs, $days)
     {
-        if ($locked && $secs > 0 && $secs < 86400) {
+        if ($secs > 0 && $secs < 86400) {
             $h = (int) floor($secs / 3600);
             $m = (int) floor(($secs % 3600) / 60);
             return $h . 'h' . sprintf('%02d', $m);

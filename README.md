@@ -2,7 +2,7 @@
 
 > Extension phpBB 3.3+ — Suivi de chasteté complet : calendrier, sorties/activités en cage, catalogue de cages communautaire, relations Keyholder ↔ Encagé, badges publics et statistiques
 
-[![Version](https://img.shields.io/badge/version-3.14.17-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.14.21-blue.svg)](CHANGELOG.md)
 [![phpBB](https://img.shields.io/badge/phpBB-%E2%89%A53.2.0-orange.svg)](https://www.phpbb.com)
 [![PHP](https://img.shields.io/badge/PHP-%E2%89%A57.1-8892BF.svg)](https://php.net)
 [![Licence](https://img.shields.io/badge/licence-GPL--2.0--only-green.svg)](LICENSE)

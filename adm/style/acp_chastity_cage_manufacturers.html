@@ -2,102 +2,102 @@
 
 <a id="maincontent"></a>
 
-<h1>{L_ACP_CHASTITY_CAGE_MANUFACTURERS}</h1>
+<h1>{{ lang('ACP_CHASTITY_CAGE_MANUFACTURERS') }}</h1>
 
-<form id="acp_chastity_cage_mfr_edit" method="post" action="{U_ACTION}">
+<form id="acp_chastity_cage_mfr_edit" method="post" action="{{ U_ACTION }}">
 
 	<fieldset>
-		<legend><!-- IF EDIT_MFR_ID -->{L_CHASTITY_MANUFACTURER_EDIT}<!-- ELSE -->{L_CHASTITY_MANUFACTURER_ADD}<!-- ENDIF --></legend>
+		<legend>{% if EDIT_MFR_ID %}{{ lang('CHASTITY_MANUFACTURER_EDIT') }}{% else %}{{ lang('CHASTITY_MANUFACTURER_ADD') }}{% endif %}</legend>
 
-		<input type="hidden" name="manufacturer_id" value="{EDIT_MFR_ID}" />
+		<input type="hidden" name="manufacturer_id" value="{{ EDIT_MFR_ID }}" />
 
 		<dl>
-			<dt><label for="mfr_name">{L_CHASTITY_MANUFACTURER_NAME}{L_COLON}</label></dt>
-			<dd><input type="text" id="mfr_name" name="mfr_name" value="{EDIT_MFR_NAME}" maxlength="200" class="inputbox" required="required" /></dd>
+			<dt><label for="mfr_name">{{ lang('CHASTITY_MANUFACTURER_NAME') }}{{ lang('COLON') }}</label></dt>
+			<dd><input type="text" id="mfr_name" name="mfr_name" value="{{ EDIT_MFR_NAME }}" maxlength="200" class="inputbox" required="required" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="mfr_address">{L_CHASTITY_MANUFACTURER_ADDRESS}{L_COLON}</label></dt>
-			<dd><textarea id="mfr_address" name="mfr_address" rows="3" cols="40">{EDIT_MFR_ADDRESS}</textarea></dd>
+			<dt><label for="mfr_address">{{ lang('CHASTITY_MANUFACTURER_ADDRESS') }}{{ lang('COLON') }}</label></dt>
+			<dd><textarea id="mfr_address" name="mfr_address" rows="3" cols="40">{{ EDIT_MFR_ADDRESS }}</textarea></dd>
 		</dl>
 		<dl>
-			<dt><label for="mfr_phone">{L_CHASTITY_MANUFACTURER_PHONE}{L_COLON}</label></dt>
-			<dd><input type="text" id="mfr_phone" name="mfr_phone" value="{EDIT_MFR_PHONE}" maxlength="50" class="inputbox" /></dd>
+			<dt><label for="mfr_phone">{{ lang('CHASTITY_MANUFACTURER_PHONE') }}{{ lang('COLON') }}</label></dt>
+			<dd><input type="text" id="mfr_phone" name="mfr_phone" value="{{ EDIT_MFR_PHONE }}" maxlength="50" class="inputbox" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="mfr_email">{L_CHASTITY_MANUFACTURER_EMAIL}{L_COLON}</label></dt>
-			<dd><input type="email" id="mfr_email" name="mfr_email" value="{EDIT_MFR_EMAIL}" maxlength="200" class="inputbox" /></dd>
+			<dt><label for="mfr_email">{{ lang('CHASTITY_MANUFACTURER_EMAIL') }}{{ lang('COLON') }}</label></dt>
+			<dd><input type="email" id="mfr_email" name="mfr_email" value="{{ EDIT_MFR_EMAIL }}" maxlength="200" class="inputbox" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="mfr_website">{L_CHASTITY_MANUFACTURER_WEBSITE}{L_COLON}</label></dt>
-			<dd><input type="text" id="mfr_website" name="mfr_website" value="{EDIT_MFR_WEBSITE}" maxlength="255" class="inputbox" placeholder="https://" /></dd>
+			<dt><label for="mfr_website">{{ lang('CHASTITY_MANUFACTURER_WEBSITE') }}{{ lang('COLON') }}</label></dt>
+			<dd><input type="text" id="mfr_website" name="mfr_website" value="{{ EDIT_MFR_WEBSITE }}" maxlength="255" class="inputbox" placeholder="https://" /></dd>
 		</dl>
 		<dl>
-			<dt><label>{L_CHASTITY_MANUFACTURER_PARTNER}{L_COLON}</label></dt>
+			<dt><label>{{ lang('CHASTITY_MANUFACTURER_PARTNER') }}{{ lang('COLON') }}</label></dt>
 			<dd>
-				<input type="radio" name="mfr_is_partner" id="mfr_partner_yes" value="1" <!-- IF EDIT_MFR_PARTNER -->checked="checked"<!-- ENDIF --> />
-				<label for="mfr_partner_yes">{L_YES}</label>
+				<input type="radio" name="mfr_is_partner" id="mfr_partner_yes" value="1" {% if EDIT_MFR_PARTNER %}checked="checked"{% endif %} />
+				<label for="mfr_partner_yes">{{ lang('YES') }}</label>
 				&nbsp;&nbsp;
-				<input type="radio" name="mfr_is_partner" id="mfr_partner_no" value="0" <!-- IF not EDIT_MFR_PARTNER -->checked="checked"<!-- ENDIF --> />
-				<label for="mfr_partner_no">{L_NO}</label>
+				<input type="radio" name="mfr_is_partner" id="mfr_partner_no" value="0" {% if not EDIT_MFR_PARTNER %}checked="checked"{% endif %} />
+				<label for="mfr_partner_no">{{ lang('NO') }}</label>
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="mfr_partner_notes">{L_CHASTITY_MANUFACTURER_NOTES}{L_COLON}</label></dt>
-			<dd><textarea id="mfr_partner_notes" name="mfr_partner_notes" rows="3" cols="40">{EDIT_MFR_NOTES}</textarea></dd>
+			<dt><label for="mfr_partner_notes">{{ lang('CHASTITY_MANUFACTURER_NOTES') }}{{ lang('COLON') }}</label></dt>
+			<dd><textarea id="mfr_partner_notes" name="mfr_partner_notes" rows="3" cols="40">{{ EDIT_MFR_NOTES }}</textarea></dd>
 		</dl>
 
 		<p class="submit-buttons">
-			<input type="submit" name="save_manufacturer" value="{L_SUBMIT}" class="button1" />
-			<!-- IF EDIT_MFR_ID --><a href="{U_ACTION}" class="button2">{L_CANCEL}</a><!-- ENDIF -->
+			<input type="submit" name="save_manufacturer" value="{{ lang('SUBMIT') }}" class="button1" />
+			{% if EDIT_MFR_ID %}<a href="{{ U_ACTION }}" class="button2">{{ lang('CANCEL') }}</a>{% endif %}
 		</p>
 	</fieldset>
 
-	{S_FORM_TOKEN}
+	{{ S_FORM_TOKEN }}
 </form>
 
-<!-- IF .manufacturers -->
+{% if loops.manufacturers is defined and loops.manufacturers|length %}
 <fieldset>
-	<legend>{L_ACP_CHASTITY_CAGE_MANUFACTURERS}</legend>
+	<legend>{{ lang('ACP_CHASTITY_CAGE_MANUFACTURERS') }}</legend>
 	<table class="table1 zebra-table">
 		<thead>
 			<tr>
-				<th>{L_CHASTITY_MANUFACTURER_NAME}</th>
-				<th>{L_CHASTITY_MANUFACTURER_WEBSITE}</th>
-				<th>{L_CHASTITY_MANUFACTURER_PARTNER}</th>
-				<th>{L_ACP_CHASTITY_CAGE_CATALOG}</th>
-				<th>{L_ACTION}</th>
+				<th>{{ lang('CHASTITY_MANUFACTURER_NAME') }}</th>
+				<th>{{ lang('CHASTITY_MANUFACTURER_WEBSITE') }}</th>
+				<th>{{ lang('CHASTITY_MANUFACTURER_PARTNER') }}</th>
+				<th>{{ lang('ACP_CHASTITY_CAGE_CATALOG') }}</th>
+				<th>{{ lang('ACTION') }}</th>
 			</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN manufacturers -->
+		{% for manufacturers in loops.manufacturers %}
 			<tr>
 				<td>
-					<strong>{manufacturers.NAME}</strong>
-					<!-- IF manufacturers.PHONE --><br /><small>📞 {manufacturers.PHONE}</small><!-- ENDIF -->
-					<!-- IF manufacturers.EMAIL --><br /><small>📧 {manufacturers.EMAIL}</small><!-- ENDIF -->
+					<strong>{{ manufacturers.NAME }}</strong>
+					{% if manufacturers.PHONE %}<br /><small>📞 {{ manufacturers.PHONE }}</small>{% endif %}
+					{% if manufacturers.EMAIL %}<br /><small>📧 {{ manufacturers.EMAIL }}</small>{% endif %}
 				</td>
-				<td><!-- IF manufacturers.WEBSITE --><a href="{manufacturers.WEBSITE}" target="_blank">{manufacturers.WEBSITE}</a><!-- ELSE -->-<!-- ENDIF --></td>
-				<td><!-- IF manufacturers.IS_PARTNER --><span style="color:green;font-weight:bold;">{L_YES}</span><!-- ELSE -->{L_NO}<!-- ENDIF --></td>
-				<td>{manufacturers.CAGE_COUNT}</td>
+				<td>{% if manufacturers.WEBSITE %}<a href="{{ manufacturers.WEBSITE }}" target="_blank">{{ manufacturers.WEBSITE }}</a>{% else %}-{% endif %}</td>
+				<td>{% if manufacturers.IS_PARTNER %}<span style="color:green;font-weight:bold;">{{ lang('YES') }}</span>{% else %}{{ lang('NO') }}{% endif %}</td>
+				<td>{{ manufacturers.CAGE_COUNT }}</td>
 				<td style="white-space:nowrap;">
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="manufacturer_id" value="{manufacturers.ID}" />
-						<button type="submit" name="edit_mfr_btn" value="{manufacturers.ID}" class="button2">{L_EDIT}</button>
-						{S_FORM_TOKEN}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="manufacturer_id" value="{{ manufacturers.ID }}" />
+						<button type="submit" name="edit_mfr_btn" value="{{ manufacturers.ID }}" class="button2">{{ lang('EDIT') }}</button>
+						{{ S_FORM_TOKEN }}
 					</form>
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="manufacturer_id" value="{manufacturers.ID}" />
-						<button type="submit" name="delete_manufacturer" value="1" class="button2" onclick="return confirm('{L_CHASTITY_MANUFACTURER_DELETE_CONFIRM}');">{L_DELETE}</button>
-						{S_FORM_TOKEN}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="manufacturer_id" value="{{ manufacturers.ID }}" />
+						<button type="submit" name="delete_manufacturer" value="1" class="button2" onclick="return confirm('{{ lang('CHASTITY_MANUFACTURER_DELETE_CONFIRM') }}');">{{ lang('DELETE') }}</button>
+						{{ S_FORM_TOKEN }}
 					</form>
 				</td>
 			</tr>
-		<!-- END manufacturers -->
+		{% endfor %}
 		</tbody>
 	</table>
 </fieldset>
-<!-- ELSE -->
-<div class="successbox"><p>{L_CHASTITY_MANUFACTURER_NONE}</p></div>
-<!-- ENDIF -->
+{% else %}
+<div class="successbox"><p>{{ lang('CHASTITY_MANUFACTURER_NONE') }}</p></div>
+{% endif %}
 
 <!-- INCLUDE overall_footer.html -->
