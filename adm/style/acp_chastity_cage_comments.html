@@ -2,142 +2,142 @@
 
 <a id="maincontent"></a>
 
-<h1>{L_ACP_CHASTITY_CAGE_COMMENTS} <span style="font-size:0.5em;color:#999;">[build 3.7.10]</span></h1>
+<h1>{{ lang('ACP_CHASTITY_CAGE_COMMENTS') }} <span style="font-size:0.5em;color:#999;">[build 3.7.10]</span></h1>
 
-<p>{L_ACP_CHASTITY_CAGE_COMMENTS_EXPLAIN}</p>
+<p>{{ lang('ACP_CHASTITY_CAGE_COMMENTS_EXPLAIN') }}</p>
 
 <!-- Barre de recherche / filtres -->
-<form method="get" action="{U_ACTION}" id="acp_filters">
-	<input type="hidden" name="i" value="{ADM_I}" />
+<form method="get" action="{{ U_ACTION }}" id="acp_filters">
+	<input type="hidden" name="i" value="{{ ADM_I }}" />
 	<input type="hidden" name="mode" value="cage_comments" />
 	<fieldset>
-		<legend>🔍 {L_ACP_SEARCH_FILTERS}</legend>
+		<legend>🔍 {{ lang('ACP_SEARCH_FILTERS') }}</legend>
 		<table style="width:100%;">
 			<tr>
 				<td style="padding:4px;">
-					<label for="search_text">{L_ACP_SEARCH_TEXT}{L_COLON}</label><br>
-					<input type="text" id="search_text" name="search_text" value="{FILTER_TEXT}" class="inputbox narrow" placeholder="{L_ACP_SEARCH_TEXT_PLACEHOLDER}" />
+					<label for="search_text">{{ lang('ACP_SEARCH_TEXT') }}{{ lang('COLON') }}</label><br>
+					<input type="text" id="search_text" name="search_text" value="{{ FILTER_TEXT }}" class="inputbox narrow" placeholder="{{ lang('ACP_SEARCH_TEXT_PLACEHOLDER') }}" />
 				</td>
 				<td style="padding:4px;">
-					<label for="search_user">{L_ACP_SEARCH_USER}{L_COLON}</label><br>
-					<input type="text" id="search_user" name="search_user" value="{FILTER_USER}" class="inputbox narrow" placeholder="{L_ACP_SEARCH_USER_PLACEHOLDER}" />
+					<label for="search_user">{{ lang('ACP_SEARCH_USER') }}{{ lang('COLON') }}</label><br>
+					<input type="text" id="search_user" name="search_user" value="{{ FILTER_USER }}" class="inputbox narrow" placeholder="{{ lang('ACP_SEARCH_USER_PLACEHOLDER') }}" />
 				</td>
 				<td style="padding:4px;">
-					<label for="date_from">{L_ACP_DATE_FROM}{L_COLON}</label><br>
-					<input type="date" id="date_from" name="date_from" value="{FILTER_DATE_FROM}" class="inputbox narrow" />
+					<label for="date_from">{{ lang('ACP_DATE_FROM') }}{{ lang('COLON') }}</label><br>
+					<input type="date" id="date_from" name="date_from" value="{{ FILTER_DATE_FROM }}" class="inputbox narrow" />
 				</td>
 				<td style="padding:4px;">
-					<label for="date_to">{L_ACP_DATE_TO}{L_COLON}</label><br>
-					<input type="date" id="date_to" name="date_to" value="{FILTER_DATE_TO}" class="inputbox narrow" />
+					<label for="date_to">{{ lang('ACP_DATE_TO') }}{{ lang('COLON') }}</label><br>
+					<input type="date" id="date_to" name="date_to" value="{{ FILTER_DATE_TO }}" class="inputbox narrow" />
 				</td>
 				<td style="padding:4px;vertical-align:bottom;">
-					<input type="submit" value="{L_ACP_FILTER}" class="button1" />
-					<!-- IF HAS_FILTERS -->
-					<a href="{U_ACTION}" class="button2">{L_ACP_CLEAR_FILTERS}</a>
-					<!-- ENDIF -->
+					<input type="submit" value="{{ lang('ACP_FILTER') }}" class="button1" />
+					{% if HAS_FILTERS %}
+					<a href="{{ U_ACTION }}" class="button2">{{ lang('ACP_CLEAR_FILTERS') }}</a>
+					{% endif %}
 				</td>
 			</tr>
 		</table>
 	</fieldset>
 </form>
 
-<!-- IF PENDING_COMMENTS gt 0 -->
+{% if PENDING_COMMENTS > 0 %}
 <fieldset>
-	<legend style="color:#BC2A4D;">⚠️ {PENDING_COMMENTS} {L_ACP_PENDING_COMMENTS}</legend>
+	<legend style="color:#BC2A4D;">⚠️ {{ PENDING_COMMENTS }} {{ lang('ACP_PENDING_COMMENTS') }}</legend>
 	<table class="table1" style="width:100%;margin-top:10px;">
 		<thead>
 			<tr>
-				<th>{L_CHASTITY_CAGE_NAME}</th>
-				<th>{L_USER}</th>
-				<th>{L_CHASTITY_CAGE_RATE}</th>
-				<th>{L_CHASTITY_CAGE_COMMENT_LABEL}</th>
-				<th>{L_DATE}</th>
-				<th>{L_ACTIONS}</th>
+				<th>{{ lang('CHASTITY_CAGE_NAME') }}</th>
+				<th>{{ lang('USER') }}</th>
+				<th>{{ lang('CHASTITY_CAGE_RATE') }}</th>
+				<th>{{ lang('CHASTITY_CAGE_COMMENT_LABEL') }}</th>
+				<th>{{ lang('DATE') }}</th>
+				<th>{{ lang('ACTIONS') }}</th>
 			</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN ctpendingrow -->
+		{% for ctpendingrow in loops.ctpendingrow %}
 			<tr>
-				<td><strong>{ctpendingrow.CAGE_NAME}</strong></td>
-				<td><span style="color:#{ctpendingrow.AUTHOR_COLOUR};font-weight:bold;">{ctpendingrow.AUTHOR}</span></td>
+				<td><strong>{{ ctpendingrow.CAGE_NAME }}</strong></td>
+				<td><span style="color:#{{ ctpendingrow.AUTHOR_COLOUR }};font-weight:bold;">{{ ctpendingrow.AUTHOR }}</span></td>
 				<td style="color:#FFB400;">
-					<!-- IF ctpendingrow.RATING gte 1 -->★<!-- ENDIF -->
-					<!-- IF ctpendingrow.RATING gte 2 -->★<!-- ENDIF -->
-					<!-- IF ctpendingrow.RATING gte 3 -->★<!-- ENDIF -->
-					<!-- IF ctpendingrow.RATING gte 4 -->★<!-- ENDIF -->
-					<!-- IF ctpendingrow.RATING gte 5 -->★<!-- ENDIF -->
+					{% if ctpendingrow.RATING >= 1 %}★{% endif %}
+					{% if ctpendingrow.RATING >= 2 %}★{% endif %}
+					{% if ctpendingrow.RATING >= 3 %}★{% endif %}
+					{% if ctpendingrow.RATING >= 4 %}★{% endif %}
+					{% if ctpendingrow.RATING >= 5 %}★{% endif %}
 				</td>
-				<td>{ctpendingrow.COMMENT}</td>
-				<td>{ctpendingrow.DATE}</td>
+				<td>{{ ctpendingrow.COMMENT }}</td>
+				<td>{{ ctpendingrow.DATE }}</td>
 				<td>
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="rating_id" value="{ctpendingrow.RATING_ID}" />
-						<button type="submit" name="validate_comment" value="1" class="button1" title="{L_CHASTITY_CAGE_VALIDATE}">✅</button>
-						<button type="submit" name="reject_comment" value="1" class="button2" title="{L_CHASTITY_CAGE_REJECT}" onclick="return confirm('{L_CONFIRM_OPERATION}');">❌</button>
-						<button type="submit" name="delete_comment" value="1" class="button2" title="{L_ACP_DELETE_COMMENT}" onclick="return confirm('{L_ACP_DELETE_CONFIRM}');">🗑️</button>
-						{S_FORM_TOKEN}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="rating_id" value="{{ ctpendingrow.RATING_ID }}" />
+						<button type="submit" name="validate_comment" value="1" class="button1" title="{{ lang('CHASTITY_CAGE_VALIDATE') }}">✅</button>
+						<button type="submit" name="reject_comment" value="1" class="button2" title="{{ lang('CHASTITY_CAGE_REJECT') }}" onclick="return confirm('{{ lang('CONFIRM_OPERATION') }}');">❌</button>
+						<button type="submit" name="delete_comment" value="1" class="button2" title="{{ lang('ACP_DELETE_COMMENT') }}" onclick="return confirm('{{ lang('ACP_DELETE_CONFIRM') }}');">🗑️</button>
+						{{ S_FORM_TOKEN }}
 					</form>
 				</td>
 			</tr>
-		<!-- END ctpendingrow -->
+		{% endfor %}
 		</tbody>
 	</table>
 </fieldset>
-<!-- ELSEIF not HAS_FILTERS -->
+{% elseif not HAS_FILTERS %}
 <div class="successbox" style="background:#D4EDDA;border-left:4px solid #5A8770;padding:12px;margin-bottom:15px;">
-	✅ {L_ACP_NO_PENDING_COMMENTS}
+	✅ {{ lang('ACP_NO_PENDING_COMMENTS') }}
 </div>
-<!-- ENDIF -->
+{% endif %}
 
 <fieldset>
-	<legend>💬 {VALIDATED_COMMENTS} {L_ACP_VALIDATED_COMMENTS_TITLE}</legend>
-	<!-- IF VALIDATED_COMMENTS gt 0 -->
+	<legend>💬 {{ VALIDATED_COMMENTS }} {{ lang('ACP_VALIDATED_COMMENTS_TITLE') }}</legend>
+	{% if VALIDATED_COMMENTS > 0 %}
 	<table class="table1" style="width:100%;margin-top:10px;">
 		<thead>
 			<tr>
-				<th>{L_CHASTITY_CAGE_NAME}</th>
-				<th>{L_USER}</th>
-				<th>{L_CHASTITY_CAGE_RATE}</th>
-				<th>{L_CHASTITY_CAGE_COMMENT_LABEL}</th>
-				<th>{L_DATE}</th>
-				<th>{L_ACTIONS}</th>
+				<th>{{ lang('CHASTITY_CAGE_NAME') }}</th>
+				<th>{{ lang('USER') }}</th>
+				<th>{{ lang('CHASTITY_CAGE_RATE') }}</th>
+				<th>{{ lang('CHASTITY_CAGE_COMMENT_LABEL') }}</th>
+				<th>{{ lang('DATE') }}</th>
+				<th>{{ lang('ACTIONS') }}</th>
 			</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN ctvalidrow -->
+		{% for ctvalidrow in loops.ctvalidrow %}
 			<tr>
-				<td><strong>{ctvalidrow.CAGE_NAME}</strong></td>
-				<td><span style="color:#{ctvalidrow.AUTHOR_COLOUR};font-weight:bold;">{ctvalidrow.AUTHOR}</span></td>
+				<td><strong>{{ ctvalidrow.CAGE_NAME }}</strong></td>
+				<td><span style="color:#{{ ctvalidrow.AUTHOR_COLOUR }};font-weight:bold;">{{ ctvalidrow.AUTHOR }}</span></td>
 				<td style="color:#FFB400;">
-					<!-- IF ctvalidrow.RATING gte 1 -->★<!-- ENDIF -->
-					<!-- IF ctvalidrow.RATING gte 2 -->★<!-- ENDIF -->
-					<!-- IF ctvalidrow.RATING gte 3 -->★<!-- ENDIF -->
-					<!-- IF ctvalidrow.RATING gte 4 -->★<!-- ENDIF -->
-					<!-- IF ctvalidrow.RATING gte 5 -->★<!-- ENDIF -->
+					{% if ctvalidrow.RATING >= 1 %}★{% endif %}
+					{% if ctvalidrow.RATING >= 2 %}★{% endif %}
+					{% if ctvalidrow.RATING >= 3 %}★{% endif %}
+					{% if ctvalidrow.RATING >= 4 %}★{% endif %}
+					{% if ctvalidrow.RATING >= 5 %}★{% endif %}
 				</td>
 				<td>
-					<form method="post" action="{U_ACTION}" style="margin:0;">
-						<input type="hidden" name="rating_id" value="{ctvalidrow.RATING_ID}" />
-						<textarea name="comment_text" rows="2" style="width:100%;box-sizing:border-box;font-size:0.85em;" maxlength="500">{ctvalidrow.COMMENT}</textarea>
-						<button type="submit" name="edit_comment" value="1" class="button2" style="margin-top:4px;font-size:0.85em;">💾 {L_SAVE}</button>
-						{S_FORM_TOKEN}
+					<form method="post" action="{{ U_ACTION }}" style="margin:0;">
+						<input type="hidden" name="rating_id" value="{{ ctvalidrow.RATING_ID }}" />
+						<textarea name="comment_text" rows="2" style="width:100%;box-sizing:border-box;font-size:0.85em;" maxlength="500">{{ ctvalidrow.COMMENT }}</textarea>
+						<button type="submit" name="edit_comment" value="1" class="button2" style="margin-top:4px;font-size:0.85em;">💾 {{ lang('SAVE') }}</button>
+						{{ S_FORM_TOKEN }}
 					</form>
 				</td>
-				<td>{ctvalidrow.DATE}</td>
+				<td>{{ ctvalidrow.DATE }}</td>
 				<td>
-					<form method="post" action="{U_ACTION}" style="display:inline;">
-						<input type="hidden" name="rating_id" value="{ctvalidrow.RATING_ID}" />
-						<button type="submit" name="delete_comment" value="1" class="button2" title="{L_ACP_DELETE_COMMENT}" onclick="return confirm('{L_ACP_DELETE_CONFIRM}');">🗑️</button>
-						{S_FORM_TOKEN}
+					<form method="post" action="{{ U_ACTION }}" style="display:inline;">
+						<input type="hidden" name="rating_id" value="{{ ctvalidrow.RATING_ID }}" />
+						<button type="submit" name="delete_comment" value="1" class="button2" title="{{ lang('ACP_DELETE_COMMENT') }}" onclick="return confirm('{{ lang('ACP_DELETE_CONFIRM') }}');">🗑️</button>
+						{{ S_FORM_TOKEN }}
 					</form>
 				</td>
 			</tr>
-		<!-- END ctvalidrow -->
+		{% endfor %}
 		</tbody>
 	</table>
-	<!-- ELSE -->
-	<p style="text-align:center;color:#888;padding:20px;"><em>{L_ACP_NO_COMMENTS_FOUND}</em></p>
-	<!-- ENDIF -->
+	{% else %}
+	<p style="text-align:center;color:#888;padding:20px;"><em>{{ lang('ACP_NO_COMMENTS_FOUND') }}</em></p>
+	{% endif %}
 </fieldset>
 
 <!-- INCLUDE overall_footer.html -->

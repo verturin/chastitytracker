@@ -1627,26 +1627,75 @@ foreach ($datetime_months as $num => $key) {
 
         if (!empty($config['chastity_locktober_leaderboard_enabled']))
         {
-            $sql = 'SELECT u.username, u.user_colour, u.user_id, p.start_date
+            // A3 : le tri se faisait par date de début de période
+            // (ORDER BY p.start_date ASC), pas par nombre de jours — sans
+            // effet pratique puisque presque tout le monde démarre autour du
+            // 1er octobre. Le nombre de jours est calculé en PHP (fuseaux
+            // horaires/moteurs SQL hétérogènes selon le backend phpBB), donc
+            // le tri par jours doit aussi se faire en PHP : on récupère tous
+            // les participants actifs, on calcule leurs jours, puis on trie
+            // le tableau résultant par jours décroissants avant de limiter
+            // à 20 pour l'affichage.
+            //
+            // Inclut aussi les périodes 'completed' (terminées avant la fin
+            // du mois) : un participant qui arrête ou termine en cours de
+            // mois doit rester au classement avec son total final de jours,
+            // pas disparaître du seul fait que sa période n'est plus active.
+            $sql = 'SELECT u.username, u.user_colour, u.user_id, p.start_date, p.end_date, p.status, p.days_count
                     FROM ' . $periods_table . ' p
                     LEFT JOIN ' . USERS_TABLE . ' u ON u.user_id = p.user_id
                     WHERE p.is_locktober = 1
                       AND p.locktober_year = ' . $current_year . "
-                      AND p.status = 'active'
-                    ORDER BY p.start_date ASC
-                    LIMIT 20";
+                      AND p.status IN ('active', 'completed')";
             $result = $db->sql_query($sql);
-            $rank   = 1;
+            $lb_rows = [];
             while ($row = $db->sql_fetchrow($result))
+            {
+                if ($row['status'] === 'active')
+                {
+                    $lb_days = (int) floor((time() - (int) $row['start_date']) / 86400) + 1;
+                }
+                else
+                {
+                    // Période terminée : days_count est déjà calculé et figé
+                    // à la clôture (cohérent avec l'historique
+                    // "completed_locktober"), avec repli sur end_date si
+                    // jamais absent.
+                    $lb_days = (int) $row['days_count'];
+                    if ($lb_days <= 0 && (int) $row['end_date'] > 0)
+                    {
+                        $lb_days = (int) floor(((int) $row['end_date'] - (int) $row['start_date']) / 86400) + 1;
+                    }
+                }
+
+                $lb_rows[] = [
+                    'username'    => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+                    'days'        => $lb_days,
+                    'start_date'  => (int) $row['start_date'],
+                ];
+            }
+            $db->sql_freeresult($result);
+
+            // Tri décroissant par jours ; à égalité, celui qui a démarré en
+            // premier (start_date le plus ancien) passe devant.
+            usort($lb_rows, function ($a, $b) {
+                if ($a['days'] !== $b['days'])
+                {
+                    return $b['days'] <=> $a['days'];
+                }
+                return $a['start_date'] <=> $b['start_date'];
+            });
+
+            $rank = 1;
+            foreach (array_slice($lb_rows, 0, 20) as $lb_row)
             {
                 $template->assign_block_vars('leaderboard', [
                     'RANK'     => $rank,
-                    'USERNAME' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-                    'DAYS'     => (int) floor((time() - (int) $row['start_date']) / 86400) + 1,
+                    'USERNAME' => $lb_row['username'],
+                    'DAYS'     => $lb_row['days'],
                 ]);
                 $rank++;
             }
-            $db->sql_freeresult($result);
         }
 
         // Badges Locktober acquis par le membre (image + année + niveau)

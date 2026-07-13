@@ -2,6 +2,35 @@
 
 ---
 
+## [3.14.21] — Juillet 2026 — **Migration 100% Twig (catalogue de cages)**
+
+### Modifié
+- Les 7 derniers fichiers de templates utilisant encore la syntaxe classique phpBB (`<!-- IF -->`/`<!-- BEGIN -->`, héritée du tout début du module Cages) sont désormais entièrement convertis en Twig, comme le reste de l'extension : `ucp_chastity_cage_catalog.html`, `ucp_chastity_cage_collection.html`, `chastity_public_cages.html`, `acp_chastity_cage_catalog.html`, `acp_chastity_cage_materials.html`, `acp_chastity_cage_manufacturers.html`, `acp_chastity_cage_comments.html`. Aucun changement fonctionnel ni visuel — réécriture technique pure, chaque fichier vérifié individuellement (résidus de syntaxe, équilibre des balises, comparaison ligne à ligne avec l'original) avant remplacement.
+- L'extension est désormais 100% Twig sur l'ensemble de ses templates.
+
+---
+
+## [3.14.20] — Juillet 2026 — **Locktober : les périodes terminées restent au classement**
+
+### Corrigé
+- Le classement Locktober ne conservait que les participants encore actuellement verrouillés (`status = 'active'`) — un participant qui termine ou arrête sa période en cours de mois disparaissait purement et simplement du classement au lieu d'y rester avec son total final de jours. La requête inclut désormais aussi les périodes `completed`, avec leur nombre de jours figé à la clôture (`days_count`).
+
+---
+
+## [3.14.19] — Juillet 2026 — **Locktober : tri du classement**
+
+### Corrigé
+- Le classement Locktober (leaderboard) était trié par date de début de période (`ORDER BY start_date ASC`), pas par nombre de jours effectivement tenus — sans effet pratique puisque la quasi-totalité des participants démarre autour du 1ᵉʳ octobre. Le tri se fait désormais réellement par jours décroissants (calculés en PHP pour rester portable entre les différents moteurs SQL supportés par phpBB), avec en cas d'égalité un départage par date de départ la plus ancienne.
+
+---
+
+## [3.14.18] — Juillet 2026 — **Affichage sub-24h pour le statut Libre**
+
+### Corrigé
+- L'affichage "depuis Xh" pour les durées inférieures à 24h ne s'appliquait qu'au statut Verrouillé. Un membre tout juste libéré affichait "0 jour" (ou restait carrément masqué dans le mini-profil des messages, confondu avec "n'a jamais eu de période") au lieu de "3h20" par exemple. Corrigé sur les 3 surfaces concernées : badge PNG (widget/signature), mini-profil des messages du forum, et profil complet (onglet Contact). Bascule vers l'affichage en jours dès 24h écoulées, comme pour le statut Verrouillé.
+
+---
+
 ## [3.14.17] — Juillet 2026 — **Mot de sécurité obligatoire**
 
 ### Modifié
